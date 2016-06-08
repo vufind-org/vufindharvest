@@ -247,24 +247,24 @@ class OaiHarvester
      */
     protected $endDate = 0;
 
-	/**
-	 * Should we suppress output?
-	 *
-	 * @var bool
-	 */
-	protected $silent;
+    /**
+     * Should we suppress output?
+     *
+     * @var bool
+     */
+    protected $silent;
 
     /**
      * Constructor.
      *
      * @param string $target      Name of source being harvested (used as directory
-	 * name for storing harvested data inside $harvestRoot)
-	 * @param string $harvestRoot Root directory containing harvested data.
+     * name for storing harvested data inside $harvestRoot)
+     * @param string $harvestRoot Root directory containing harvested data.
      * @param array  $settings    OAI-PMH settings from oai.ini.
      * @param Client $client      HTTP client
      * @param string $from        Harvest start date (omit to use last_harvest.txt)
      * @param string $until       Harvest end date (optional)
-	 * @param bool   $silent      Should we suppress output?
+     * @param bool   $silent      Should we suppress output?
      */
     public function __construct($target, $harvestRoot, $settings, Client $client,
         $from = null, $until = null, $silent = true
@@ -277,8 +277,8 @@ class OaiHarvester
             $this->client->setOptions(['sslverifypeer' => false]);
         }
 
-		// Store silence setting:
-		$this->silent = $silent;
+        // Store silence setting:
+        $this->silent = $silent;
 
         // Don't time out during harvest!!
         set_time_limit(0);
@@ -389,7 +389,7 @@ class OaiHarvester
     /**
      * Set up directory structure for harvesting (support method for constructor).
      *
-	 * @param string $harvestRoot Root directory containing harvested data.
+     * @param string $harvestRoot Root directory containing harvested data.
      * @param string $target      The OAI-PMH target directory to create inside
      * $harvestRoot.
      *
