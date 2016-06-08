@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="vufindharvest" basedir="." default="main">
+  <property name="tmp" value="/tmp" />
+  <property name="package"  value="${phing.project.name}" override="true" />
+  <property name="builddir" value="${tmp}/build/${phing.project.name}" override="true" />
+  <property name="srcdir"   value="${project.basedir}" override="true" />
+  <property name="php-cs-fixers" value="no_blank_lines_before_namespaces,function_call_space,trailing_spaces,unused_use,lowercase_keywords,encoding,parenthesis,php_closing_tag,visibility,duplicate_semicolon,extra_empty_lines,no_blank_lines_after_class_opening,no_empty_lines_after_phpdocs,operators_spaces,spaces_before_semicolon,ternary_spaces,concat_with_spaces,short_array_syntax,phpdoc_no_access,remove_leading_slash_use,eof_ending" />
+
+  <!-- Main Target -->
+  <target name="main" description="main target">
+    <trycatch property="exceptionmsg">
+      <try>
+        <phingcall target="startup" />
+        <phingcall target="ci-tasks" />
+        <phingcall target="shutdown" />
+      </try>
+      <catch>
+        <phingcall target="shutdown" />
+        <fail>Unexpected error during continuous integration tasks -- ${exceptionmsg}</fail>
+      </catch>
+    </trycatch>
+  </target>
+
+  <!-- Continuous Integration Tasks -->
+  <target name="ci-tasks" description="continuous integration tasks">
+
+    <!-- Create dirs -->
+    <mkdir dir="${builddir}/reports"/>
+    <mkdir dir="${builddir}/reports/coverage"/>
+
+    <!-- Call standard tasks -->
+    <phingcall target="phpcs"/>
+    <phingcall target="phpunit"/>
+    <phingcall target="phpdoc"/>
+    <phingcall target="phpcpd"/>
+    <phingcall target="phpmd"/>
+    <phingcall target="pdepend"/>
+    <phingcall target="phploc"/>
+  </target>
+
+  <!-- Report rule violations with PHPMD (mess detector) -->
+  <target name="phpmd">
+    <exec command="${srcdir}/vendor/bin/phpmd ${srcdir}/src xml ${srcdir}/tests/phpmd.xml --exclude ${srcdir}/tests --reportfile ${builddir}/reports/phpmd.xml" />
+  </target>
+
+  <!-- Measure project with phploc -->
+  <target name="phploc">
+    <exec command="${srcdir}/vendor/bin/phploc --log-csv ${builddir}/reports/phploc.csv ${srcdir}/src" />
+  </target>
+
+  <!-- PHP_Depend code analysis -->
+  <target name="pdepend">
+    <exec command="${srcdir}/vendor/bin/pdepend --jdepend-xml=${builddir}/reports/jdepend.xml --jdepend-chart=${builddir}/reports/dependencies.svg --overview-pyramid=${builddir}/reports/pdepend-pyramid.svg ${srcdir}/src" />
+  </target>
+
+  <!-- PHP copy-and-paste detection -->
+  <target name="phpcpd">
+    <exec command="${srcdir}/vendor/bin/phpcpd --log-pmd ${builddir}/reports/pmd-cpd.xml --exclude tests ${srcdir}/src" />
+  </target>
+
+  <!-- PHP CodeSniffer -->
+  <target name="phpcs">
+    <exec command="${srcdir}/vendor/bin/phpcs --standard=PEAR --ignore=tests/* --extensions=php --report=checkstyle ${srcdir}/src &gt; ${builddir}/reports/checkstyle.xml" escape="false" />
+  </target>
+  <target name="phpcs-console">
+    <exec command="${srcdir}/vendor/bin/phpcs --standard=PEAR --ignore=tests/* --extensions=php ${srcdir}/src" escape="false" passthru="true" checkreturn="true" />
+  </target>
+
+  <!-- php-cs-fixer (first task applies fixes, second task simply checks if they are needed) -->
+  <target name="php-cs-fixer">
+    <exec command="${srcdir}/vendor/bin/php-cs-fixer fix ${srcdir}/src --fixers=${php-cs-fixers} --verbose" passthru="true" escape="false" />
+  </target>
+  <target name="php-cs-fixer-dryrun">
+    <exec command="${srcdir}/vendor/bin/php-cs-fixer fix ${srcdir}/src --fixers=${php-cs-fixers} --dry-run --verbose --diff" passthru="true" escape="false" checkreturn="true" />
+  </target>
+
+  <!-- PHP API Documentation -->
+  <target name="phpdoc">
+    <mkdir dir="${builddir}/apidocs"/>
+    <phpdoc2 title="VuFindHarvest API Documentation"
+      destdir="${builddir}/apidocs">
+      <fileset dir=".">
+        <include name="src/**/*.php" />
+      </fileset>
+    </phpdoc2>
+  </target>
+
+  <!-- PHPUnit -->
+  <target name="phpunit" description="Run tests">
+    <exec dir="${srcdir}" command="${srcdir}/vendor/bin/phpunit -dzend.enable_gc=0 --log-junit ${builddir}/reports/phpunit.xml --coverage-clover ${builddir}/reports/coverage/clover.xml --coverage-html ${builddir}/reports/coverage/" passthru="true" checkreturn="true" />
+  </target>
+
+  <!-- PHPUnit without logging output -->
+  <target name="phpunitfast" description="Run tests">
+    <exec dir="${srcdir}" command="${srcdir}/vendor/bin/phpunit -dzend.enable_gc=0" passthru="true" checkreturn="true" />
+  </target>
+
+  <!-- Set up dependencies -->
+  <target name="startup" description="set up dependencies">
+    <exec command="composer install" />
+  </target>
+
+  <!-- Uninstall and Deactivate VuFind -->
+  <target name="shutdown" description="clean up file system">
+    <delete dir="${srcdir}/vendor" includeemptydirs="true" failonerror="true" />
+    <delete file="${srcdir}/composer.lock" failonerror="true" />
+    <exec command="git reset --hard" />
+  </target>
+</project>
