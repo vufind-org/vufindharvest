@@ -149,8 +149,8 @@ class OaiHarvesterConsoleRunner
     /**
      * Harvest a single repository.
      *
-     * @param string $target  Name of repo (used for target directory)
-     * @param array $settings Settings for the harvester.
+     * @param string $target   Name of repo (used for target directory)
+     * @param array  $settings Settings for the harvester.
      *
      * @return void
      * @throws \Exception
