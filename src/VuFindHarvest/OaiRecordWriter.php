@@ -144,7 +144,7 @@ class OaiRecordWriter
             'combineRecords', 'combineRecordsTag', 'harvestedIdLog',
             'idPrefix', 'idReplace', 'idSearch',
             'injectId', 'injectDate', 'injectHeaderElements',
-            'injectSetName', 'injectSetSpec', 
+            'injectSetName', 'injectSetSpec',
         ];
         foreach ($mappableSettings as $current) {
             if (isset($settings[$current])) {
