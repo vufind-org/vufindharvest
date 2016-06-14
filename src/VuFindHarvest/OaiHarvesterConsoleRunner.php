@@ -49,14 +49,41 @@ class OaiHarvesterConsoleRunner
     protected $opts;
 
     /**
+     * HTTP client
+     *
+     * @var Client
+     */
+    protected $client;
+
+    /**
+     * Root directory for harvesting
+     *
+     * @var string
+     */
+    protected $harvestRoot;
+
+    /**
      * Constructor
      *
-     * @param Getopt $opts CLI options (omit for defaults)
+     * @param Getopt $opts        CLI options (omit for defaults)
+     * @param Client $client      HTTP client (omit for default)
+     * @param string $harvestRoot Root directory for harvesting (omit for default)
      */
-    public function __construct($opts = null)
+    public function __construct($opts = null, $client = null, $harvestRoot = null)
     {
-        $this->opts = $opts ?: new Getopt([]);
-        $this->opts->addRules(
+        $this->opts = $opts ?: static::getDefaultOptions();
+        $this->client = $client ?: new Client();
+        $this->harvestRoot = $harvestRoot ?: getcwd();
+    }
+
+    /**
+     * Get the default Options object.
+     *
+     * @return Getopt
+     */
+    public static function getDefaultOptions()
+    {
+        return new Getopt(
             [
                 'from-s' => 'Harvest start date',
                 'until-s' => 'Harvest end date',
@@ -106,7 +133,7 @@ class OaiHarvesterConsoleRunner
      */
     protected function getHarvestRoot()
     {
-        return getcwd();
+        return $this->harvestRoot;
     }
 
     /**
@@ -116,7 +143,7 @@ class OaiHarvesterConsoleRunner
      */
     protected function getHttpClient()
     {
-        return new Client();
+        return $this->client;
     }
 
     /**
