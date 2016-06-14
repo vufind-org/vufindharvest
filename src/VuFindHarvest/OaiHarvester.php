@@ -26,7 +26,6 @@
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
 namespace VuFindHarvest;
-use Zend\Console\Console;
 use Zend\Http\Client;
 
 /**
@@ -42,6 +41,8 @@ use Zend\Http\Client;
  */
 class OaiHarvester
 {
+    use WriterTrait;
+
     /**
      * HTTP client
      *
@@ -248,13 +249,6 @@ class OaiHarvester
     protected $endDate = 0;
 
     /**
-     * Should we suppress output?
-     *
-     * @var bool
-     */
-    protected $silent;
-
-    /**
      * Constructor.
      *
      * @param string $target      Name of source being harvested (used as directory
@@ -277,8 +271,8 @@ class OaiHarvester
             $this->client->setOptions(['sslverifypeer' => false]);
         }
 
-        // Store silence setting:
-        $this->silent = $silent;
+        // Store silence setting (configure WriterTrait):
+        $this->isSilent($silent);
 
         // Don't time out during harvest!!
         set_time_limit(0);
@@ -1033,37 +1027,5 @@ class OaiHarvester
         if (!is_array($this->injectHeaderElements)) {
             $this->injectHeaderElements = [$this->injectHeaderElements];
         }
-    }
-
-    /**
-     * Write a string to the Console.
-     *
-     * @param string $str String to write.
-     *
-     * @return void
-     */
-    protected function write($str)
-    {
-        // Bypass output when silent:
-        if ($this->silent) {
-            return;
-        }
-        Console::write($str);
-    }
-
-    /**
-     * Write a string w/newline to the Console.
-     *
-     * @param string $str String to write.
-     *
-     * @return void
-     */
-    protected function writeLine($str)
-    {
-        // Bypass output when silent:
-        if ($this->silent) {
-            return;
-        }
-        Console::writeLine($str);
     }
 }
