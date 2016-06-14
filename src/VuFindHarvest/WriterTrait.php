@@ -55,7 +55,7 @@ trait WriterTrait
      */
     protected function isSilent($silent = null)
     {
-        if (null !== $this->silent) {
+        if (null !== $silent) {
             $this->silent = $silent;
         }
         return $this->silent;
