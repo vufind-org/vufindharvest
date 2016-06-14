@@ -88,22 +88,14 @@ class OaiHarvesterTest extends \PHPUnit_Framework_TestCase
             'url' => 'http://localhost',
             'set' => 'myset',
             'metadataPrefix' => 'fakemdprefix',
-            'idPrefix' => 'fakeidprefix',
-            'idSearch' => 'search',
-            'idReplace' => 'replace',
-            'harvestedIdLog' => '/my/harvest.log',
-            'injectId' => 'idtag',
-            'injectSetSpec' => 'setspectag',
-            'injectDate' => 'datetag',
-            'injectHeaderElements' => 'headertag',
             'dateGranularity' => 'mygranularity',
             'verbose' => true,
             'sanitize' => true,
             'badXMLLog' => '/my/xml.log',
         ];
         $oai = new OaiHarvester(
-		    'test', sys_get_temp_dir(), $config, $this->getMockClient()
-		);
+            'test', sys_get_temp_dir(), $config, $this->getMockClient()
+        );
 
         // Special cases where config key != class property:
         $this->assertEquals(
@@ -113,16 +105,9 @@ class OaiHarvesterTest extends \PHPUnit_Framework_TestCase
             $config['dateGranularity'], $this->getProperty($oai, 'granularity')
         );
 
-        // Special case where value is transformed:
-        $this->assertEquals(
-            [$config['injectHeaderElements']],
-            $this->getProperty($oai, 'injectHeaderElements')
-        );
-
         // Unset special cases in preparation for generic loop below:
         unset($config['url']);
         unset($config['dateGranularity']);
-        unset($config['injectHeaderElements']);
 
         // Generic case for remaining configs:
         foreach ($config as $key => $value) {
@@ -152,14 +137,15 @@ class OaiHarvesterTest extends \PHPUnit_Framework_TestCase
             'dateGranularity' => 'mygranularity',
         ];
         $oai = new OaiHarvester('test', sys_get_temp_dir(), $config, $client);
+        $writer = $this->getProperty($oai, 'writer');
         $this->assertEquals(
-            $config['injectSetName'], $this->getProperty($oai, 'injectSetName')
+            $config['injectSetName'], $this->getProperty($writer, 'injectSetName')
         );
         $this->assertEquals(
             [
                 'Audio (Music)' => 'Audio (Music)',
                 'Audio (Non-Music)' => 'Audio (Non-Music)'
-            ], $this->getProperty($oai, 'setNames')
+            ], $this->getProperty($writer, 'setNames')
         );
     }
 

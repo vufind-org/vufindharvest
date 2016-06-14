@@ -58,18 +58,11 @@ class OaiHarvester
     protected $timeout = 60;
 
     /**
-     * Combine harvested records (per OAI chunk size) into one (collection) file?
+     * Record writer
      *
-     * @var bool
+     * @var OaiRecordWriter
      */
-    protected $combineRecords = false;
-
-    /**
-     * The wrapping XML tag to be used if combinedRecords is set to true
-     *
-     * @var string
-     */
-    protected $combineRecordsTag = '<collection>';
+    protected $writer;
 
     /**
      * URL to harvest from
@@ -91,27 +84,6 @@ class OaiHarvester
      * @var string
      */
     protected $metadataPrefix = 'oai_dc';
-
-    /**
-     * OAI prefix to strip from ID values
-     *
-     * @var string
-     */
-    protected $idPrefix = '';
-
-    /**
-     * Regular expression searches
-     *
-     * @var array
-     */
-    protected $idSearch = [];
-
-    /**
-     * Replacements for regular expression matches
-     *
-     * @var array
-     */
-    protected $idReplace = [];
 
     /**
      * Directory for storing harvested files
@@ -157,55 +129,6 @@ class OaiHarvester
     protected $granularity = 'auto';
 
     /**
-     * Tag to use for injecting IDs into XML (false for none)
-     *
-     * @var string|bool
-     */
-    protected $injectId = false;
-
-    /**
-     * Tag to use for injecting setSpecs (false for none)
-     *
-     * @var string|bool
-     */
-    protected $injectSetSpec = false;
-
-    /**
-     * Tag to use for injecting set names (false for none)
-     *
-     * @var string|bool
-     */
-    protected $injectSetName = false;
-
-    /**
-     * Tag to use for injecting datestamp (false for none)
-     *
-     * @var string|bool
-     */
-    protected $injectDate = false;
-
-    /**
-     * List of header elements to copy into body
-     *
-     * @var array
-     */
-    protected $injectHeaderElements = [];
-
-    /**
-     * Associative array of setSpec => setName
-     *
-     * @var array
-     */
-    protected $setNames = [];
-
-    /**
-     * Filename for logging harvested IDs (false for none)
-     *
-     * @var string|bool
-     */
-    protected $harvestedIdLog = false;
-
-    /**
      * Should we display debug output?
      *
      * @var bool
@@ -239,14 +162,6 @@ class OaiHarvester
      * @var string|bool
      */
     protected $httpPass = false;
-
-    /**
-     * As we harvest records, we want to track the most recent date encountered
-     * so we can set a start point for the next harvest.  (Unix timestamp format)
-     *
-     * @var int
-     */
-    protected $endDate = 0;
 
     /**
      * Constructor.
@@ -291,9 +206,12 @@ class OaiHarvester
         // Save configuration:
         $this->setConfig($target, $settings);
 
+        // Build response writer:
+        $this->writer = new OaiRecordWriter($this->basePath, $settings);
+
         // Load set names if we're going to need them:
-        if ($this->injectSetName) {
-            $this->loadSetNames();
+        if ($this->writer->needsSetNames()) {
+            $this->writer->setSetNames($this->loadSetNames());
         }
 
         // Autoload granularity if necessary:
@@ -414,23 +332,6 @@ class OaiHarvester
     {
         return (file_exists($this->lastHarvestFile))
             ? trim(current(file($this->lastHarvestFile))) : null;
-    }
-
-    /**
-     * Normalize a date to a Unix timestamp.
-     *
-     * @param string $date Date (ISO-8601 or YYYY-MM-DD HH:MM:SS)
-     *
-     * @return integer     Unix timestamp (or false if $date invalid)
-     */
-    protected function normalizeDate($date)
-    {
-        // Remove timezone markers -- we don't want PHP to outsmart us by adjusting
-        // the time zone!
-        $date = str_replace(['T', 'Z'], [' ', ''], $date);
-
-        // Translate to a timestamp:
-        return strtotime($date);
     }
 
     /**
@@ -593,161 +494,6 @@ class OaiHarvester
     }
 
     /**
-     * Get the filename for a specific record ID.
-     *
-     * @param string $id  ID of record to save.
-     * @param string $ext File extension to use.
-     *
-     * @return string     Full path + filename.
-     */
-    protected function getFilename($id, $ext)
-    {
-        return $this->basePath . time() . '_' .
-            preg_replace('/[^\w]/', '_', $id) . '.' . $ext;
-    }
-
-    /**
-     * Create a tracking file to record the deletion of a record.
-     *
-     * @param string|array $ids ID(s) of deleted record(s).
-     *
-     * @return void
-     */
-    protected function saveDeletedRecords($ids)
-    {
-        $ids = (array)$ids; // make sure input is array format
-        $filename = $this->getFilename($ids[0], 'delete');
-        file_put_contents($filename, implode("\n", $ids));
-    }
-
-    /**
-     * Save a record to disk.
-     *
-     * @param string $id     ID of record to save.
-     * @param object $record Record to save (in SimpleXML format).
-     *
-     * @return void
-     */
-    protected function getRecordXML($id, $record)
-    {
-        if (!isset($record->metadata)) {
-            throw new \Exception("Unexpected missing record metadata.");
-        }
-
-        // Extract the actual metadata from inside the <metadata></metadata> tags;
-        // there is probably a cleaner way to do this, but this simple method avoids
-        // the complexity of dealing with namespaces in SimpleXML:
-        $xml = trim($record->metadata->asXML());
-        preg_match('/^<metadata([^\>]*)>/', $xml, $extractedNs);
-        $xml = preg_replace('/(^<metadata[^\>]*>)|(<\/metadata>$)/m', '', $xml);
-        // remove all attributes from extractedNs that appear deeper in xml; this
-        // helps prevent fatal errors caused by the same namespace declaration
-        // appearing twice in a single tag.
-        $attributes = [];
-        preg_match_all(
-            '/(^| )([^"]*"?[^"]*"|[^\']*\'?[^\']*\')/',
-            $extractedNs[1], $attributes
-        );
-        $extractedAttributes = '';
-        foreach ($attributes[0] as $attribute) {
-            $attribute = trim($attribute);
-            // if $attribute appears in xml, remove it:
-            if (!strstr($xml, $attribute)) {
-                $extractedAttributes = ($extractedAttributes == '') ?
-                    $attribute : $extractedAttributes . ' ' . $attribute;
-            }
-        }
-
-        // If we are supposed to inject any values, do so now inside the first
-        // tag of the file:
-        $insert = '';
-        if (!empty($this->injectId)) {
-            $insert .= "<{$this->injectId}>" . htmlspecialchars($id) .
-                "</{$this->injectId}>";
-        }
-        if (!empty($this->injectDate)) {
-            $insert .= "<{$this->injectDate}>" .
-                htmlspecialchars((string)$record->header->datestamp) .
-                "</{$this->injectDate}>";
-        }
-        if (!empty($this->injectSetSpec)) {
-            if (isset($record->header->setSpec)) {
-                foreach ($record->header->setSpec as $current) {
-                    $insert .= "<{$this->injectSetSpec}>" .
-                        htmlspecialchars((string)$current) .
-                        "</{$this->injectSetSpec}>";
-                }
-            }
-        }
-        if (!empty($this->injectSetName)) {
-            if (isset($record->header->setSpec)) {
-                foreach ($record->header->setSpec as $current) {
-                    $name = $this->setNames[(string)$current];
-                    $insert .= "<{$this->injectSetName}>" .
-                        htmlspecialchars($name) .
-                        "</{$this->injectSetName}>";
-                }
-            }
-        }
-        if (!empty($this->injectHeaderElements)) {
-            foreach ($this->injectHeaderElements as $element) {
-                if (isset($record->header->$element)) {
-                    $insert .= $record->header->$element->asXML();
-                }
-            }
-        }
-        if (!empty($insert)) {
-            $xml = preg_replace('/>/', '>' . $insert, $xml, 1);
-        }
-        $xml = $this->fixNamespaces(
-            $xml, $record->getDocNamespaces(),
-            $extractedAttributes
-        );
-
-        return trim($xml);
-    }
-
-    /**
-     * Save a record to disk.
-     *
-     * @param string $id  Record ID to use for filename generation.
-     * @param string $xml XML to save.
-     *
-     * @return void
-     */
-    protected function saveFile($id, $xml)
-    {
-        // Save our XML:
-        file_put_contents($this->getFilename($id, 'xml'), trim($xml));
-    }
-
-    /**
-     * Support method for saveRecord() -- fix namespaces in the top tag of the XML
-     * document to compensate for bugs in the SimpleXML library.
-     *
-     * @param string $xml  XML document to clean up
-     * @param array  $ns   Namespaces to check
-     * @param string $attr Attributes extracted from the <metadata> tag
-     *
-     * @return string
-     */
-    protected function fixNamespaces($xml, $ns, $attr = '')
-    {
-        foreach ($ns as $key => $val) {
-            if (!empty($key)
-                && strstr($xml, $key . ':') && !strstr($xml, 'xmlns:' . $key)
-                && !strstr($attr, 'xmlns:' . $key)
-            ) {
-                $attr .= ' xmlns:' . $key . '="' . $val . '"';
-            }
-        }
-        if (!empty($attr)) {
-            $xml = preg_replace('/>/', $attr . '>', $xml, 1);
-        }
-        return $xml;
-    }
-
-    /**
      * Load date granularity from the server.
      *
      * @return void
@@ -763,7 +509,7 @@ class OaiHarvester
     /**
      * Load set list from the server.
      *
-     * @return void
+     * @return array
      */
     protected function loadSetNames()
     {
@@ -773,9 +519,11 @@ class OaiHarvester
         // first page of sets without using a resumption token:
         $params = [];
 
+        $setNames = [];
+
         // Grab set information until we have it all (at which point we will
         // break out of this otherwise-infinite loop):
-        while (true) {
+        do {
             // Process current page of results:
             $response = $this->sendRequest('ListSets', $params);
             if (isset($response->ListSets->set)) {
@@ -783,142 +531,19 @@ class OaiHarvester
                     $spec = (string)$current->setSpec;
                     $name = (string)$current->setName;
                     if (!empty($spec)) {
-                        $this->setNames[$spec] = $name;
+                        $setNames[$spec] = $name;
                     }
                 }
             }
 
             // Is there a resumption token?  If so, continue looping; if not,
             // we're done!
-            if (isset($response->ListSets->resumptionToken)
-                && !empty($response->ListSets->resumptionToken)
-            ) {
-                $params['resumptionToken']
-                    = (string)$response->ListSets->resumptionToken;
-            } else {
-                $this->writeLine("found " . count($this->setNames));
-                return;
-            }
-        }
-    }
-
-    /**
-     * Extract the ID from a record object (support method for processRecords()).
-     *
-     * @param object $record SimpleXML record.
-     *
-     * @return string        The ID value.
-     */
-    protected function extractID($record)
-    {
-        // Normalize to string:
-        $id = (string)$record->header->identifier;
-
-        // Strip prefix if found:
-        if (substr($id, 0, strlen($this->idPrefix)) == $this->idPrefix) {
-            $id = substr($id, strlen($this->idPrefix));
-        }
-
-        // Apply regular expression matching:
-        if (!empty($this->idSearch)) {
-            $id = preg_replace($this->idSearch, $this->idReplace, $id);
-        }
-
-        // Return final value:
-        return $id;
-    }
-
-    /**
-     * Save harvested records to disk and track the end date.
-     *
-     * @param object $records SimpleXML records.
-     *
-     * @return void
-     */
-    protected function processRecords($records)
-    {
-        $this->writeLine('Processing ' . count($records) . " records...");
-
-        // Array for tracking successfully harvested IDs:
-        $harvestedIds = [];
-
-        // Array for tracking deleted IDs and string for tracking inner HTML
-        // (both of these variables are used only when in 'combineRecords' mode):
-        $deletedIds = [];
-        $innerXML = '';
-
-        // Loop through the records:
-        foreach ($records as $record) {
-            // Die if the record is missing its header:
-            if (empty($record->header)) {
-                throw new \Exception("Unexpected missing record header.");
-            }
-
-            // Get the ID of the current record:
-            $id = $this->extractID($record);
-
-            // Save the current record, either as a deleted or as a regular file:
-            $attribs = $record->header->attributes();
-            if (strtolower($attribs['status']) == 'deleted') {
-                if ($this->combineRecords) {
-                    $deletedIds[] = $id;
-                } else {
-                    $this->saveDeletedRecords($id);
-                }
-            } else {
-                if ($this->combineRecords) {
-                    $innerXML .= $this->getRecordXML($id, $record);
-                } else {
-                    $this->saveFile($id, $this->getRecordXML($id, $record));
-                }
-                $harvestedIds[] = $id;
-            }
-
-            // If the current record's date is newer than the previous end date,
-            // remember it for future reference:
-            $date = $this->normalizeDate($record->header->datestamp);
-            if ($date && $date > $this->endDate) {
-                $this->endDate = $date;
-            }
-        }
-
-        if ($this->combineRecords) {
-            if (!empty($harvestedIds)) {
-                $this->saveFile($harvestedIds[0], $this->getCombinedXML($innerXML));
-            }
-
-            if (!empty($deletedIds)) {
-                $this->saveDeletedRecords($deletedIds);
-            }
-        }
-
-        // Do we have IDs to log and a log filename?  If so, log them:
-        if (!empty($this->harvestedIdLog) && !empty($harvestedIds)) {
-            $file = fopen($this->basePath . $this->harvestedIdLog, 'a');
-            if (!$file) {
-                throw new \Exception("Problem opening {$this->harvestedIdLog}.");
-            }
-            fputs($file, implode(PHP_EOL, $harvestedIds));
-            fclose($file);
-        }
-    }
-
-    /**
-     * Support method for building combined XML document.
-     *
-     * @param string $innerXML XML for inside of document.
-     *
-     * @return string
-     */
-    protected function getCombinedXML($innerXML)
-    {
-        // Determine start and end tags from configuration:
-        $start = $this->combineRecordsTag;
-        $tmp = explode(' ', $start);
-        $end = '</' . str_replace(['<', '>'], '', $tmp[0]) . '>';
-
-        // Assemble the document:
-        return $start . $innerXML . $end;
+            $params['resumptionToken']
+                = !empty($response->ListSets->resumptionToken)
+                ? (string)$response->ListSets->resumptionToken : '';
+        } while (!empty($params['resumptionToken']));
+        $this->writeLine("found " . count($setNames));
+        return $setNames;
     }
 
     /**
@@ -935,7 +560,10 @@ class OaiHarvester
 
         // Save the records from the response:
         if ($response->ListRecords->record) {
-            $this->processRecords($response->ListRecords->record);
+            $this->writeLine(
+                'Processing ' . count($response->ListRecords->record) . " records..."
+            );
+            $endDate = $this->writer->write($response->ListRecords->record);
         }
 
         // If we have a resumption token, keep going; otherwise, we're done -- save
@@ -944,10 +572,10 @@ class OaiHarvester
             && !empty($response->ListRecords->resumptionToken)
         ) {
             return $response->ListRecords->resumptionToken;
-        } else if ($this->endDate > 0) {
+        } else if (isset($endDate) && $endDate > 0) {
             $dateFormat = ($this->granularity == 'YYYY-MM-DD') ?
                 'Y-m-d' : 'Y-m-d\TH:i:s\Z';
-            $this->saveLastHarvestedDate(date($dateFormat, $this->endDate));
+            $this->saveLastHarvestedDate(date($dateFormat, $endDate));
         }
         return false;
     }
@@ -1006,10 +634,8 @@ class OaiHarvester
 
         // Settings that may be mapped directly from $settings to class properties:
         $mappableSettings = [
-            'set', 'metadataPrefix', 'idPrefix', 'idSearch', 'idReplace',
-            'harvestedIdLog', 'injectId', 'injectSetSpec', 'injectSetName',
-            'injectDate', 'injectHeaderElements', 'verbose', 'sanitize', 'badXMLLog',
-            'httpUser', 'httpPass', 'timeout', 'combineRecords', 'combineRecordsTag',
+            'set', 'metadataPrefix', 'verbose', 'sanitize', 'badXMLLog',
+            'httpUser', 'httpPass', 'timeout',
         ];
         foreach ($mappableSettings as $current) {
             if (isset($settings[$current])) {
@@ -1021,11 +647,6 @@ class OaiHarvester
         // readability):
         if (isset($settings['dateGranularity'])) {
             $this->granularity = $settings['dateGranularity'];
-        }
-
-        // Normalize injectHeaderElements to an array:
-        if (!is_array($this->injectHeaderElements)) {
-            $this->injectHeaderElements = [$this->injectHeaderElements];
         }
     }
 }
