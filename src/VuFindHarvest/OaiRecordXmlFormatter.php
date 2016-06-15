@@ -152,8 +152,30 @@ class OaiRecordXmlFormatter
      */
     protected function getIdAdditions($id)
     {
-        return !empty($this->injectId)
-            ? $this->createTag($this->injectId, $id) : '';
+        return $this->injectId ? $this->createTag($this->injectId, $id) : '';
+    }
+
+    /**
+     * Format setSpec header element as XML tags for inclusion in final record.
+     *
+     * @param object $setSpec Header setSpec element (in SimpleXML format).
+     *
+     * @return string
+     */
+    protected function getHeaderSetAdditions($setSpec)
+    {
+        $insert = '';
+        foreach ($setSpec as $current) {
+            $set = (string)$current;
+            if ($this->injectSetSpec) {
+                $insert .= $this->createTag($this->injectSetSpec, $set);
+            }
+            if ($this->injectSetName) {
+                $name = isset($this->setNames[$set]) ? $this->setNames[$set] : $set;
+                $insert .= $this->createTag($this->injectSetName, $name);
+            }
+        }
+        return $insert;
     }
 
     /**
@@ -166,23 +188,16 @@ class OaiRecordXmlFormatter
     protected function getHeaderAdditions($header)
     {
         $insert = '';
-        if (!empty($this->injectDate)) {
+        if ($this->injectDate) {
             $insert .= $this
                 ->createTag($this->injectDate, (string)$header->datestamp);
         }
-        if (!empty($this->injectSetSpec) && isset($header->setSpec)) {
-            foreach ($header->setSpec as $current) {
-                $insert .= $this->createTag($this->injectSetSpec, (string)$current);
-            }
+        if (isset($header->setSpec)
+            && ($this->injectSetSpec || $this->injectSetName)
+        ) {
+            $insert .= $this->getHeaderSetAdditions($header->setSpec);
         }
-        if (!empty($this->injectSetName) && isset($header->setSpec)) {
-            foreach ($header->setSpec as $current) {
-                $name = isset($this->setNames[(string)$current])
-                    ? $this->setNames[(string)$current] : (string)$current;
-                $insert .= $this->createTag($this->injectSetName, $name);
-            }
-        }
-        if (!empty($this->injectHeaderElements)) {
+        if ($this->injectHeaderElements) {
             foreach ($this->injectHeaderElements as $element) {
                 if (isset($header->$element)) {
                     $insert .= $header->$element->asXML();

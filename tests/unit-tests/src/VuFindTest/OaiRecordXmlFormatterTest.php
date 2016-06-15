@@ -104,6 +104,36 @@ class OaiRecordXmlFormatterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test date injection.
+     *
+     * @return void
+     */
+    public function testDateInjection()
+    {
+        $formatter = new OaiRecordXmlFormatter(['injectDate' => 'datetest']);
+        $result = $formatter
+            ->format('foo', $this->getRecordFromFixture('marc.xml', 1));
+        $xml = simplexml_load_string($result);
+        $this->assertEquals('2016-05-02T08:06:51Z', (string)$xml->datetest);
+    }
+
+    /**
+     * Test generic header injection.
+     *
+     * @return void
+     */
+    public function testHeaderInjection()
+    {
+        $cfg = ['injectHeaderElements' => 'identifier'];
+        $formatter = new OaiRecordXmlFormatter($cfg);
+        $result = $formatter->format('foo', $this->getRecordFromFixture());
+        $xml = simplexml_load_string($result);
+        $this->assertEquals(
+            'oai:urm_publish:9925821506101791', (string)$xml->identifier
+        );
+    }
+
+    /**
      * Test set spec injection.
      *
      * @return void
@@ -146,13 +176,30 @@ class OaiRecordXmlFormatterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test exception when metadata is missing.
+     *
+     * @return void
+     *
+     * @expectedException        Exception
+     * @expectedExceptionMessage Unexpected missing record metadata.
+     */
+    public function testMissingMetadataException()
+    {
+        $formatter = new OaiRecordXmlFormatter();
+        $formatter->format('foo', simplexml_load_string('<empty />'));
+    }
+
+    /**
      * Get a record from the test fixture.
+     *
+     * @param string $fixture Filename of fixture (inside fixture directory).
+     * @param int    $i       Index of record to retrieve from fixture.
      *
      * @return object
      */
-    protected function getRecordFromFixture()
+    protected function getRecordFromFixture($fixture = 'marc.xml', $i = 0)
     {
-        $xml = simplexml_load_file(__DIR__ . '/../../../fixtures/marc.xml');
-        return $xml->ListRecords->record[0];
+        $xml = simplexml_load_file(__DIR__ . '/../../../fixtures/' . $fixture);
+        return $xml->ListRecords->record[$i];
     }
 }
