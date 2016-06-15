@@ -207,17 +207,33 @@ class OaiHarvester
         $this->setConfig($target, $settings);
 
         // Build response writer:
-        $this->writer = new OaiRecordWriter($this->basePath, $settings);
-
-        // Load set names if we're going to need them:
-        if ($this->writer->needsSetNames()) {
-            $this->writer->setSetNames($this->loadSetNames());
-        }
+        $this->writer = $this->constructWriter($settings);
 
         // Autoload granularity if necessary:
         if ($this->granularity == 'auto') {
             $this->loadGranularity();
         }
+    }
+
+    /**
+     * Support method for constructor -- build the writer support object.
+     *
+     * @param array $settings OAI-PMH settings from oai.ini.
+     *
+     * @return OaiRecordWriter
+     */
+    protected function constructWriter($settings)
+    {
+        // Build the formatter:
+        $formatter = new OaiRecordXmlFormatter($settings);
+
+        // Load set names if we're going to need them:
+        if ($formatter->needsSetNames()) {
+            $formatter->setSetNames($this->loadSetNames());
+        }
+
+        // Build the writer:
+        return new OaiRecordWriter($this->basePath, $formatter, $settings);
     }
 
     /**

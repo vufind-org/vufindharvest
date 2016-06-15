@@ -88,73 +88,33 @@ class OaiRecordWriter
     protected $idReplace = [];
 
     /**
-     * Tag to use for injecting IDs into XML (false for none)
+     * XML record formatter
      *
-     * @var string|bool
+     * @var OaiRecordXmlFormatter
      */
-    protected $injectId = false;
-
-    /**
-     * Tag to use for injecting setSpecs (false for none)
-     *
-     * @var string|bool
-     */
-    protected $injectSetSpec = false;
-
-    /**
-     * Tag to use for injecting set names (false for none)
-     *
-     * @var string|bool
-     */
-    protected $injectSetName = false;
-
-    /**
-     * Tag to use for injecting datestamp (false for none)
-     *
-     * @var string|bool
-     */
-    protected $injectDate = false;
-
-    /**
-     * List of header elements to copy into body
-     *
-     * @var array
-     */
-    protected $injectHeaderElements = [];
-
-    /**
-     * Associative array of setSpec => setName
-     *
-     * @var array
-     */
-    protected $setNames = [];
+    protected $recordFormatter;
 
     /**
      * Constructor
      *
-     * @param string $basePath Target directory for harvested files
-     * @param array  $settings Configuration settings
+     * @param string                $basePath  Target directory for harvested files
+     * @param OaiRecordXmlFormatter $formatter XML record formatter
+     * @param array                 $settings  Configuration settings
      */
-    public function __construct($basePath, $settings = [])
+    public function __construct($basePath, $formatter, $settings = [])
     {
         $this->basePath = $basePath;
+        $this->recordFormatter = $formatter;
 
         // Settings that may be mapped directly from $settings to class properties:
         $mappableSettings = [
             'combineRecords', 'combineRecordsTag', 'harvestedIdLog',
             'idPrefix', 'idReplace', 'idSearch',
-            'injectId', 'injectDate', 'injectHeaderElements',
-            'injectSetName', 'injectSetSpec',
         ];
         foreach ($mappableSettings as $current) {
             if (isset($settings[$current])) {
                 $this->$current = $settings[$current];
             }
-        }
-
-        // Normalize injectHeaderElements to an array:
-        if (!is_array($this->injectHeaderElements)) {
-            $this->injectHeaderElements = [$this->injectHeaderElements];
         }
     }
 
@@ -182,32 +142,6 @@ class OaiRecordWriter
 
         // Return final value:
         return $id;
-    }
-
-    /**
-     * Fix namespaces in the top tag of the XML document to compensate for bugs
-     * in the SimpleXML library.
-     *
-     * @param string $xml  XML document to clean up
-     * @param array  $ns   Namespaces to check
-     * @param string $attr Attributes extracted from the <metadata> tag
-     *
-     * @return string
-     */
-    protected function fixNamespaces($xml, $ns, $attr = '')
-    {
-        foreach ($ns as $key => $val) {
-            if (!empty($key)
-                && strstr($xml, $key . ':') && !strstr($xml, 'xmlns:' . $key)
-                && !strstr($attr, 'xmlns:' . $key)
-            ) {
-                $attr .= ' xmlns:' . $key . '="' . $val . '"';
-            }
-        }
-        if (!empty($attr)) {
-            $xml = preg_replace('/>/', $attr . '>', $xml, 1);
-        }
-        return $xml;
     }
 
     /**
@@ -243,93 +177,6 @@ class OaiRecordWriter
     }
 
     /**
-     * Save a record to disk.
-     *
-     * @param string $id     ID of record to save.
-     * @param object $record Record to save (in SimpleXML format).
-     *
-     * @return void
-     */
-    protected function getRecordXML($id, $record)
-    {
-        if (!isset($record->metadata)) {
-            throw new \Exception("Unexpected missing record metadata.");
-        }
-
-        // Extract the actual metadata from inside the <metadata></metadata> tags;
-        // there is probably a cleaner way to do this, but this simple method avoids
-        // the complexity of dealing with namespaces in SimpleXML:
-        $xml = trim($record->metadata->asXML());
-        preg_match('/^<metadata([^\>]*)>/', $xml, $extractedNs);
-        $xml = preg_replace('/(^<metadata[^\>]*>)|(<\/metadata>$)/m', '', $xml);
-        // remove all attributes from extractedNs that appear deeper in xml; this
-        // helps prevent fatal errors caused by the same namespace declaration
-        // appearing twice in a single tag.
-        $attributes = [];
-        preg_match_all(
-            '/(^| )([^"]*"?[^"]*"|[^\']*\'?[^\']*\')/',
-            $extractedNs[1], $attributes
-        );
-        $extractedAttributes = '';
-        foreach ($attributes[0] as $attribute) {
-            $attribute = trim($attribute);
-            // if $attribute appears in xml, remove it:
-            if (!strstr($xml, $attribute)) {
-                $extractedAttributes = ($extractedAttributes == '') ?
-                    $attribute : $extractedAttributes . ' ' . $attribute;
-            }
-        }
-
-        // If we are supposed to inject any values, do so now inside the first
-        // tag of the file:
-        $insert = '';
-        if (!empty($this->injectId)) {
-            $insert .= "<{$this->injectId}>" . htmlspecialchars($id) .
-                "</{$this->injectId}>";
-        }
-        if (!empty($this->injectDate)) {
-            $insert .= "<{$this->injectDate}>" .
-                htmlspecialchars((string)$record->header->datestamp) .
-                "</{$this->injectDate}>";
-        }
-        if (!empty($this->injectSetSpec)) {
-            if (isset($record->header->setSpec)) {
-                foreach ($record->header->setSpec as $current) {
-                    $insert .= "<{$this->injectSetSpec}>" .
-                        htmlspecialchars((string)$current) .
-                        "</{$this->injectSetSpec}>";
-                }
-            }
-        }
-        if (!empty($this->injectSetName)) {
-            if (isset($record->header->setSpec)) {
-                foreach ($record->header->setSpec as $current) {
-                    $name = $this->setNames[(string)$current];
-                    $insert .= "<{$this->injectSetName}>" .
-                        htmlspecialchars($name) .
-                        "</{$this->injectSetName}>";
-                }
-            }
-        }
-        if (!empty($this->injectHeaderElements)) {
-            foreach ($this->injectHeaderElements as $element) {
-                if (isset($record->header->$element)) {
-                    $insert .= $record->header->$element->asXML();
-                }
-            }
-        }
-        if (!empty($insert)) {
-            $xml = preg_replace('/>/', '>' . $insert, $xml, 1);
-        }
-        $xml = $this->fixNamespaces(
-            $xml, $record->getDocNamespaces(),
-            $extractedAttributes
-        );
-
-        return trim($xml);
-    }
-
-    /**
      * Create a tracking file to record the deletion of a record.
      *
      * @param string|array $ids ID(s) of deleted record(s).
@@ -358,16 +205,6 @@ class OaiRecordWriter
     }
 
     /**
-     * Do we need access to set information?
-     *
-     * @return bool
-     */
-    public function needsSetNames()
-    {
-        return $this->injectSetName;
-    }
-
-    /**
      * Normalize a date to a Unix timestamp.
      *
      * @param string $date Date (ISO-8601 or YYYY-MM-DD HH:MM:SS)
@@ -382,18 +219,6 @@ class OaiRecordWriter
 
         // Translate to a timestamp:
         return strtotime($date);
-    }
-
-    /**
-     * Inject set name information.
-     *
-     * @param array $names Associative array of setSpec => setName
-     *
-     * @return void
-     */
-    public function setSetNames($names)
-    {
-        $this->setNames = $names;
     }
 
     /**
@@ -435,10 +260,11 @@ class OaiRecordWriter
                     $this->saveDeletedRecords($id);
                 }
             } else {
+                $recordXML = $this->recordFormatter->format($id, $record);
                 if ($this->combineRecords) {
-                    $innerXML .= $this->getRecordXML($id, $record);
+                    $innerXML .= $recordXML;
                 } else {
-                    $this->saveFile($id, $this->getRecordXML($id, $record));
+                    $this->saveFile($id, $recordXML);
                 }
                 $harvestedIds[] = $id;
             }

@@ -33,23 +33,6 @@ use VuFindHarvest\OaiHarvester;
 /**
  * OAI-PMH harvester unit test.
  *
- * PHP version 5
- *
- * Copyright (C) Villanova University 2010.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  * @category VuFind
  * @package  Tests
  * @author   Demian Katz <demian.katz@villanova.edu>
@@ -138,14 +121,15 @@ class OaiHarvesterTest extends \PHPUnit_Framework_TestCase
         ];
         $oai = new OaiHarvester('test', sys_get_temp_dir(), $config, $client);
         $writer = $this->getProperty($oai, 'writer');
+        $formatter = $this->getProperty($writer, 'recordFormatter');
         $this->assertEquals(
-            $config['injectSetName'], $this->getProperty($writer, 'injectSetName')
+            $config['injectSetName'], $this->getProperty($formatter, 'injectSetName')
         );
         $this->assertEquals(
             [
                 'Audio (Music)' => 'Audio (Music)',
                 'Audio (Non-Music)' => 'Audio (Non-Music)'
-            ], $this->getProperty($writer, 'setNames')
+            ], $this->getProperty($formatter, 'setNames')
         );
     }
 

@@ -5,7 +5,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) Villanova University 2010.
+ * Copyright (C) Villanova University 2016.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -28,27 +28,10 @@
  */
 namespace VuFindTest\Harvest;
 
-use VuFindHarvest\OaiRecordWriter;
+use VuFindHarvest\OaiRecordWriter, VuFindHarvest\OaiRecordXmlFormatter;
 
 /**
  * OAI-PMH record writer unit test.
- *
- * PHP version 5
- *
- * Copyright (C) Villanova University 2010.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category VuFind
  * @package  Tests
@@ -89,21 +72,10 @@ class OaiRecordWriterTest extends \PHPUnit_Framework_TestCase
             'idSearch' => 'search',
             'idReplace' => 'replace',
             'harvestedIdLog' => '/my/harvest.log',
-            'injectId' => 'idtag',
-            'injectSetSpec' => 'setspectag',
-            'injectDate' => 'datetag',
-            'injectHeaderElements' => 'headertag',
         ];
-        $oai = new OaiRecordWriter(sys_get_temp_dir(), $config);
-
-        // Special case where value is transformed:
-        $this->assertEquals(
-            [$config['injectHeaderElements']],
-            $this->getProperty($oai, 'injectHeaderElements')
+        $oai = new OaiRecordWriter(
+            sys_get_temp_dir(), new OaiRecordXmlFormatter(), $config
         );
-
-        // Unset special cases in preparation for generic loop below:
-        unset($config['injectHeaderElements']);
 
         // Generic case for remaining configs:
         foreach ($config as $key => $value) {
