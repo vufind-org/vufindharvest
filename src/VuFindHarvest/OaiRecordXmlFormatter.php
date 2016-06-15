@@ -131,6 +131,19 @@ class OaiRecordXmlFormatter
     }
 
     /**
+     * Format a line of XML.
+     *
+     * @param string $tag   Tag name
+     * @param string $value Content of tag
+     *
+     * @return string
+     */
+    protected function createTag($tag, $value)
+    {
+        return "<{$tag}>" . htmlspecialchars($value) . "</{$tag}>";
+    }
+
+    /**
      * Format the ID as an XML tag for inclusion in final record.
      *
      * @param string $id Record ID
@@ -139,11 +152,8 @@ class OaiRecordXmlFormatter
      */
     protected function getIdAdditions($id)
     {
-        if (!empty($this->injectId)) {
-            return "<{$this->injectId}>" . htmlspecialchars($id)
-                . "</{$this->injectId}>";
-        }
-        return '';
+        return !empty($this->injectId)
+            ? $this->createTag($this->injectId, $id) : '';
     }
 
     /**
@@ -157,23 +167,19 @@ class OaiRecordXmlFormatter
     {
         $insert = '';
         if (!empty($this->injectDate)) {
-            $insert .= "<{$this->injectDate}>" .
-                htmlspecialchars((string)$header->datestamp) .
-                "</{$this->injectDate}>";
+            $insert .= $this
+                ->createTag($this->injectDate, (string)$header->datestamp);
         }
         if (!empty($this->injectSetSpec) && isset($header->setSpec)) {
             foreach ($header->setSpec as $current) {
-                $insert .= "<{$this->injectSetSpec}>" .
-                    htmlspecialchars((string)$current) .
-                    "</{$this->injectSetSpec}>";
+                $insert .= $this->createTag($this->injectSetSpec, (string)$current);
             }
         }
         if (!empty($this->injectSetName) && isset($header->setSpec)) {
             foreach ($header->setSpec as $current) {
-                $name = $this->setNames[(string)$current];
-                $insert .= "<{$this->injectSetName}>" .
-                    htmlspecialchars($name) .
-                    "</{$this->injectSetName}>";
+                $name = isset($this->setNames[(string)$current])
+                    ? $this->setNames[(string)$current] : (string)$current;
+                $insert .= $this->createTag($this->injectSetName, $name);
             }
         }
         if (!empty($this->injectHeaderElements)) {
