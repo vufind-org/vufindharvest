@@ -46,20 +46,6 @@ class OaiRecordWriter
     protected $basePath;
 
     /**
-     * Combine harvested records (per OAI chunk size) into one (collection) file?
-     *
-     * @var bool
-     */
-    protected $combineRecords = false;
-
-    /**
-     * The wrapping XML tag to be used if combinedRecords is set to true
-     *
-     * @var string
-     */
-    protected $combineRecordsTag = '<collection>';
-
-    /**
      * Filename for logging harvested IDs (false for none)
      *
      * @var string|bool
@@ -95,6 +81,13 @@ class OaiRecordWriter
     protected $recordFormatter;
 
     /**
+     * Writer strategy
+     *
+     * @var RecordWriterStrategyInterface
+     */
+    protected $strategy;
+
+    /**
      * Constructor
      *
      * @param string                $basePath  Target directory for harvested files
@@ -105,17 +98,34 @@ class OaiRecordWriter
     {
         $this->basePath = $basePath;
         $this->recordFormatter = $formatter;
+        $this->strategy = $this->constructStrategy($settings);
 
         // Settings that may be mapped directly from $settings to class properties:
         $mappableSettings = [
-            'combineRecords', 'combineRecordsTag', 'harvestedIdLog',
-            'idPrefix', 'idReplace', 'idSearch',
+            'harvestedIdLog', 'idPrefix', 'idReplace', 'idSearch',
         ];
         foreach ($mappableSettings as $current) {
             if (isset($settings[$current])) {
                 $this->$current = $settings[$current];
             }
         }
+    }
+
+    /**
+     * Support method for constructor: build writer strategy object.
+     *
+     * @param array $settings Configuration settings
+     *
+     * @return RecordWriterStrategyInterface
+     */
+    protected function constructStrategy($settings)
+    {
+        if (isset($settings['combineRecords']) && $settings['combineRecords']) {
+            $combineTag = isset($settings['combineRecordsTag'])
+                ? $settings['combineRecordsTag'] : null;
+            return new CombinedRecordWriterStrategy($this->basePath, $combineTag);
+        }
+        return new IndividualRecordWriterStrategy($this->basePath);
     }
 
     /**
@@ -145,66 +155,6 @@ class OaiRecordWriter
     }
 
     /**
-     * Support method for building combined XML document.
-     *
-     * @param string $innerXML XML for inside of document.
-     *
-     * @return string
-     */
-    protected function getCombinedXML($innerXML)
-    {
-        // Determine start and end tags from configuration:
-        $start = $this->combineRecordsTag;
-        $tmp = explode(' ', $start);
-        $end = '</' . str_replace(['<', '>'], '', $tmp[0]) . '>';
-
-        // Assemble the document:
-        return $start . $innerXML . $end;
-    }
-
-    /**
-     * Get the filename for a specific record ID.
-     *
-     * @param string $id  ID of record to save.
-     * @param string $ext File extension to use.
-     *
-     * @return string     Full path + filename.
-     */
-    protected function getFilename($id, $ext)
-    {
-        return $this->basePath . time() . '_' .
-            preg_replace('/[^\w]/', '_', $id) . '.' . $ext;
-    }
-
-    /**
-     * Create a tracking file to record the deletion of a record.
-     *
-     * @param string|array $ids ID(s) of deleted record(s).
-     *
-     * @return void
-     */
-    protected function saveDeletedRecords($ids)
-    {
-        $ids = (array)$ids; // make sure input is array format
-        $filename = $this->getFilename($ids[0], 'delete');
-        file_put_contents($filename, implode("\n", $ids));
-    }
-
-    /**
-     * Save a record to disk.
-     *
-     * @param string $id  Record ID to use for filename generation.
-     * @param string $xml XML to save.
-     *
-     * @return void
-     */
-    protected function saveFile($id, $xml)
-    {
-        // Save our XML:
-        file_put_contents($this->getFilename($id, 'xml'), trim($xml));
-    }
-
-    /**
      * Normalize a date to a Unix timestamp.
      *
      * @param string $date Date (ISO-8601 or YYYY-MM-DD HH:MM:SS)
@@ -222,6 +172,27 @@ class OaiRecordWriter
     }
 
     /**
+     * Write a log file of harvested IDs (if configured to do so).
+     *
+     * @param array $harvestedIds Harvested IDs
+     *
+     * @return void
+     * @throws \Exception
+     */
+    protected function writeHarvestedIdsLog($harvestedIds)
+    {
+        // Do we have IDs to log and a log filename?  If so, log them:
+        if (!empty($this->harvestedIdLog) && !empty($harvestedIds)) {
+            $file = fopen($this->basePath . $this->harvestedIdLog, 'a');
+            if (!$file) {
+                throw new \Exception("Problem opening {$this->harvestedIdLog}.");
+            }
+            fputs($file, implode(PHP_EOL, $harvestedIds));
+            fclose($file);
+        }
+    }
+
+    /**
      * Save harvested records to disk and return the end date.
      *
      * @param object $records SimpleXML records.
@@ -236,16 +207,13 @@ class OaiRecordWriter
         // Date of most recent record encountered:
         $endDate = 0;
 
-        // Array for tracking deleted IDs and string for tracking inner HTML
-        // (both of these variables are used only when in 'combineRecords' mode):
-        $deletedIds = [];
-        $innerXML = '';
+        $this->strategy->beginWrite();
 
         // Loop through the records:
         foreach ($records as $record) {
             // Die if the record is missing its header:
             if (empty($record->header)) {
-                throw new \Exception("Unexpected missing record header.");
+                throw new \Exception('Unexpected missing record header.');
             }
 
             // Get the ID of the current record:
@@ -254,18 +222,10 @@ class OaiRecordWriter
             // Save the current record, either as a deleted or as a regular file:
             $attribs = $record->header->attributes();
             if (strtolower($attribs['status']) == 'deleted') {
-                if ($this->combineRecords) {
-                    $deletedIds[] = $id;
-                } else {
-                    $this->saveDeletedRecords($id);
-                }
+                $this->strategy->addDeletedRecord($id);
             } else {
                 $recordXML = $this->recordFormatter->format($id, $record);
-                if ($this->combineRecords) {
-                    $innerXML .= $recordXML;
-                } else {
-                    $this->saveFile($id, $recordXML);
-                }
+                $this->strategy->addRecord($id, $recordXML);
                 $harvestedIds[] = $id;
             }
 
@@ -277,25 +237,9 @@ class OaiRecordWriter
             }
         }
 
-        if ($this->combineRecords) {
-            if (!empty($harvestedIds)) {
-                $this->saveFile($harvestedIds[0], $this->getCombinedXML($innerXML));
-            }
+        $this->strategy->endWrite();
 
-            if (!empty($deletedIds)) {
-                $this->saveDeletedRecords($deletedIds);
-            }
-        }
-
-        // Do we have IDs to log and a log filename?  If so, log them:
-        if (!empty($this->harvestedIdLog) && !empty($harvestedIds)) {
-            $file = fopen($this->basePath . $this->harvestedIdLog, 'a');
-            if (!$file) {
-                throw new \Exception("Problem opening {$this->harvestedIdLog}.");
-            }
-            fputs($file, implode(PHP_EOL, $harvestedIds));
-            fclose($file);
-        }
+        $this->writeHarvestedIdsLog($harvestedIds);
 
         return $endDate;
     }
