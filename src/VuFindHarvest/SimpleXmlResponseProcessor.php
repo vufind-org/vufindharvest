@@ -55,7 +55,8 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
     /**
      * Constructor
      *
-     * @param array $settings OAI-PMH settings from oai.ini.
+     * @param string $basePath Base path to harvest directory.
+     * @param array  $settings OAI-PMH settings from oai.ini.
      */
     public function __construct($basePath, $settings = [])
     {
