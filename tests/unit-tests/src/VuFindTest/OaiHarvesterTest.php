@@ -72,9 +72,6 @@ class OaiHarvesterTest extends \PHPUnit_Framework_TestCase
             'set' => 'myset',
             'metadataPrefix' => 'fakemdprefix',
             'dateGranularity' => 'mygranularity',
-            'verbose' => true,
-            'sanitize' => true,
-            'badXMLLog' => '/my/xml.log',
         ];
         $oai = new OaiHarvester(
             'test', sys_get_temp_dir(), $config, $this->getMockClient()
@@ -82,15 +79,10 @@ class OaiHarvesterTest extends \PHPUnit_Framework_TestCase
 
         // Special cases where config key != class property:
         $this->assertEquals(
-            $config['url'], $this->getProperty($oai, 'baseURL')
-        );
-        $this->assertEquals(
             $config['dateGranularity'], $this->getProperty($oai, 'granularity')
         );
-
-        // Unset special cases in preparation for generic loop below:
-        unset($config['url']);
         unset($config['dateGranularity']);
+        unset($config['url']);
 
         // Generic case for remaining configs:
         foreach ($config as $key => $value) {

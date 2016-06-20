@@ -44,20 +44,6 @@ class OaiHarvester
     use WriterTrait;
 
     /**
-     * HTTP client
-     *
-     * @var Client
-     */
-    protected $client;
-
-    /**
-     * HTTP client's timeout
-     *
-     * @var int
-     */
-    protected $timeout = 60;
-
-    /**
      * Record writer
      *
      * @var OaiRecordWriter
@@ -65,11 +51,11 @@ class OaiHarvester
     protected $writer;
 
     /**
-     * URL to harvest from
+     * Low-level OAI-PMH communicator
      *
-     * @var string
+     * @var OaiCommunicator
      */
-    protected $baseURL;
+    protected $communicator;
 
     /**
      * Target set(s) to harvest (null for all records)
@@ -129,41 +115,6 @@ class OaiHarvester
     protected $granularity = 'auto';
 
     /**
-     * Should we display debug output?
-     *
-     * @var bool
-     */
-    protected $verbose = false;
-
-    /**
-     * Should we sanitize XML?
-     *
-     * @var bool
-     */
-    protected $sanitize = false;
-
-    /**
-     * Filename for logging bad XML responses (false for none)
-     *
-     * @var string|bool
-     */
-    protected $badXMLLog = false;
-
-    /**
-     * Username for HTTP basic authentication (false for none)
-     *
-     * @var string|bool
-     */
-    protected $httpUser = false;
-
-    /**
-     * Password for HTTP basic authentication (false for none)
-     *
-     * @var string|bool
-     */
-    protected $httpPass = false;
-
-    /**
      * Constructor.
      *
      * @param string $target      Name of source being harvested (used as directory
@@ -178,14 +129,6 @@ class OaiHarvester
     public function __construct($target, $harvestRoot, $settings, Client $client,
         $from = null, $until = null, $silent = true
     ) {
-        // Store client:
-        $this->client = $client;
-
-        // Disable SSL verification if requested:
-        if (isset($settings['sslverifypeer']) && !$settings['sslverifypeer']) {
-            $this->client->setOptions(['sslverifypeer' => false]);
-        }
-
         // Store silence setting (configure WriterTrait):
         $this->isSilent($silent);
 
@@ -206,7 +149,9 @@ class OaiHarvester
         // Save configuration:
         $this->setConfig($target, $settings);
 
-        // Build response writer:
+        // Build communicator and response writer:
+        $rp = new SimpleXmlResponseProcessor($this->basePath, $settings);
+        $this->communicator = new OaiCommunicator($client, $settings, $rp, $silent);
         $this->writer = $this->constructWriter($settings);
 
         // Autoload granularity if necessary:
@@ -373,140 +318,9 @@ class OaiHarvester
      */
     protected function sendRequest($verb, $params = [])
     {
-        // Debug:
-        if ($this->verbose) {
-            $this->write(
-                "Sending request: verb = {$verb}, params = " . print_r($params, true)
-            );
-        }
-
-        // Set up retry loop:
-        while (true) {
-            // Set up the request:
-            $this->client->resetParameters();
-            $this->client->setUri($this->baseURL);
-            $this->client->setOptions(['timeout' => $this->timeout]);
-
-            // Set authentication, if necessary:
-            if ($this->httpUser && $this->httpPass) {
-                $this->client->setAuth($this->httpUser, $this->httpPass);
-            }
-
-            // Load request parameters:
-            $query = $this->client->getRequest()->getQuery();
-            $query->set('verb', $verb);
-            foreach ($params as $key => $value) {
-                $query->set($key, $value);
-            }
-
-            // Perform request and die on error:
-            $result = $this->client->setMethod('GET')->send();
-            if ($result->getStatusCode() == 503) {
-                $delayHeader = $result->getHeaders()->get('Retry-After');
-                $delay = is_object($delayHeader)
-                    ? $delayHeader->getDeltaSeconds() : 0;
-                if ($delay > 0) {
-                    if ($this->verbose) {
-                        $this->writeLine(
-                            "Received 503 response; waiting {$delay} seconds..."
-                        );
-                    }
-                    sleep($delay);
-                }
-            } else if (!$result->isSuccess()) {
-                throw new \Exception('HTTP Error ' . $result->getStatusCode());
-            } else {
-                // If we didn't get an error, we can leave the retry loop:
-                break;
-            }
-        }
-
-        // If we got this far, there was no error -- send back response.
-        return $this->processResponse($result->getBody());
-    }
-
-    /**
-     * Log a bad XML response.
-     *
-     * @param string $xml Bad XML
-     *
-     * @return void
-     */
-    protected function logBadXML($xml)
-    {
-        $file = fopen($this->basePath . $this->badXMLLog, 'a');
-        if (!$file) {
-            throw new \Exception("Problem opening {$this->badXMLLog}.");
-        }
-        fputs($file, $xml . "\n\n");
-        fclose($file);
-    }
-
-    /**
-     * Sanitize XML.
-     *
-     * @param string $xml XML to sanitize
-     *
-     * @return string
-     */
-    protected function sanitizeXML($xml)
-    {
-        // Sanitize the XML if requested:
-        $regex = '/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u';
-        $newXML = trim(preg_replace($regex, ' ', $xml, -1, $count));
-
-        if ($count > 0 && $this->badXMLLog) {
-            $this->logBadXML($xml);
-        }
-
-        return $newXML;
-    }
-
-    /**
-     * Process an OAI-PMH response into a SimpleXML object.  Die if an error is
-     * detected.
-     *
-     * @param string $xml OAI-PMH response XML.
-     *
-     * @return object     SimpleXML-formatted response.
-     */
-    protected function processResponse($xml)
-    {
-        // Sanitize if necessary:
-        if ($this->sanitize) {
-            $xml = $this->sanitizeXML($xml);
-        }
-
-        // Parse the XML (newer versions of LibXML require a special flag for
-        // large documents, and responses may be quite large):
-        $flags = LIBXML_VERSION >= 20900 ? LIBXML_PARSEHUGE : 0;
-        $result = simplexml_load_string($xml, null, $flags);
-        if (!$result) {
-            throw new \Exception("Problem loading XML: {$xml}");
-        }
-
-        // Detect errors and die if one is found:
-        if ($result->error) {
-            $attribs = $result->error->attributes();
-
-            // If this is a bad resumption token error and we're trying to
-            // restore a prior state, we should clean up.
-            if ($attribs['code'] == 'badResumptionToken'
-                && file_exists($this->lastStateFile)
-            ) {
-                unlink($this->lastStateFile);
-                throw new \Exception(
-                    "Token expired; removing last_state.txt. Please restart harvest."
-                );
-            }
-            throw new \Exception(
-                "OAI-PMH error -- code: {$attribs['code']}, " .
-                "value: {$result->error}"
-            );
-        }
-
-        // If we got this far, we have a valid response:
-        return $result;
+        $response = $this->communicator->request($verb, $params);
+        $this->checkResponseForErrors($response);
+        return $response;
     }
 
     /**
@@ -560,6 +374,38 @@ class OaiHarvester
         } while (!empty($params['resumptionToken']));
         $this->writeLine("found " . count($setNames));
         return $setNames;
+    }
+
+    /**
+     * Check an OAI-PMH response for errors that need to be handled.
+     *
+     * @param object $result OAI-PMH response (SimpleXML object)
+     *
+     * @return void
+     *
+     * @throws \Exception
+     */
+    protected function checkResponseForErrors($result)
+    {
+        // Detect errors and die if one is found:
+        if ($result->error) {
+            $attribs = $result->error->attributes();
+
+            // If this is a bad resumption token error and we're trying to
+            // restore a prior state, we should clean up.
+            if ($attribs['code'] == 'badResumptionToken'
+                && file_exists($this->lastStateFile)
+            ) {
+                unlink($this->lastStateFile);
+                throw new \Exception(
+                    "Token expired; removing last_state.txt. Please restart harvest."
+                );
+            }
+            throw new \Exception(
+                "OAI-PMH error -- code: {$attribs['code']}, " .
+                "value: {$result->error}"
+            );
+        }
     }
 
     /**
@@ -642,17 +488,12 @@ class OaiHarvester
      */
     protected function setConfig($target, $settings)
     {
-        // Set up base URL:
         if (empty($settings['url'])) {
             throw new \Exception("Missing base URL for {$target}.");
         }
-        $this->baseURL = $settings['url'];
 
         // Settings that may be mapped directly from $settings to class properties:
-        $mappableSettings = [
-            'set', 'metadataPrefix', 'verbose', 'sanitize', 'badXMLLog',
-            'httpUser', 'httpPass', 'timeout',
-        ];
+        $mappableSettings = ['set', 'metadataPrefix'];
         foreach ($mappableSettings as $current) {
             if (isset($settings[$current])) {
                 $this->$current = $settings[$current];
