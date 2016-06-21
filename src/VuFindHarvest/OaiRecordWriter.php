@@ -193,6 +193,16 @@ class OaiRecordWriter
     }
 
     /**
+     * Get base path for writes.
+     *
+     * @return string
+     */
+    public function getBasePath()
+    {
+        return $this->basePath;
+    }
+
+    /**
      * Save harvested records to disk and return the end date.
      *
      * @param object $records SimpleXML records.

@@ -70,18 +70,18 @@ class OaiCommunicatorTest extends \PHPUnit_Framework_TestCase
         $config = [
             'url' => 'http://localhost',
             'verbose' => true,
+            'silent' => false,
             'httpUser' => 'foo',
             'httpPass' => 'bar',
         ];
         $oai = new OaiCommunicator(
-            $this->getMock('Zend\Http\Client'), $config, null, false
+            $this->getMock('Zend\Http\Client'), $config
         );
 
         $this->assertEquals(
             $config['url'], $this->getProperty($oai, 'baseUrl')
         );
         unset($config['url']);
-        $this->assertFalse($this->getProperty($oai, 'silent'));
         unset($config['verbose']);
 
         // Generic case for remaining configs:

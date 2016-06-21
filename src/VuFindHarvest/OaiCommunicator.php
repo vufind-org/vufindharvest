@@ -89,10 +89,9 @@ class OaiCommunicator
      * @param Client                     $client    HTTP client
      * @param array                      $settings  OAI-PMH settings from oai.ini.
      * @param ResponseProcessorInterface $processor Response processor (optional)
-     * @param bool                       $silent    Should we suppress output?
      */
-    public function __construct(Client $client,
-        $settings = [], ResponseProcessorInterface $processor = null, $silent = true
+    public function __construct(Client $client, $settings = [],
+        ResponseProcessorInterface $processor = null
     ) {
         // Set up base URL:
         if (empty($settings['url'])) {
@@ -104,6 +103,7 @@ class OaiCommunicator
         // only needs to output messages when we are in verbose mode, so we
         // actually need to check two settings: the global silence setting passed
         // in as $silent, and the 'verbose' value in $settings.
+        $silent = isset($settings['silent']) ? $settings['silent'] : true;
         if (!isset($settings['verbose']) || !$settings['verbose']) {
             $silent = true;
         }

@@ -184,14 +184,15 @@ class OaiHarvesterConsoleRunner
      */
     protected function harvestSingleRepository($target, $settings)
     {
-        $harvest = new OaiHarvester(
+        $settings['from'] = $this->opts->getOption('from');
+        $settings['until'] = $this->opts->getOption('until');
+        $settings['silent'] = false;
+        $factory = new OaiHarvesterFactory();
+        $harvest = $factory->getHarvester(
             $target,
             $this->getHarvestRoot(),
-            $settings,
             $this->getHttpClient(),
-            $this->opts->getOption('from'),
-            $this->opts->getOption('until'),
-            false   // do not silence output
+            $settings
         );
         $harvest->launch();
     }

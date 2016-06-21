@@ -2,6 +2,9 @@
 <phpunit bootstrap="tests/bootstrap.php"
          strict="true">
   <testsuites>
+    <testsuite name="Integration Tests">
+      <directory>tests/integration-tests</directory>
+    </testsuite>
     <testsuite name="Unit Tests">
       <directory>tests/unit-tests</directory>
     </testsuite>

@@ -26,12 +26,9 @@
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
 namespace VuFindHarvest;
-use Zend\Http\Client;
 
 /**
- * OAI Class
- *
- * This class harvests records via OAI-PMH using settings from oai.ini.
+ * OAI-PMH Harvest Tool
  *
  * @category VuFind
  * @package  Harvest_Tools
@@ -117,68 +114,34 @@ class OaiHarvester
     /**
      * Constructor.
      *
-     * @param string $target      Name of source being harvested (used as directory
-     * name for storing harvested data inside $harvestRoot)
-     * @param string $harvestRoot Root directory containing harvested data.
-     * @param array  $settings    OAI-PMH settings from oai.ini.
-     * @param Client $client      HTTP client
-     * @param string $from        Harvest start date (omit to use last_harvest.txt)
-     * @param string $until       Harvest end date (optional)
-     * @param bool   $silent      Should we suppress output?
+     * @param array           $settings     OAI-PMH settings
+     * @param OaiCommunicator $communicator Low-level API client
+     * @param OaiRecordWriter $writer       Record writer
      */
-    public function __construct($target, $harvestRoot, $settings, Client $client,
-        $from = null, $until = null, $silent = true
+    public function __construct($settings, OaiCommunicator $communicator,
+        OaiRecordWriter $writer
     ) {
-        // Store silence setting (configure WriterTrait):
-        $this->isSilent($silent);
-
         // Don't time out during harvest!!
         set_time_limit(0);
 
         // Set up base directory for harvested files:
-        $this->setBasePath($harvestRoot, $target);
+        $this->basePath = $writer->getBasePath();
 
         // Check if there is a file containing a start date:
         $this->lastHarvestFile = $this->basePath . 'last_harvest.txt';
         $this->lastStateFile = $this->basePath . 'last_state.txt';
 
-        // Set up start/end dates:
-        $this->setStartDate(empty($from) ? $this->loadLastHarvestedDate() : $from);
-        $this->setEndDate($until);
-
         // Save configuration:
-        $this->setConfig($target, $settings);
+        $this->setConfig($settings);
 
         // Build communicator and response writer:
-        $rp = new SimpleXmlResponseProcessor($this->basePath, $settings);
-        $this->communicator = new OaiCommunicator($client, $settings, $rp, $silent);
-        $this->writer = $this->constructWriter($settings);
+        $this->communicator = $communicator;
+        $this->writer = $writer;
 
         // Autoload granularity if necessary:
         if ($this->granularity == 'auto') {
             $this->loadGranularity();
         }
-    }
-
-    /**
-     * Support method for constructor -- build the writer support object.
-     *
-     * @param array $settings OAI-PMH settings from oai.ini.
-     *
-     * @return OaiRecordWriter
-     */
-    protected function constructWriter($settings)
-    {
-        // Build the formatter:
-        $formatter = new OaiRecordXmlFormatter($settings);
-
-        // Load set names if we're going to need them:
-        if ($formatter->needsSetNames()) {
-            $formatter->setSetNames($this->loadSetNames());
-        }
-
-        // Build the writer:
-        return new OaiRecordWriter($this->basePath, $formatter, $settings);
     }
 
     /**
@@ -260,30 +223,6 @@ class OaiHarvester
     }
 
     /**
-     * Set up directory structure for harvesting (support method for constructor).
-     *
-     * @param string $harvestRoot Root directory containing harvested data.
-     * @param string $target      The OAI-PMH target directory to create inside
-     * $harvestRoot.
-     *
-     * @return void
-     */
-    protected function setBasePath($harvestRoot, $target)
-    {
-        // Build the full harvest path:
-        $this->basePath = rtrim($harvestRoot, '/') . '/' . rtrim($target, '/') . '/';
-
-        // Create the directory if it does not already exist:
-        if (!is_dir($this->basePath)) {
-            if (!mkdir($this->basePath)) {
-                throw new \Exception(
-                    "Problem creating directory {$this->basePath}."
-                );
-            }
-        }
-    }
-
-    /**
      * Retrieve the date from the "last harvested" file and use it as our start
      * date if it is available.
      *
@@ -334,46 +273,6 @@ class OaiHarvester
         $response = $this->sendRequest('Identify');
         $this->granularity = (string)$response->Identify->granularity;
         $this->writeLine("found {$this->granularity}.");
-    }
-
-    /**
-     * Load set list from the server.
-     *
-     * @return array
-     */
-    protected function loadSetNames()
-    {
-        $this->write("Loading set list... ");
-
-        // On the first pass through the following loop, we want to get the
-        // first page of sets without using a resumption token:
-        $params = [];
-
-        $setNames = [];
-
-        // Grab set information until we have it all (at which point we will
-        // break out of this otherwise-infinite loop):
-        do {
-            // Process current page of results:
-            $response = $this->sendRequest('ListSets', $params);
-            if (isset($response->ListSets->set)) {
-                foreach ($response->ListSets->set as $current) {
-                    $spec = (string)$current->setSpec;
-                    $name = (string)$current->setName;
-                    if (!empty($spec)) {
-                        $setNames[$spec] = $name;
-                    }
-                }
-            }
-
-            // Is there a resumption token?  If so, continue looping; if not,
-            // we're done!
-            $params['resumptionToken']
-                = !empty($response->ListSets->resumptionToken)
-                ? (string)$response->ListSets->resumptionToken : '';
-        } while (!empty($params['resumptionToken']));
-        $this->writeLine("found " . count($setNames));
-        return $setNames;
     }
 
     /**
@@ -481,16 +380,26 @@ class OaiHarvester
     /**
      * Set configuration (support method for constructor).
      *
-     * @param string $target   Target directory for harvest.
-     * @param array  $settings Configuration
+     * @param array $settings Configuration
      *
      * @return void
      */
-    protected function setConfig($target, $settings)
+    protected function setConfig($settings)
     {
         if (empty($settings['url'])) {
-            throw new \Exception("Missing base URL for {$target}.");
+            throw new \Exception('Missing base URL.');
         }
+
+        // Store silence setting (configure WriterTrait):
+        $silent = isset($settings['silent']) ? $settings['silent'] : true;
+        $this->isSilent($silent);
+
+        // Set up start/end dates:
+        $from = empty($settings['from'])
+            ? $this->loadLastHarvestedDate() : $settings['from'];
+        $until = empty($settings['until']) ? null : $settings['until'];
+        $this->setStartDate($from);
+        $this->setEndDate($until);
 
         // Settings that may be mapped directly from $settings to class properties:
         $mappableSettings = ['set', 'metadataPrefix'];
