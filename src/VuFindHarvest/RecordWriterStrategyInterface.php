@@ -39,6 +39,13 @@ namespace VuFindHarvest;
 interface RecordWriterStrategyInterface
 {
     /**
+     * Get base path for writes.
+     *
+     * @return string
+     */
+    public function getBasePath();
+
+    /**
      * Called before the writing process begins.
      *
      * @return void

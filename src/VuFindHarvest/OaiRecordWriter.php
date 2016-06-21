@@ -39,13 +39,6 @@ namespace VuFindHarvest;
 class OaiRecordWriter
 {
     /**
-     * Directory for storing harvested files
-     *
-     * @var string
-     */
-    protected $basePath;
-
-    /**
      * Filename for logging harvested IDs (false for none)
      *
      * @var string|bool
@@ -90,15 +83,14 @@ class OaiRecordWriter
     /**
      * Constructor
      *
-     * @param string                $basePath  Target directory for harvested files
-     * @param OaiRecordXmlFormatter $formatter XML record formatter
-     * @param array                 $settings  Configuration settings
+     * @param RecordWriterStrategyInterface $strategy  Writing strategy
+     * @param OaiRecordXmlFormatter         $formatter XML record formatter
+     * @param array                         $settings  Configuration settings
      */
-    public function __construct($basePath, $formatter, $settings = [])
+    public function __construct($strategy, $formatter, $settings = [])
     {
-        $this->basePath = $basePath;
         $this->recordFormatter = $formatter;
-        $this->strategy = $this->constructStrategy($settings);
+        $this->strategy = $strategy;
 
         // Settings that may be mapped directly from $settings to class properties:
         $mappableSettings = [
@@ -109,23 +101,6 @@ class OaiRecordWriter
                 $this->$current = $settings[$current];
             }
         }
-    }
-
-    /**
-     * Support method for constructor: build writer strategy object.
-     *
-     * @param array $settings Configuration settings
-     *
-     * @return RecordWriterStrategyInterface
-     */
-    protected function constructStrategy($settings)
-    {
-        if (isset($settings['combineRecords']) && $settings['combineRecords']) {
-            $combineTag = isset($settings['combineRecordsTag'])
-                ? $settings['combineRecordsTag'] : null;
-            return new CombinedRecordWriterStrategy($this->basePath, $combineTag);
-        }
-        return new IndividualRecordWriterStrategy($this->basePath);
     }
 
     /**
@@ -183,7 +158,7 @@ class OaiRecordWriter
     {
         // Do we have IDs to log and a log filename?  If so, log them:
         if (!empty($this->harvestedIdLog) && !empty($harvestedIds)) {
-            $file = fopen($this->basePath . $this->harvestedIdLog, 'a');
+            $file = fopen($this->getBasePath() . $this->harvestedIdLog, 'a');
             if (!$file) {
                 throw new \Exception("Problem opening {$this->harvestedIdLog}.");
             }
@@ -199,7 +174,7 @@ class OaiRecordWriter
      */
     public function getBasePath()
     {
-        return $this->basePath;
+        return $this->strategy->getBasePath();
     }
 
     /**

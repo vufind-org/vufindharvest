@@ -58,6 +58,16 @@ abstract class AbstractRecordWriterStrategy implements RecordWriterStrategyInter
     }
 
     /**
+     * Get base path for writes.
+     *
+     * @return string
+     */
+    public function getBasePath()
+    {
+        return $this->basePath;
+    }
+
+    /**
      * Get the filename for a specific record ID.
      *
      * @param string $id  ID of record to save.

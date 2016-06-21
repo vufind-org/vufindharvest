@@ -172,16 +172,33 @@ class OaiHarvesterFactory
     /**
      * Build the writer support object.
      *
-     * @param string                $basePath  Base path for harvest
-     * @param OaiRecordXmlFormatter $formatter XML formatter
-     * @param array                 $settings  OAI-PMH settings
+     * @param RecordWriterStrategyInterface $strategy  Writing strategy
+     * @param OaiRecordXmlFormatter         $formatter XML record formatter
+     * @param array                         $settings  Configuration settings
      *
      * @return OaiRecordWriter
      */
-    protected function getWriter($basePath, OaiRecordXmlFormatter $formatter,
-        array $settings
+    protected function getWriter(RecordWriterStrategyInterface $strategy,
+        OaiRecordXmlFormatter $formatter, array $settings
     ) {
-        return new OaiRecordWriter($basePath, $formatter, $settings);
+        return new OaiRecordWriter($strategy, $formatter, $settings);
+    }
+
+    /**
+     * Build writer strategy object.
+     *
+     * @param array $settings Configuration settings
+     *
+     * @return RecordWriterStrategyInterface
+     */
+    protected function getWriterStrategy($basePath, $settings)
+    {
+        if (isset($settings['combineRecords']) && $settings['combineRecords']) {
+            $combineTag = isset($settings['combineRecordsTag'])
+                ? $settings['combineRecordsTag'] : null;
+            return new CombinedRecordWriterStrategy($basePath, $combineTag);
+        }
+        return new IndividualRecordWriterStrategy($basePath);
     }
 
     /**
@@ -207,7 +224,8 @@ class OaiHarvesterFactory
             $settings, $responseProcessor, $target
         );
         $formatter = $this->getFormatter($communicator, $settings);
-        $writer = $this->getWriter($basePath, $formatter, $settings);
+        $strategy = $this->getWriterStrategy($basePath, $settings);
+        $writer = $this->getWriter($strategy, $formatter, $settings);
         return new OaiHarvester($communicator, $writer, $settings);
     }
 }
