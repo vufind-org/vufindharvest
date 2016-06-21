@@ -40,6 +40,37 @@ use Zend\Http\Client;
 class OaiHarvesterFactory
 {
     /**
+     * Configure the HTTP client
+     *
+     * @param Client $client   HTTP client
+     * @param array  $settings Settings
+     *
+     * @return Client
+     *
+     * @throws Exception
+     */
+    protected function configureClient(Client $client, array $settings)
+    {
+        $configuredClient = $client ?: new Client();
+
+        // Set authentication, if necessary:
+        if (!empty($settings['httpUser']) && !empty($settings['httpPass'])) {
+            $configuredClient->setAuth($settings['httpUser'], $settings['httpPass']);
+        }
+
+        // Set up assorted client options from $settings array:
+        $options = [
+            'timeout' => isset($settings['timeout']) ? $settings['timeout'] : 60,
+        ];
+        if (isset($settings['sslverifypeer']) && !$settings['sslverifypeer']) {
+            $options['sslverifypeer'] = false;
+        }
+        $configuredClient->setOptions($options);
+
+        return $configuredClient;
+    }
+
+    /**
      * Set up directory structure for harvesting.
      *
      * @param string $harvestRoot Root directory containing harvested data.
@@ -66,16 +97,28 @@ class OaiHarvesterFactory
     /**
      * Get the communicator.
      *
-     * @param Client                     $client            HTTP client
-     * @param array                      $settings          Additional settings
-     * @param ResponseProcessorInterface $responseProcessor Response processor
+     * @param Client                     $client    HTTP client
+     * @param array                      $settings  Additional settings
+     * @param ResponseProcessorInterface $processor Response processor
+     * @param string                     $target    Target being configured (used for
+     * error messages)
      *
      * @return OaiCommunicator
      */
     protected function getCommunicator(Client $client, array $settings,
-        ResponseProcessorInterface $responseProcessor
+        ResponseProcessorInterface $processor, $target
     ) {
-        return new OaiCommunicator($client, $settings, $responseProcessor);
+        if (empty($settings['url'])) {
+            throw new \Exception("Missing base URL for {$target}.");
+        }
+        // We only want the communicator to output messages if we are NOT in
+        // silent mode and we ARE in verbose mode. (i.e. silence overrides
+        // verbosity; communicator messages are considered verbose output).
+        $silent = isset($settings['silent']) ? $settings['silent'] : true;
+        if (!isset($settings['verbose']) || !$settings['verbose']) {
+            $silent = true;
+        }
+        return new OaiCommunicator($settings['url'], $client, $processor, $silent);
     }
 
     /**
@@ -142,23 +185,6 @@ class OaiHarvesterFactory
     }
 
     /**
-     * Validate incoming settings; throw exception if problem found.
-     *
-     * @param string $target   Target being processed
-     * @param array  $settings Settings to validate
-     *
-     * @return void
-     *
-     * @throws \Exception
-     */
-    protected function validateSettings($target, array $settings)
-    {
-        if (empty($settings['url'])) {
-            throw new \Exception("Missing base URL for {$target}.");
-        }
-    }
-
-    /**
      * Get the harvester
      *
      * @param string $target      Name of source being harvested (used as directory
@@ -174,14 +200,14 @@ class OaiHarvesterFactory
     public function getHarvester($target, $harvestRoot, Client $client = null,
         array $settings = []
     ) {
-        $this->validateSettings($target, $settings);
         $basePath = $this->getBasePath($harvestRoot, $target);
         $responseProcessor = $this->getResponseProcessor($basePath, $settings);
         $communicator = $this->getCommunicator(
-            $client ?: new Client(), $settings, $responseProcessor
+            $this->configureClient($client, $settings),
+            $settings, $responseProcessor, $target
         );
         $formatter = $this->getFormatter($communicator, $settings);
         $writer = $this->getWriter($basePath, $formatter, $settings);
-        return new OaiHarvester($settings, $communicator, $writer);
+        return new OaiHarvester($communicator, $writer, $settings);
     }
 }

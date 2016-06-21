@@ -114,12 +114,12 @@ class OaiHarvester
     /**
      * Constructor.
      *
-     * @param array           $settings     OAI-PMH settings
      * @param OaiCommunicator $communicator Low-level API client
      * @param OaiRecordWriter $writer       Record writer
+     * @param array           $settings     OAI-PMH settings
      */
-    public function __construct($settings, OaiCommunicator $communicator,
-        OaiRecordWriter $writer
+    public function __construct(OaiCommunicator $communicator,
+        OaiRecordWriter $writer, $settings = []
     ) {
         // Don't time out during harvest!!
         set_time_limit(0);
@@ -386,10 +386,6 @@ class OaiHarvester
      */
     protected function setConfig($settings)
     {
-        if (empty($settings['url'])) {
-            throw new \Exception('Missing base URL.');
-        }
-
         // Store silence setting (configure WriterTrait):
         $silent = isset($settings['silent']) ? $settings['silent'] : true;
         $this->isSilent($silent);

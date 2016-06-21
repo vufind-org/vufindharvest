@@ -151,13 +151,13 @@ class OaiHarvesterFactoryTest extends \PHPUnit_Framework_TestCase
         $client = $this->getMockClient();
         $client->expects($this->once())
             ->method('setOptions')
-            ->with($this->equalTo(['sslverifypeer' => false]));
+            ->with($this->equalTo(['sslverifypeer' => false, 'timeout' => 60]));
         $config = [
             'url' => 'http://localhost',
             'sslverifypeer' => false,
             'dateGranularity' => 'mygranularity',
         ];
-        $oai = $this->getOaiHarvester('test', sys_get_temp_dir(), $config, $client);
+        $this->getOaiHarvester('test', sys_get_temp_dir(), $config, $client);
     }
 
     /**
