@@ -187,7 +187,8 @@ class OaiHarvesterFactory
     /**
      * Build writer strategy object.
      *
-     * @param array $settings Configuration settings
+     * @param string $basePath Base path for harvest
+     * @param array  $settings Configuration settings
      *
      * @return RecordWriterStrategyInterface
      */
