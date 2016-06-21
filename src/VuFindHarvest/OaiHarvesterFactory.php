@@ -42,7 +42,7 @@ class OaiHarvesterFactory
     /**
      * Get HTTP client options from $settings array
      *
-     * @param array  $settings Settings
+     * @param array $settings Settings
      *
      * @return array
      */
