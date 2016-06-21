@@ -131,8 +131,12 @@ class OaiHarvester
         $this->lastHarvestFile = $this->basePath . 'last_harvest.txt';
         $this->lastStateFile = $this->basePath . 'last_state.txt';
 
-        // Save configuration:
-        $this->setConfig($settings);
+        // Store silence setting (configure WriterTrait):
+        $this->isSilent(isset($settings['silent']) ? $settings['silent'] : true);
+
+        // Store other settings
+        $this->storeDateSettings($settings);
+        $this->storeMiscSettings($settings);
 
         // Build communicator and response writer:
         $this->communicator = $communicator;
@@ -378,35 +382,37 @@ class OaiHarvester
     }
 
     /**
-     * Set configuration (support method for constructor).
+     * Set date range configuration (support method for constructor).
      *
      * @param array $settings Configuration
      *
      * @return void
      */
-    protected function setConfig($settings)
+    protected function storeDateSettings($settings)
     {
-        // Store silence setting (configure WriterTrait):
-        $silent = isset($settings['silent']) ? $settings['silent'] : true;
-        $this->isSilent($silent);
-
         // Set up start/end dates:
         $from = empty($settings['from'])
             ? $this->loadLastHarvestedDate() : $settings['from'];
         $until = empty($settings['until']) ? null : $settings['until'];
         $this->setStartDate($from);
         $this->setEndDate($until);
+    }
 
-        // Settings that may be mapped directly from $settings to class properties:
-        $mappableSettings = ['set', 'metadataPrefix'];
-        foreach ($mappableSettings as $current) {
-            if (isset($settings[$current])) {
-                $this->$current = $settings[$current];
-            }
+    /**
+     * Set miscellaneous configuration (support method for constructor).
+     *
+     * @param array $settings Configuration
+     *
+     * @return void
+     */
+    protected function storeMiscSettings($settings)
+    {
+        if (isset($settings['set'])) {
+            $this->set = $settings['set'];
         }
-
-        // Special case: $settings value does not match property value (for
-        // readability):
+        if (isset($settings['metadataPrefix'])) {
+            $this->metadataPrefix = $settings['metadataPrefix'];
+        }
         if (isset($settings['dateGranularity'])) {
             $this->granularity = $settings['dateGranularity'];
         }

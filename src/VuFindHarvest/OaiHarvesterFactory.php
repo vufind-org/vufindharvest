@@ -40,6 +40,24 @@ use Zend\Http\Client;
 class OaiHarvesterFactory
 {
     /**
+     * Get HTTP client options from $settings array
+     *
+     * @param array  $settings Settings
+     *
+     * @return array
+     */
+    protected function getClientOptions(array $settings)
+    {
+        $options = [
+            'timeout' => isset($settings['timeout']) ? $settings['timeout'] : 60,
+        ];
+        if (isset($settings['sslverifypeer']) && !$settings['sslverifypeer']) {
+            $options['sslverifypeer'] = false;
+        }
+        return $options;
+    }
+
+    /**
      * Configure the HTTP client
      *
      * @param Client $client   HTTP client
@@ -59,13 +77,7 @@ class OaiHarvesterFactory
         }
 
         // Set up assorted client options from $settings array:
-        $options = [
-            'timeout' => isset($settings['timeout']) ? $settings['timeout'] : 60,
-        ];
-        if (isset($settings['sslverifypeer']) && !$settings['sslverifypeer']) {
-            $options['sslverifypeer'] = false;
-        }
-        $configuredClient->setOptions($options);
+        $configuredClient->setOptions($this->getClientOptions($settings));
 
         return $configuredClient;
     }
