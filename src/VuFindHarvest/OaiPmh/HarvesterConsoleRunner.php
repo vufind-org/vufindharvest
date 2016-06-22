@@ -26,7 +26,9 @@
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
 namespace VuFindHarvest\OaiPmh;
-use Zend\Console\Console, Zend\Console\Getopt, Zend\Http\Client;
+use VuFindHarvest\WriterTrait;
+use Zend\Console\Getopt;
+use Zend\Http\Client;
 
 /**
  * OAI Class
@@ -41,6 +43,8 @@ use Zend\Console\Console, Zend\Console\Getopt, Zend\Http\Client;
  */
 class HarvesterConsoleRunner
 {
+    use WriterTrait;
+
     /**
      * Console options
      *
@@ -77,14 +81,16 @@ class HarvesterConsoleRunner
      * @param string           $harvestRoot Root directory for harvesting (omit for
      * default)
      * @param HarvesterFactory $factory     Harvester factory (omit for default)
+     * @param bool             $silent      Should we suppress output?
      */
     public function __construct($opts = null, $client = null, $harvestRoot = null,
-        HarvesterFactory $factory = null
+        HarvesterFactory $factory = null, $silent = false
     ) {
         $this->opts = $opts ?: static::getDefaultOptions();
         $this->client = $client ?: new Client();
         $this->harvestRoot = $harvestRoot ?: getcwd();
         $this->factory = $factory ?: new HarvesterFactory();
+        $this->isSilent($silent);
     }
 
     /**
@@ -120,18 +126,18 @@ class HarvesterConsoleRunner
             if (empty($target) || empty($settings)) {
                 continue;
             }
-            Console::writeLine("Processing {$target}...");
+            $this->writeLine("Processing {$target}...");
             try {
                 $this->harvestSingleRepository($target, $settings);
             } catch (\Exception $e) {
-                Console::writeLine($e->getMessage());
+                $this->writeLine($e->getMessage());
                 return false;
             }
             $processed++;
         }
 
         // All done.
-        Console::writeLine(
+        $this->writeLine(
             "Completed without errors -- {$processed} source(s) processed."
         );
         return true;
@@ -165,18 +171,18 @@ class HarvesterConsoleRunner
     protected function getSettings()
     {
         if (!($ini = $this->opts->getOption('ini'))) {
-            Console::writeLine('Please specify an .ini file with the --ini flag.');
+            $this->writeLine('Please specify an .ini file with the --ini flag.');
             return false;
         }
         $oaiSettings = @parse_ini_file($ini, true);
         if (empty($oaiSettings)) {
-            Console::writeLine("Please add OAI-PMH settings to {$ini}.");
+            $this->writeLine("Please add OAI-PMH settings to {$ini}.");
             return false;
         }
         $argv = $this->opts->getRemainingArgs();
         if ($section = isset($argv[0]) ? $argv[0] : false) {
             if (!isset($oaiSettings[$section])) {
-                Console::writeLine("$section not found in $ini.");
+                $this->writeLine("$section not found in $ini.");
                 return false;
             }
             $oaiSettings = [$section => $oaiSettings[$section]];
