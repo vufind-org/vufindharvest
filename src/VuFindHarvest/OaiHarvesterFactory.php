@@ -28,6 +28,8 @@
 namespace VuFindHarvest;
 use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyFactory;
 use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface;
+use VuFindHarvest\ResponseProcessor\ResponseProcessorInterface;
+use VuFindHarvest\ResponseProcessor\SimpleXmlResponseProcessor;
 use Zend\Http\Client;
 
 /**
