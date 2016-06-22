@@ -56,6 +56,13 @@ class Harvester
     protected $communicator;
 
     /**
+     * State manager
+     *
+     * @var StateManager
+     */
+    protected $stateManager;
+
+    /**
      * Target set(s) to harvest (null for all records)
      *
      * @var string|array
@@ -68,28 +75,6 @@ class Harvester
      * @var string
      */
     protected $metadataPrefix = 'oai_dc';
-
-    /**
-     * Directory for storing harvested files
-     *
-     * @var string
-     */
-    protected $basePath;
-
-    /**
-     * File for tracking last harvest date
-     *
-     * @var string
-     */
-    protected $lastHarvestFile;
-
-    /**
-     * File for tracking last harvest state (for continuing interrupted
-     * connection).
-     *
-     * @var string
-     */
-    protected $lastStateFile;
 
     /**
      * Harvest end date (null for no specific end)
@@ -117,20 +102,19 @@ class Harvester
      *
      * @param Communicator $communicator Low-level API client
      * @param RecordWriter $writer       Record writer
+     * @param StateManager $stateManager State manager
      * @param array        $settings     OAI-PMH settings
      */
     public function __construct(Communicator $communicator, RecordWriter $writer,
-        $settings = []
+        StateManager $stateManager, $settings = []
     ) {
         // Don't time out during harvest!!
         set_time_limit(0);
 
-        // Set up base directory for harvested files:
-        $this->basePath = $writer->getBasePath();
-
-        // Check if there is a file containing a start date:
-        $this->lastHarvestFile = $this->basePath . 'last_harvest.txt';
-        $this->lastStateFile = $this->basePath . 'last_state.txt';
+        // Store dependencies
+        $this->communicator = $communicator;
+        $this->writer = $writer;
+        $this->stateManager = $stateManager;
 
         // Store silence setting (configure WriterTrait):
         $this->isSilent(isset($settings['silent']) ? $settings['silent'] : true);
@@ -138,10 +122,6 @@ class Harvester
         // Store other settings
         $this->storeDateSettings($settings);
         $this->storeMiscSettings($settings);
-
-        // Build communicator and response writer:
-        $this->communicator = $communicator;
-        $this->writer = $writer;
 
         // Autoload granularity if necessary:
         if ($this->granularity == 'auto') {
@@ -186,10 +166,9 @@ class Harvester
         }
 
         // Load last state, if applicable (used to recover from server failure).
-        if (file_exists($this->lastStateFile)) {
-            $this->write("Found {$this->lastStateFile}; attempting to resume.\n");
-            list($resumeSet, $resumeToken, $this->startDate)
-                = explode("\t", file_get_contents($this->lastStateFile));
+        if ($state = $this->stateManager->loadState()) {
+            $this->write("Found saved state; attempting to resume.\n");
+            list($resumeSet, $resumeToken, $this->startDate) = $state;
         }
 
         // Loop through all of the selected sets:
@@ -213,42 +192,14 @@ class Harvester
             // Keep harvesting as long as a resumption token is provided:
             while ($token !== false) {
                 // Save current state in case we need to resume later:
-                file_put_contents(
-                    $this->lastStateFile, "$set\t$token\t{$this->startDate}"
-                );
+                $this->stateManager->saveState($set, $token, $this->startDate);
                 $token = $this->getRecordsByToken($token);
             }
         }
 
         // If we made it this far, all was successful, so we should clean up
-        // the "last state" file.
-        if (file_exists($this->lastStateFile)) {
-            unlink($this->lastStateFile);
-        }
-    }
-
-    /**
-     * Retrieve the date from the "last harvested" file and use it as our start
-     * date if it is available.
-     *
-     * @return string
-     */
-    protected function loadLastHarvestedDate()
-    {
-        return (file_exists($this->lastHarvestFile))
-            ? trim(current(file($this->lastHarvestFile))) : null;
-    }
-
-    /**
-     * Save a date to the "last harvested" file.
-     *
-     * @param string $date Date to save.
-     *
-     * @return void
-     */
-    protected function saveLastHarvestedDate($date)
-    {
-        file_put_contents($this->lastHarvestFile, $date);
+        // the stored state.
+        $this->stateManager->clearState();
     }
 
     /**
@@ -298,9 +249,9 @@ class Harvester
             // If this is a bad resumption token error and we're trying to
             // restore a prior state, we should clean up.
             if ($attribs['code'] == 'badResumptionToken'
-                && file_exists($this->lastStateFile)
+                && $this->stateManager->loadState()
             ) {
-                unlink($this->lastStateFile);
+                $this->stateManager->clearState();
                 throw new \Exception(
                     "Token expired; removing last_state.txt. Please restart harvest."
                 );
@@ -341,7 +292,7 @@ class Harvester
         } else if (isset($endDate) && $endDate > 0) {
             $dateFormat = ($this->granularity == 'YYYY-MM-DD') ?
                 'Y-m-d' : 'Y-m-d\TH:i:s\Z';
-            $this->saveLastHarvestedDate(date($dateFormat, $endDate));
+            $this->stateManager->saveDate(date($dateFormat, $endDate));
         }
         return false;
     }
@@ -393,7 +344,7 @@ class Harvester
     {
         // Set up start/end dates:
         $from = empty($settings['from'])
-            ? $this->loadLastHarvestedDate() : $settings['from'];
+            ? $this->stateManager->loadDate() : $settings['from'];
         $until = empty($settings['until']) ? null : $settings['until'];
         $this->setStartDate($from);
         $this->setEndDate($until);

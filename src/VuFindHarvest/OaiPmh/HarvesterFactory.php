@@ -186,6 +186,18 @@ class HarvesterFactory
     }
 
     /**
+     * Get state manager
+     *
+     * @param string $basePath Base path for harvest
+     *
+     * @return StateManager
+     */
+    protected function getStateManager($basePath)
+    {
+        return new StateManager($basePath);
+    }
+
+    /**
      * Build the writer support object.
      *
      * @param RecordWriterStrategyInterface $strategy  Writing strategy
@@ -236,6 +248,7 @@ class HarvesterFactory
         $strategy = $this->getWriterStrategyFactory()
             ->getStrategy($basePath, $settings);
         $writer = $this->getWriter($strategy, $formatter, $settings);
-        return new Harvester($communicator, $writer, $settings);
+        $stateManager = $this->getStateManager($basePath);
+        return new Harvester($communicator, $writer, $stateManager, $settings);
     }
 }
