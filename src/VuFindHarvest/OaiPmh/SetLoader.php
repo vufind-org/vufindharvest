@@ -25,7 +25,8 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-namespace VuFindHarvest;
+namespace VuFindHarvest\OaiPmh;
+use VuFindHarvest\WriterTrait;
 
 /**
  * OAI-PMH Harvest Tool
@@ -36,24 +37,24 @@ namespace VuFindHarvest;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-class OaiSetLoader
+class SetLoader
 {
     use WriterTrait;
 
     /**
      * Low-level OAI-PMH communicator
      *
-     * @var OaiCommunicator
+     * @var Communicator
      */
     protected $communicator;
 
     /**
      * Constructor.
      *
-     * @param OaiCommunicator $communicator Low-level API client
-     * @param array           $settings     OAI-PMH settings
+     * @param Communicator $communicator Low-level API client
+     * @param array        $settings     OAI-PMH settings
      */
-    public function __construct(OaiCommunicator $communicator, $settings = [])
+    public function __construct(Communicator $communicator, $settings = [])
     {
         $this->communicator = $communicator;
         $silent = isset($settings['silent']) ? $settings['silent'] : true;

@@ -25,7 +25,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-namespace VuFindHarvest;
+namespace VuFindHarvest\OaiPmh;
 
 /**
  * OAI-PMH XML Record Formatter
@@ -36,7 +36,7 @@ namespace VuFindHarvest;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-class OaiRecordXmlFormatter
+class RecordXmlFormatter
 {
     /**
      * Tag to use for injecting IDs into XML (false for none)

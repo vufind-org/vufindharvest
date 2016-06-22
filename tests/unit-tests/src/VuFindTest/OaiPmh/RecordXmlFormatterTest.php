@@ -28,7 +28,7 @@
  */
 namespace VuFindTest\Harvest;
 
-use VuFindHarvest\OaiRecordXmlFormatter;
+use VuFindHarvest\OaiPmh\RecordXmlFormatter;
 
 /**
  * OAI-PMH record xml formatter unit test.
@@ -39,7 +39,7 @@ use VuFindHarvest\OaiRecordXmlFormatter;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
-class OaiRecordXmlFormatterTest extends \PHPUnit_Framework_TestCase
+class RecordXmlFormatterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Return protected or private property.
@@ -73,7 +73,7 @@ class OaiRecordXmlFormatterTest extends \PHPUnit_Framework_TestCase
             'injectDate' => 'datetag',
             'injectHeaderElements' => 'headertag',
         ];
-        $oai = new OaiRecordXmlFormatter($config);
+        $oai = new RecordXmlFormatter($config);
 
         // Special case where value is transformed:
         $this->assertEquals(
@@ -97,7 +97,7 @@ class OaiRecordXmlFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function testIdInjection()
     {
-        $formatter = new OaiRecordXmlFormatter(['injectId' => 'id']);
+        $formatter = new RecordXmlFormatter(['injectId' => 'id']);
         $result = $formatter->format('foo', $this->getRecordFromFixture());
         $xml = simplexml_load_string($result);
         $this->assertEquals('foo', $xml->id);
@@ -110,7 +110,7 @@ class OaiRecordXmlFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function testDateInjection()
     {
-        $formatter = new OaiRecordXmlFormatter(['injectDate' => 'datetest']);
+        $formatter = new RecordXmlFormatter(['injectDate' => 'datetest']);
         $result = $formatter
             ->format('foo', $this->getRecordFromFixture('marc.xml', 1));
         $xml = simplexml_load_string($result);
@@ -125,7 +125,7 @@ class OaiRecordXmlFormatterTest extends \PHPUnit_Framework_TestCase
     public function testHeaderInjection()
     {
         $cfg = ['injectHeaderElements' => 'identifier'];
-        $formatter = new OaiRecordXmlFormatter($cfg);
+        $formatter = new RecordXmlFormatter($cfg);
         $result = $formatter->format('foo', $this->getRecordFromFixture());
         $xml = simplexml_load_string($result);
         $this->assertEquals(
@@ -140,7 +140,7 @@ class OaiRecordXmlFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetSpecInjection()
     {
-        $formatter = new OaiRecordXmlFormatter(['injectSetSpec' => 'setSpec']);
+        $formatter = new RecordXmlFormatter(['injectSetSpec' => 'setSpec']);
         $result = $formatter->format('foo', $this->getRecordFromFixture());
         $xml = simplexml_load_string($result);
         $this->assertEquals(2, count($xml->setSpec));
@@ -155,7 +155,7 @@ class OaiRecordXmlFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetNameInjection()
     {
-        $formatter = new OaiRecordXmlFormatter(['injectSetName' => 'setName']);
+        $formatter = new RecordXmlFormatter(['injectSetName' => 'setName']);
 
         // Default behavior -- use set spec if no set name provided:
         $result = $formatter->format('foo', $this->getRecordFromFixture());
@@ -185,7 +185,7 @@ class OaiRecordXmlFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function testMissingMetadataException()
     {
-        $formatter = new OaiRecordXmlFormatter();
+        $formatter = new RecordXmlFormatter();
         $formatter->format('foo', simplexml_load_string('<empty />'));
     }
 
@@ -199,7 +199,7 @@ class OaiRecordXmlFormatterTest extends \PHPUnit_Framework_TestCase
      */
     protected function getRecordFromFixture($fixture = 'marc.xml', $i = 0)
     {
-        $xml = simplexml_load_file(__DIR__ . '/../../../fixtures/' . $fixture);
+        $xml = simplexml_load_file(__DIR__ . '/../../../../fixtures/' . $fixture);
         return $xml->ListRecords->record[$i];
     }
 }

@@ -25,8 +25,9 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-namespace VuFindHarvest;
+namespace VuFindHarvest\OaiPmh;
 use VuFindHarvest\ResponseProcessor\ResponseProcessorInterface;
+use VuFindHarvest\WriterTrait;
 use Zend\Http\Client, Zend\Uri\Http;
 
 /**
@@ -38,7 +39,7 @@ use Zend\Http\Client, Zend\Uri\Http;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-class OaiCommunicator
+class Communicator
 {
     use WriterTrait;
 

@@ -25,9 +25,9 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
-use VuFindHarvest\OaiHarvesterConsoleRunner;
+use VuFindHarvest\OaiPmh\HarvesterConsoleRunner;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$runner = new OaiHarvesterConsoleRunner();
+$runner = new HarvesterConsoleRunner();
 $runner->run();

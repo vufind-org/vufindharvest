@@ -25,7 +25,8 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-namespace VuFindHarvest;
+namespace VuFindHarvest\OaiPmh;
+use VuFindHarvest\WriterTrait;
 
 /**
  * OAI-PMH Harvest Tool
@@ -36,21 +37,21 @@ namespace VuFindHarvest;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-class OaiHarvester
+class Harvester
 {
     use WriterTrait;
 
     /**
      * Record writer
      *
-     * @var OaiRecordWriter
+     * @var RecordWriter
      */
     protected $writer;
 
     /**
      * Low-level OAI-PMH communicator
      *
-     * @var OaiCommunicator
+     * @var Communicator
      */
     protected $communicator;
 
@@ -114,12 +115,12 @@ class OaiHarvester
     /**
      * Constructor.
      *
-     * @param OaiCommunicator $communicator Low-level API client
-     * @param OaiRecordWriter $writer       Record writer
-     * @param array           $settings     OAI-PMH settings
+     * @param Communicator $communicator Low-level API client
+     * @param RecordWriter $writer       Record writer
+     * @param array        $settings     OAI-PMH settings
      */
-    public function __construct(OaiCommunicator $communicator,
-        OaiRecordWriter $writer, $settings = []
+    public function __construct(Communicator $communicator, RecordWriter $writer,
+        $settings = []
     ) {
         // Don't time out during harvest!!
         set_time_limit(0);

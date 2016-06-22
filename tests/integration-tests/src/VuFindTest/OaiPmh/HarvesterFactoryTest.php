@@ -26,9 +26,11 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
-namespace VuFindTest\Harvest;
+namespace VuFindTest\Harvest\OaiPmh;
 
-use Zend\Http\Client, VuFindHarvest\OaiHarvester, VuFindHarvest\OaiHarvesterFactory;
+use VuFindHarvest\OaiPmh\Harvester;
+use VuFindHarvest\OaiPmh\HarvesterFactory;
+use Zend\Http\Client;
 
 /**
  * OAI-PMH harvester factory integration test.
@@ -39,7 +41,7 @@ use Zend\Http\Client, VuFindHarvest\OaiHarvester, VuFindHarvest\OaiHarvesterFact
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
-class OaiHarvesterFactoryTest extends \PHPUnit_Framework_TestCase
+class HarvesterFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Return protected or private property.
@@ -70,9 +72,9 @@ class OaiHarvesterFactoryTest extends \PHPUnit_Framework_TestCase
      *
      * @return type
      */
-    protected function getOaiHarvester($target, $harvestRoot, $config, $client)
+    protected function getHarvester($target, $harvestRoot, $config, $client)
     {
-        $factory = new OaiHarvesterFactory();
+        $factory = new HarvesterFactory();
         return $factory->getHarvester($target, $harvestRoot, $client, $config);
     }
 
@@ -89,7 +91,7 @@ class OaiHarvesterFactoryTest extends \PHPUnit_Framework_TestCase
             'metadataPrefix' => 'fakemdprefix',
             'dateGranularity' => 'mygranularity',
         ];
-        $oai = $this->getOaiHarvester(
+        $oai = $this->getHarvester(
             'test', sys_get_temp_dir(), $config, $this->getMockClient()
         );
 
@@ -127,7 +129,7 @@ class OaiHarvesterFactoryTest extends \PHPUnit_Framework_TestCase
             'verbose' => true,
             'dateGranularity' => 'mygranularity',
         ];
-        $oai = $this->getOaiHarvester('test', sys_get_temp_dir(), $config, $client);
+        $oai = $this->getHarvester('test', sys_get_temp_dir(), $config, $client);
         $writer = $this->getProperty($oai, 'writer');
         $formatter = $this->getProperty($writer, 'recordFormatter');
         $this->assertEquals(
@@ -157,7 +159,7 @@ class OaiHarvesterFactoryTest extends \PHPUnit_Framework_TestCase
             'sslverifypeer' => false,
             'dateGranularity' => 'mygranularity',
         ];
-        $this->getOaiHarvester('test', sys_get_temp_dir(), $config, $client);
+        $this->getHarvester('test', sys_get_temp_dir(), $config, $client);
     }
 
     /**
@@ -179,7 +181,7 @@ class OaiHarvesterFactoryTest extends \PHPUnit_Framework_TestCase
             'url' => 'http://localhost',
             'verbose' => true,
         ];
-        $oai = $this->getOaiHarvester('test', sys_get_temp_dir(), $config, $client);
+        $oai = $this->getHarvester('test', sys_get_temp_dir(), $config, $client);
         $this->assertEquals(
             'YYYY-MM-DDThh:mm:ssZ', $this->getProperty($oai, 'granularity')
         );
@@ -216,7 +218,7 @@ class OaiHarvesterFactoryTest extends \PHPUnit_Framework_TestCase
             'url' => 'http://localhost',
             'verbose' => true,
         ];
-        $oai = $this->getOaiHarvester('test', sys_get_temp_dir(), $config, $client);
+        $oai = $this->getHarvester('test', sys_get_temp_dir(), $config, $client);
         $this->assertEquals(
             'YYYY-MM-DDThh:mm:ssZ', $this->getProperty($oai, 'granularity')
         );
@@ -241,7 +243,7 @@ class OaiHarvesterFactoryTest extends \PHPUnit_Framework_TestCase
             'url' => 'http://localhost',
             'verbose' => true,
         ];
-        $oai = $this->getOaiHarvester('test', sys_get_temp_dir(), $config, $client);
+        $oai = $this->getHarvester('test', sys_get_temp_dir(), $config, $client);
     }
 
     /**
@@ -255,7 +257,7 @@ class OaiHarvesterFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testMissingURLThrowsException()
     {
-        $oai = $this->getOaiHarvester('test', sys_get_temp_dir(), [], $this->getMockClient());
+        $oai = $this->getHarvester('test', sys_get_temp_dir(), [], $this->getMockClient());
     }
 
     // Internal API

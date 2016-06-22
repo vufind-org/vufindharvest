@@ -25,7 +25,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-namespace VuFindHarvest;
+namespace VuFindHarvest\OaiPmh;
 use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyFactory;
 use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface;
 use VuFindHarvest\ResponseProcessor\ResponseProcessorInterface;
@@ -41,7 +41,7 @@ use Zend\Http\Client;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-class OaiHarvesterFactory
+class HarvesterFactory
 {
     /**
      * Get HTTP client options from $settings array
@@ -119,7 +119,7 @@ class OaiHarvesterFactory
      * @param string                     $target    Target being configured (used for
      * error messages)
      *
-     * @return OaiCommunicator
+     * @return Communicator
      */
     protected function getCommunicator(Client $client, array $settings,
         ResponseProcessorInterface $processor, $target
@@ -134,21 +134,21 @@ class OaiHarvesterFactory
         if (!isset($settings['verbose']) || !$settings['verbose']) {
             $silent = true;
         }
-        return new OaiCommunicator($settings['url'], $client, $processor, $silent);
+        return new Communicator($settings['url'], $client, $processor, $silent);
     }
 
     /**
      * Get the record XML formatter.
      *
-     * @param OaiCommunicator $communicator Communicator
-     * @param array           $settings     Additional settings
+     * @param Communicator $communicator Communicator
+     * @param array        $settings     Additional settings
      *
-     * @return OaiRecordXmlFormatter
+     * @return RecordXmlFormatter
      */
-    protected function getFormatter(OaiCommunicator $communicator, array $settings)
+    protected function getFormatter(Communicator $communicator, array $settings)
     {
         // Build the formatter:
-        $formatter = new OaiRecordXmlFormatter($settings);
+        $formatter = new RecordXmlFormatter($settings);
 
         // Load set names if we're going to need them:
         if ($formatter->needsSetNames()) {
@@ -175,29 +175,29 @@ class OaiHarvesterFactory
     /**
      * Get the set loader (used to load set names).
      *
-     * @param OaiCommunicator $communicator API communicator
-     * @param array           $settings     OAI-PMH settings
+     * @param Communicator $communicator API communicator
+     * @param array        $settings     OAI-PMH settings
      *
-     * @return OaiSetLoader
+     * @return SetLoader
      */
-    protected function getSetLoader(OaiCommunicator $communicator, array $settings)
+    protected function getSetLoader(Communicator $communicator, array $settings)
     {
-        return new OaiSetLoader($communicator, $settings);
+        return new SetLoader($communicator, $settings);
     }
 
     /**
      * Build the writer support object.
      *
      * @param RecordWriterStrategyInterface $strategy  Writing strategy
-     * @param OaiRecordXmlFormatter         $formatter XML record formatter
+     * @param RecordXmlFormatter            $formatter XML record formatter
      * @param array                         $settings  Configuration settings
      *
-     * @return OaiRecordWriter
+     * @return RecordWriter
      */
     protected function getWriter(RecordWriterStrategyInterface $strategy,
-        OaiRecordXmlFormatter $formatter, array $settings
+        RecordXmlFormatter $formatter, array $settings
     ) {
-        return new OaiRecordWriter($strategy, $formatter, $settings);
+        return new RecordWriter($strategy, $formatter, $settings);
     }
 
     /**
@@ -219,7 +219,7 @@ class OaiHarvesterFactory
      * @param Client $client      HTTP client
      * @param array  $settings    Additional settings
      *
-     * @return OaiHarvester
+     * @return Harvester
      *
      * @throws \Exception
      */
@@ -236,6 +236,6 @@ class OaiHarvesterFactory
         $strategy = $this->getWriterStrategyFactory()
             ->getStrategy($basePath, $settings);
         $writer = $this->getWriter($strategy, $formatter, $settings);
-        return new OaiHarvester($communicator, $writer, $settings);
+        return new Harvester($communicator, $writer, $settings);
     }
 }

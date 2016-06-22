@@ -25,7 +25,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-namespace VuFindHarvest;
+namespace VuFindHarvest\OaiPmh;
 use Zend\Console\Console, Zend\Console\Getopt, Zend\Http\Client;
 
 /**
@@ -39,7 +39,7 @@ use Zend\Console\Console, Zend\Console\Getopt, Zend\Http\Client;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-class OaiHarvesterConsoleRunner
+class HarvesterConsoleRunner
 {
     /**
      * Console options
@@ -187,7 +187,7 @@ class OaiHarvesterConsoleRunner
         $settings['from'] = $this->opts->getOption('from');
         $settings['until'] = $this->opts->getOption('until');
         $settings['silent'] = false;
-        $factory = new OaiHarvesterFactory();
+        $factory = new HarvesterFactory();
         $harvest = $factory->getHarvester(
             $target,
             $this->getHarvestRoot(),

@@ -26,9 +26,9 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
-namespace VuFindTest\Harvest;
+namespace VuFindTest\Harvest\OaiPmh;
 
-use VuFindHarvest\OaiRecordWriter, VuFindHarvest\OaiRecordXmlFormatter;
+use VuFindHarvest\OaiPmh\RecordWriter, VuFindHarvest\OaiPmh\RecordXmlFormatter;
 
 /**
  * OAI-PMH record writer unit test.
@@ -39,7 +39,7 @@ use VuFindHarvest\OaiRecordWriter, VuFindHarvest\OaiRecordXmlFormatter;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
-class OaiRecordWriterTest extends \PHPUnit_Framework_TestCase
+class RecordWriterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Return protected or private property.
@@ -73,10 +73,10 @@ class OaiRecordWriterTest extends \PHPUnit_Framework_TestCase
             'idReplace' => 'replace',
             'harvestedIdLog' => '/my/harvest.log',
         ];
-        $oai = new OaiRecordWriter(
+        $oai = new RecordWriter(
             $this->getMock(
                 'VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface'
-            ), $this->getMock('VuFindHarvest\OaiRecordXmlFormatter'), $config
+            ), $this->getMock('VuFindHarvest\OaiPmh\RecordXmlFormatter'), $config
         );
 
         // Generic case for remaining configs:

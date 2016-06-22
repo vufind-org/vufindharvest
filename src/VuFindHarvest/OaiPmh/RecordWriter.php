@@ -25,7 +25,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-namespace VuFindHarvest;
+namespace VuFindHarvest\OaiPmh;
 use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface;
 
 /**
@@ -37,7 +37,7 @@ use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-class OaiRecordWriter
+class RecordWriter
 {
     /**
      * Filename for logging harvested IDs (false for none)
@@ -70,7 +70,7 @@ class OaiRecordWriter
     /**
      * XML record formatter
      *
-     * @var OaiRecordXmlFormatter
+     * @var RecordXmlFormatter
      */
     protected $recordFormatter;
 
@@ -85,7 +85,7 @@ class OaiRecordWriter
      * Constructor
      *
      * @param RecordWriterStrategyInterface $strategy  Writing strategy
-     * @param OaiRecordXmlFormatter         $formatter XML record formatter
+     * @param RecordXmlFormatter            $formatter XML record formatter
      * @param array                         $settings  Configuration settings
      */
     public function __construct($strategy, $formatter, $settings = [])
