@@ -63,17 +63,28 @@ class HarvesterConsoleRunner
     protected $harvestRoot;
 
     /**
+     * Harvester factory
+     *
+     * @var HarvesterFactory
+     */
+    protected $factory;
+
+    /**
      * Constructor
      *
-     * @param Getopt $opts        CLI options (omit for defaults)
-     * @param Client $client      HTTP client (omit for default)
-     * @param string $harvestRoot Root directory for harvesting (omit for default)
+     * @param Getopt           $opts        CLI options (omit for defaults)
+     * @param Client           $client      HTTP client (omit for default)
+     * @param string           $harvestRoot Root directory for harvesting (omit for
+     * default)
+     * @param HarvesterFactory $factory     Harvester factory (omit for default)
      */
-    public function __construct($opts = null, $client = null, $harvestRoot = null)
-    {
+    public function __construct($opts = null, $client = null, $harvestRoot = null,
+        HarvesterFactory $factory = null
+    ) {
         $this->opts = $opts ?: static::getDefaultOptions();
         $this->client = $client ?: new Client();
         $this->harvestRoot = $harvestRoot ?: getcwd();
+        $this->factory = $factory ?: new HarvesterFactory();
     }
 
     /**
@@ -187,8 +198,7 @@ class HarvesterConsoleRunner
         $settings['from'] = $this->opts->getOption('from');
         $settings['until'] = $this->opts->getOption('until');
         $settings['silent'] = false;
-        $factory = new HarvesterFactory();
-        $harvest = $factory->getHarvester(
+        $harvest = $this->factory->getHarvester(
             $target,
             $this->getHarvestRoot(),
             $this->getHttpClient(),
