@@ -26,7 +26,6 @@
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
 namespace VuFindHarvest\OaiPmh;
-use VuFindHarvest\WriterTrait;
 
 /**
  * OAI-PMH State Manager (for persisting harvest state)
