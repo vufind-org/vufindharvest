@@ -1,10 +1,10 @@
 <?php
 /**
- * Interface for record writer strategies.
+ * Factory for record writer strategy
  *
  * PHP version 5
  *
- * Copyright (c) Demian Katz 2016.
+ * Copyright (c) Demian Katz 2010.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -25,10 +25,10 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-namespace VuFindHarvest;
+namespace VuFindHarvest\RecordWriterStrategy;
 
 /**
- * Interface for record writer strategies.
+ * Factory for record writer strategy
  *
  * @category VuFind
  * @package  Harvest_Tools
@@ -36,45 +36,23 @@ namespace VuFindHarvest;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-interface RecordWriterStrategyInterface
+class RecordWriterStrategyFactory
 {
     /**
-     * Get base path for writes.
+     * Build writer strategy object.
      *
-     * @return string
+     * @param string $basePath Base path for harvest
+     * @param array  $settings Configuration settings
+     *
+     * @return RecordWriterStrategyInterface
      */
-    public function getBasePath();
-
-    /**
-     * Called before the writing process begins.
-     *
-     * @return void
-     */
-    public function beginWrite();
-
-    /**
-     * Add the ID of a deleted record.
-     *
-     * @param string $id ID
-     *
-     * @return void
-     */
-    public function addDeletedRecord($id);
-
-    /**
-     * Add a non-deleted record.
-     *
-     * @param string $id     ID
-     * @param string $record Record XML
-     *
-     * @return void
-     */
-    public function addRecord($id, $record);
-
-    /**
-     * Close out the writing process.
-     *
-     * @return void
-     */
-    public function endWrite();
+    public function getStrategy($basePath, $settings = [])
+    {
+        if (isset($settings['combineRecords']) && $settings['combineRecords']) {
+            $combineTag = isset($settings['combineRecordsTag'])
+                ? $settings['combineRecordsTag'] : null;
+            return new CombinedRecordWriterStrategy($basePath, $combineTag);
+        }
+        return new IndividualRecordWriterStrategy($basePath);
+    }
 }

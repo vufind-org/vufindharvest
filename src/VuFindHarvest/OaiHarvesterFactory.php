@@ -26,6 +26,8 @@
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
 namespace VuFindHarvest;
+use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyFactory;
+use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface;
 use Zend\Http\Client;
 
 /**
@@ -197,21 +199,13 @@ class OaiHarvesterFactory
     }
 
     /**
-     * Build writer strategy object.
+     * Get the factory for record writer strategies.
      *
-     * @param string $basePath Base path for harvest
-     * @param array  $settings Configuration settings
-     *
-     * @return RecordWriterStrategyInterface
+     * @return RecordWriterStrategyFactory
      */
-    protected function getWriterStrategy($basePath, $settings)
+    protected function getWriterStrategyFactory()
     {
-        if (isset($settings['combineRecords']) && $settings['combineRecords']) {
-            $combineTag = isset($settings['combineRecordsTag'])
-                ? $settings['combineRecordsTag'] : null;
-            return new CombinedRecordWriterStrategy($basePath, $combineTag);
-        }
-        return new IndividualRecordWriterStrategy($basePath);
+        return new RecordWriterStrategyFactory();
     }
 
     /**
@@ -237,7 +231,8 @@ class OaiHarvesterFactory
             $settings, $responseProcessor, $target
         );
         $formatter = $this->getFormatter($communicator, $settings);
-        $strategy = $this->getWriterStrategy($basePath, $settings);
+        $strategy = $this->getWriterStrategyFactory()
+            ->getStrategy($basePath, $settings);
         $writer = $this->getWriter($strategy, $formatter, $settings);
         return new OaiHarvester($communicator, $writer, $settings);
     }

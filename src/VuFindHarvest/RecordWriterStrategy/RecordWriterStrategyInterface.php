@@ -1,6 +1,6 @@
 <?php
 /**
- * Strategy for writing records to disk individually.
+ * Interface for record writer strategies.
  *
  * PHP version 5
  *
@@ -25,10 +25,10 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-namespace VuFindHarvest;
+namespace VuFindHarvest\RecordWriterStrategy;
 
 /**
- * Strategy for writing records to disk individually.
+ * Interface for record writer strategies.
  *
  * @category VuFind
  * @package  Harvest_Tools
@@ -36,17 +36,21 @@ namespace VuFindHarvest;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-class IndividualRecordWriterStrategy extends AbstractRecordWriterStrategy
+interface RecordWriterStrategyInterface
 {
+    /**
+     * Get base path for writes.
+     *
+     * @return string
+     */
+    public function getBasePath();
+
     /**
      * Called before the writing process begins.
      *
      * @return void
      */
-    public function beginWrite()
-    {
-        // no special action needed.
-    }
+    public function beginWrite();
 
     /**
      * Add the ID of a deleted record.
@@ -55,10 +59,7 @@ class IndividualRecordWriterStrategy extends AbstractRecordWriterStrategy
      *
      * @return void
      */
-    public function addDeletedRecord($id)
-    {
-        $this->saveDeletedRecords($id);
-    }
+    public function addDeletedRecord($id);
 
     /**
      * Add a non-deleted record.
@@ -68,18 +69,12 @@ class IndividualRecordWriterStrategy extends AbstractRecordWriterStrategy
      *
      * @return void
      */
-    public function addRecord($id, $record)
-    {
-        $this->saveFile($id, $record);
-    }
+    public function addRecord($id, $record);
 
     /**
      * Close out the writing process.
      *
      * @return void
      */
-    public function endWrite()
-    {
-        // no special action needed.
-    }
+    public function endWrite();
 }

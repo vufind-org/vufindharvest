@@ -26,6 +26,7 @@
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
 namespace VuFindHarvest;
+use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface;
 
 /**
  * OAI-PMH Record Writer

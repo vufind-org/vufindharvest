@@ -26,9 +26,9 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
-namespace VuFindTest\Harvest;
+namespace VuFindTest\Harvest\RecordWriterStrategy;
 
-use VuFindHarvest\CombinedRecordWriterStrategy;
+use VuFindHarvest\RecordWriterStrategy\CombinedRecordWriterStrategy;
 
 /**
  * IndividualRecordWriterStrategy unit test.
@@ -49,7 +49,7 @@ class IndividualRecordWriterStrategyTest extends \PHPUnit_Framework_TestCase
     public function testStrategy()
     {
         $mock = $this->getMock(
-            'VuFindHarvest\IndividualRecordWriterStrategy',
+            'VuFindHarvest\RecordWriterStrategy\IndividualRecordWriterStrategy',
             ['saveDeletedRecords', 'saveFile'],
             ['foo']
         );

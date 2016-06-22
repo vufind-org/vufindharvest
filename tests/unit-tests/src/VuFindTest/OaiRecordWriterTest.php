@@ -74,9 +74,9 @@ class OaiRecordWriterTest extends \PHPUnit_Framework_TestCase
             'harvestedIdLog' => '/my/harvest.log',
         ];
         $oai = new OaiRecordWriter(
-            $this->getMock('VuFindHarvest\RecordWriterStrategyInterface'),
-            $this->getMock('VuFindHarvest\OaiRecordXmlFormatter'),
-            $config
+            $this->getMock(
+                'VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface'
+            ), $this->getMock('VuFindHarvest\OaiRecordXmlFormatter'), $config
         );
 
         // Generic case for remaining configs:
