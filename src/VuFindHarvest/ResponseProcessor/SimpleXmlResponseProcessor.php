@@ -75,9 +75,9 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
      */
     protected function logBadXML($xml)
     {
-        $file = fopen($this->badXmlLog, 'a');
+        $file = @fopen($this->badXmlLog, 'a');
         if (!$file) {
-            throw new \Exception("Problem opening {$this->badXMLLog}.");
+            throw new \Exception("Problem opening {$this->badXmlLog}.");
         }
         fputs($file, $xml . "\n\n");
         fclose($file);
@@ -96,11 +96,24 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
         $regex = '/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u';
         $newXML = trim(preg_replace($regex, ' ', $xml, -1, $count));
 
-        if ($count > 0 && $this->badXMLLog) {
+        if ($count > 0 && $this->badXmlLog) {
             $this->logBadXML($xml);
         }
 
         return $newXML;
+    }
+
+    /**
+     * Collect LibXML errors into a single string.
+     *
+     * @return string
+     */
+    protected function collectXmlErrors()
+    {
+        $callback = function ($e) {
+            return trim($e->message);
+        };
+        return implode('; ', array_map($callback, libxml_get_errors()));
     }
 
     /**
@@ -123,9 +136,12 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
         // Parse the XML (newer versions of LibXML require a special flag for
         // large documents, and responses may be quite large):
         $flags = LIBXML_VERSION >= 20900 ? LIBXML_PARSEHUGE : 0;
+        $oldSetting = libxml_use_internal_errors(true);
         $result = simplexml_load_string($xml, null, $flags);
+        $errors = $this->collectXmlErrors();
+        libxml_use_internal_errors($oldSetting);
         if (!$result) {
-            throw new \Exception("Problem loading XML: {$xml}");
+            throw new \Exception('Problem loading XML: ' . $errors);
         }
 
         // If we got this far, we have a valid response:
