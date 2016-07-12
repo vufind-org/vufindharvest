@@ -103,13 +103,36 @@ class HarvesterConsoleRunner
         return new Getopt(
             [
                 'help|h' => 'Display usage message',
+                'verbose|v' => 'Display verbose output',
                 'from-s' => 'Harvest start date',
                 'until-s' => 'Harvest end date',
                 'ini-s' => '.ini file to load',
                 'url-s' => 'Base URL of OAI-PMH server',
+                'httpUser-s' => 'Username to access url (optional)',
+                'httpPass-s' => 'Password to access url (optional)',
                 'set-s' => 'Set name to harvest',
                 'metadataPrefix-s' => 'Metadata prefix to harvest',
                 'timeout-i' => 'HTTP timeout (in seconds)',
+                'combineRecords' => 'Turn off "one record per file" mode',
+                'combineRecordsTag-s' => 'Specify the XML tag wrapped around'
+                    . ' multiple records in combineRecords mode'
+                    . ' (default = <collection>)',
+                'injectDate-s' => 'Inject date from header into specified tag',
+                'injectId-s' => 'Inject ID from header into specified tag',
+                'injectSetName-s' => 'Inject setName from header into specified tag',
+                'injectSetSpec-s' => 'Inject setSpec from header into specified tag',
+                'idSearch-s' => 'Regular expression to replace in ID'
+                    . ' (only relevant when injectId is on)',
+                'idReplace-s' => 'String to replace idSearch regex matches',
+                'dateGranularity-s' => '"YYYY-MM-DDThh:mm:ssZ," "YYYY-MM-DD" or '
+                    . '"auto" (default)',
+                'harvestedIdLog-s' => 'Filename (relative to harvest directory)'
+                    . ' to store log of harvested IDs.',
+                'nosslverifypeer' => 'Disable SSL verification',
+                'sanitize' => 'Strip illegal characters from XML',
+                'badXMLLog-s' => 'Filename (relative to harvest directory) to log'
+                    . ' XML fixed by sanitize setting'
+                
             ]
         );
     }
@@ -124,10 +147,27 @@ class HarvesterConsoleRunner
      */
     protected function updateSettingsWithConsoleOptions($settings)
     {
-        $directMapSettings = ['url', 'set', 'metadataPrefix', 'timeout'];
+        $directMapSettings = [
+            'url', 'set', 'metadataPrefix', 'timeout', 'combineRecordsTag',
+            'injectDate', 'injectId', 'injectSetName', 'injectSetSpec',
+            'idSearch', 'idReplace', 'dateGranularity', 'harvestedIdLog',
+            'badXMLLog', 'httpUser', 'httpPass',
+        ];
         foreach ($directMapSettings as $setting) {
             if ($value = $this->opts->getOption($setting)) {
                 $settings[$setting] = $value;
+            }
+        }
+        $flagSettings = [
+            'combineRecords' => ['combineRecords', true],
+            'v' => ['verbose', true],
+            'nosslverifypeer' => ['sslverifypeer', false],
+            'sanitize' => ['sanitize', true],
+        ];
+        foreach ($flagSettings as $in => $details) {
+            if ($this->opts->getOption($in)) {
+                list($out, $val) = $details;
+                $settings[$out] = $val;
             }
         }
         return $settings;
