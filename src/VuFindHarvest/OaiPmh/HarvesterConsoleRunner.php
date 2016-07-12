@@ -176,7 +176,7 @@ class HarvesterConsoleRunner
     /**
      * Render help message.
      *
-     * @return bool
+     * @return void
      */
     public function getHelp()
     {
@@ -189,7 +189,6 @@ class HarvesterConsoleRunner
             . "will be processed. [ options ] may be selected from those below,\n"
             . "and will override .ini settings where applicable.";
         $this->write(str_replace('[ options ]', $options, $msg));
-        return true;
     }
 
     /**
@@ -201,7 +200,8 @@ class HarvesterConsoleRunner
     {
         // Support help message:
         if ($this->opts->getOption('h')) {
-            return $this->getHelp();
+            $this->getHelp();
+            return true;
         }
 
         if (!$allSettings = $this->getSettings()) {
