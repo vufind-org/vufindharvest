@@ -28,7 +28,9 @@
  */
 namespace VuFindTest\Harvest\OaiPmh;
 
-use VuFindHarvest\OaiPmh\RecordWriter, VuFindHarvest\OaiPmh\RecordXmlFormatter;
+use VuFindHarvest\OaiPmh\RecordWriter;
+use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface;
+use VuFindHarvest\OaiPmh\RecordXmlFormatter;
 
 /**
  * OAI-PMH record writer unit test.
@@ -61,6 +63,50 @@ class RecordWriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Get mock XML formatter
+     *
+     * @return RecordXmlFormatter
+     */
+    protected function getMockFormatter()
+    {
+        return $this->getMock('VuFindHarvest\OaiPmh\RecordXmlFormatter');
+    }
+
+    /**
+     * Get mock writer strategy
+     *
+     * @return RecordWriterStrategyInterface
+     */
+    protected function getMockStrategy()
+    {
+        return $this->getMock(
+            'VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface'
+        );
+    }
+
+    /**
+     * Get writer to test
+     *
+     * @param array                         $config   Configuration
+     * @param RecordWriterStrategyInterface $strategy Writer strategy
+     * @param RecordXmlFormatter $formatter           XML formatter
+     *
+     * @return RecordWriter
+     */
+    protected function getWriter(array $config = [],
+        RecordWriterStrategyInterface $strategy = null,
+        RecordXmlFormatter $formatter = null
+    ) {
+        if (null === $strategy) {
+            $strategy = $this->getMockStrategy();
+        }
+        if (null === $formatter) {
+            $formatter = $this->getMockFormatter();
+        }
+        return new RecordWriter($strategy, $formatter, $config);
+    }
+
+    /**
      * Test configuration.
      *
      * @return void
@@ -73,15 +119,77 @@ class RecordWriterTest extends \PHPUnit_Framework_TestCase
             'idReplace' => 'replace',
             'harvestedIdLog' => '/my/harvest.log',
         ];
-        $oai = new RecordWriter(
-            $this->getMock(
-                'VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface'
-            ), $this->getMock('VuFindHarvest\OaiPmh\RecordXmlFormatter'), $config
-        );
+        $writer = $this->getWriter($config);
 
         // Generic case for remaining configs:
         foreach ($config as $key => $value) {
-            $this->assertEquals($value, $this->getProperty($oai, $key));
+            $this->assertEquals($value, $this->getProperty($writer, $key));
         }
+    }
+
+    /**
+     * Test get base path.
+     *
+     * @return void
+     */
+    public function testGetBasePath()
+    {
+        $strategy = $this->getMockStrategy();
+        $strategy->expects($this->once())->method('getBasePath')
+            ->will($this->returnValue('foo'));
+        $writer = $this->getWriter([], $strategy);
+        $this->assertEquals('foo', $writer->getBasePath());
+    }
+
+    /**
+     * Get XML response for testing.
+     *
+     * @return string
+     */
+    protected function getFakeResponse()
+    {
+        return <<<XML
+    <ListRecords>
+        <record>
+            <header status="deleted">
+                <identifier>foo1</identifier>
+            </header>
+        </record>
+        <record>
+            <header>
+                <identifier>foo2</identifier>
+            </header>
+            <metadata>
+                <foo />
+           </metadata>
+        </record>
+    </ListRecords>
+XML;
+    }
+
+    /**
+     * Test processing records.
+     *
+     * @return void
+     */
+    public function testProcessing()
+    {
+        $config = [
+            'idPrefix' => 'foo',
+            'idSearch' => '/1/',
+            'idReplace' => 'one'
+        ];
+        $records = simplexml_load_string($this->getFakeResponse());
+        $strategy = $this->getMockStrategy();
+        $strategy->expects($this->once())->method('addDeletedRecord')
+            ->with($this->equalTo('one'));
+        $strategy->expects($this->once())->method('addRecord')
+            ->with($this->equalTo('2'), $this->equalTo('<formatted />'));
+        $formatter = $this->getMockFormatter();
+        $formatter->expects($this->once())->method('format')
+            ->with($this->equalTo('2'), $this->equalTo($records->record[1]))
+            ->will($this->returnValue('<formatted />'));
+        $writer = $this->getWriter($config, $strategy, $formatter);
+        $writer->write($records);
     }
 }
