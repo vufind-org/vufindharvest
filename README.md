@@ -93,3 +93,21 @@ Here are key dependencies used by VuFindHarvester\OaiPmh\Harvester:
 * [VuFindHarvester\OaiPmh\RecordXmlFormatter](https://github.com/vufind-org/vufindharvest/blob/master/src/VuFindHarvest/OaiPmh/RecordXmlFormatter.php) - Class to process/fix/augment harvested XML data prior to writing it to disk
 * [VuFindHarvester\OaiPmh\SetLoader](https://github.com/vufind-org/vufindharvest/blob/master/src/VuFindHarvest/OaiPmh/SetLoader.php) - Class to retrieve a list of set information from an OAI-PMH server (used for certain types of optional XML augmentation)
 * [VuFindHarvester\OaiPmh\StateManager](https://github.com/vufind-org/vufindharvest/blob/master/src/VuFindHarvest/OaiPmh/StateManager.php) - Class for managing harvest state (last harvest date, current resumption token) on disk to assist incremental harvests and recovery from problems
+
+Several classes make use of the traits and classes in the [VuFindHarvester\ConsoleOutput](https://github.com/vufind-org/vufindharvest/tree/master/src/VuFindHarvest/ConsoleOutput)
+namespace to help with standard status output tasks.
+
+
+Changelog
+---------
+
+###v2.0.0
+* Complete rewrite of code for better separation of concerns
+* Expanded command-line functionality
+* Added documentation and more complete test suite
+
+###v1.1.0
+* Added simple stand-alone console interface
+
+###v1.0.0
+* Initial extraction of library code from the [VuFind](https://github.com/vufind-org/vufind) project
