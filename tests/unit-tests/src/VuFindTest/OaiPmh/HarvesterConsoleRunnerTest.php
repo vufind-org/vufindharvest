@@ -96,7 +96,7 @@ class HarvesterConsoleRunnerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test run with incomplete parameters.
+     * Test run with bad .ini setting.
      *
      * @return void
      */
@@ -105,6 +105,20 @@ class HarvesterConsoleRunnerTest extends \PHPUnit_Framework_TestCase
         $opts = HarvesterConsoleRunner::getDefaultOptions();
         $ini = realpath(__DIR__ . '/../../../../fixtures/test.ini');
         $opts->setArguments(['--ini=' . $ini, 'badsection']);
+        $runner = new HarvesterConsoleRunner($opts, null, null, null, true);
+        $this->assertFalse($runner->run());
+    }
+
+    /**
+     * Test run with bad .ini file.
+     *
+     * @return void
+     */
+    public function testInvalidIniFile()
+    {
+        $opts = HarvesterConsoleRunner::getDefaultOptions();
+        $ini = realpath(__DIR__ . '/../../../../fixtures/test-doesnotexist.ini');
+        $opts->setArguments(['--ini=' . $ini]);
         $runner = new HarvesterConsoleRunner($opts, null, null, null, true);
         $this->assertFalse($runner->run());
     }
