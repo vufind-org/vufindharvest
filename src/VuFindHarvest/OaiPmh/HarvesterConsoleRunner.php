@@ -102,6 +102,7 @@ class HarvesterConsoleRunner
     {
         return new Getopt(
             [
+                'help|h' => 'Display usage message',
                 'from-s' => 'Harvest start date',
                 'until-s' => 'Harvest end date',
                 'ini-s' => '.ini file to load',
@@ -133,12 +134,36 @@ class HarvesterConsoleRunner
     }
 
     /**
+     * Render help message.
+     *
+     * @return bool
+     */
+    public function getHelp()
+    {
+        $msg = $this->opts->getUsageMessage();
+        // Amend the auto-generated help message:
+        $options = "[ options ] [ target ]\n"
+            . "Where [ target ] is the name of a section of the configuration\n"
+            . "specified by the ini option, or a directory to harvest into if\n"
+            . "no .ini file is used. If [ target ] is omitted, all .ini sections\n"
+            . "will be processed. [ options ] may be selected from those below,\n"
+            . "and will override .ini settings where applicable.";
+        $this->write(str_replace('[ options ]', $options, $msg));
+        return true;
+    }
+
+    /**
      * Run the task and return true on success.
      *
      * @return bool
      */
     public function run()
     {
+        // Support help message:
+        if ($this->opts->getOption('h')) {
+            return $this->getHelp();
+        }
+
         if (!$allSettings = $this->getSettings()) {
             return false;
         }
