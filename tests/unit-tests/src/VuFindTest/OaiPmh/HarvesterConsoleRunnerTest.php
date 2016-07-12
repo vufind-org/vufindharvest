@@ -54,6 +54,22 @@ class HarvesterConsoleRunnerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test help screen
+     *
+     * @return void
+     */
+    public function testHelp()
+    {
+        $opts = HarvesterConsoleRunner::getDefaultOptions();
+        $opts->setArguments(['--help']);
+        $runner = new HarvesterConsoleRunner($opts);
+        ob_start();
+        $this->assertTrue($runner->run());
+        $this->assertEquals('Usage:', substr(ob_get_contents(), 0, 6));
+        ob_end_clean();
+    }
+
+    /**
      * Test basic functionality of console runner
      *
      * @return void
