@@ -70,7 +70,47 @@ class HarvesterConsoleRunnerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test basic functionality of console runner
+     * Test run with no parameters.
+     *
+     * @return void
+     */
+    public function testMissingParameters()
+    {
+        $opts = HarvesterConsoleRunner::getDefaultOptions();
+        $opts->setArguments([]);
+        $runner = new HarvesterConsoleRunner($opts, null, null, null, true);
+        $this->assertFalse($runner->run());
+    }
+
+    /**
+     * Test run with incomplete parameters.
+     *
+     * @return void
+     */
+    public function testIncompleteParameters()
+    {
+        $opts = HarvesterConsoleRunner::getDefaultOptions();
+        $opts->setArguments(['foo']);
+        $runner = new HarvesterConsoleRunner($opts, null, null, null, true);
+        $this->assertFalse($runner->run());
+    }
+
+    /**
+     * Test run with incomplete parameters.
+     *
+     * @return void
+     */
+    public function testInvalidIniSection()
+    {
+        $opts = HarvesterConsoleRunner::getDefaultOptions();
+        $ini = realpath(__DIR__ . '/../../../../fixtures/test.ini');
+        $opts->setArguments(['--ini=' . $ini, 'badsection']);
+        $runner = new HarvesterConsoleRunner($opts, null, null, null, true);
+        $this->assertFalse($runner->run());
+    }
+
+    /**
+     * Test basic .ini functionality of console runner
      *
      * @return void
      */
@@ -97,6 +137,43 @@ class HarvesterConsoleRunnerTest extends \PHPUnit_Framework_TestCase
         $opts = HarvesterConsoleRunner::getDefaultOptions();
         $ini = realpath(__DIR__ . '/../../../../fixtures/test.ini');
         $opts->setArguments(['--ini=' . $ini]);
+        $runner = new HarvesterConsoleRunner(
+            $opts, $client, $basePath, $factory, true
+        );
+        $this->assertTrue($runner->run());
+    }
+
+    /**
+     * Test basic functionality of console runner w/ settings overridden
+     * by command-line options.
+     *
+     * @return void
+     */
+    public function testRunFromIniFileWithOptionOverrides()
+    {
+        $basePath = '/foo/bar';
+        $client = $this->getMock('Zend\Http\Client');
+        $harvester = $this->getMockHarvester();
+        $expectedSettings = [
+            'url' => 'http://bar',
+            'metadataPrefix' => 'oai_dc',
+            'from' => null,
+            'until' => null,
+            'silent' => false,
+            'verbose' => true,
+            'timeout' => 45,
+        ];
+        $factory = $this->getMock('VuFindHarvest\OaiPmh\HarvesterFactory');
+        $factory->expects($this->once())
+            ->method('getHarvester')
+            ->with(
+                $this->equalTo('foo'), $this->equalTo($basePath),
+                $this->equalTo($client), $this->equalTo($expectedSettings)
+            )
+            ->will($this->returnValue($harvester));
+        $opts = HarvesterConsoleRunner::getDefaultOptions();
+        $ini = realpath(__DIR__ . '/../../../../fixtures/test.ini');
+        $opts->setArguments(['--ini=' . $ini, '-v', '--timeout=45', 'foo']);
         $runner = new HarvesterConsoleRunner(
             $opts, $client, $basePath, $factory, true
         );
