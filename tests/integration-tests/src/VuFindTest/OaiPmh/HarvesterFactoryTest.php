@@ -126,8 +126,8 @@ class HarvesterFactoryTest extends \PHPUnit_Framework_TestCase
         $config = [
             'url' => 'http://localhost',
             'injectSetName' => 'setnametag',
-            'verbose' => true,
             'dateGranularity' => 'mygranularity',
+            'silent' => true,
         ];
         $oai = $this->getHarvester('test', sys_get_temp_dir(), $config, $client);
         $writer = $this->getProperty($oai, 'writer');
@@ -179,7 +179,6 @@ class HarvesterFactoryTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($this->getIdentifyResponse()));
         $config = [
             'url' => 'http://localhost',
-            'verbose' => true,
         ];
         $oai = $this->getHarvester('test', sys_get_temp_dir(), $config, $client);
         $this->assertEquals(
@@ -216,7 +215,6 @@ class HarvesterFactoryTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($header));
         $config = [
             'url' => 'http://localhost',
-            'verbose' => true,
         ];
         $oai = $this->getHarvester('test', sys_get_temp_dir(), $config, $client);
         $this->assertEquals(
@@ -241,7 +239,6 @@ class HarvesterFactoryTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(false));
         $config = [
             'url' => 'http://localhost',
-            'verbose' => true,
         ];
         $oai = $this->getHarvester('test', sys_get_temp_dir(), $config, $client);
     }

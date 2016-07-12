@@ -26,7 +26,7 @@
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
 namespace VuFindHarvest\OaiPmh;
-use VuFindHarvest\WriterTrait;
+use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
 
 /**
  * OAI-PMH Harvest Tool
@@ -39,7 +39,7 @@ use VuFindHarvest\WriterTrait;
  */
 class SetLoader
 {
-    use WriterTrait;
+    use WriterAwareTrait;
 
     /**
      * Low-level OAI-PMH communicator
@@ -52,13 +52,10 @@ class SetLoader
      * Constructor.
      *
      * @param Communicator $communicator Low-level API client
-     * @param array        $settings     OAI-PMH settings
      */
-    public function __construct(Communicator $communicator, $settings = [])
+    public function __construct(Communicator $communicator)
     {
         $this->communicator = $communicator;
-        $silent = isset($settings['silent']) ? $settings['silent'] : true;
-        $this->isSilent($silent);
     }
 
     /**

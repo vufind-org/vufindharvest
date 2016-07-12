@@ -26,6 +26,7 @@
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
 namespace VuFindHarvest\OaiPmh;
+use VuFindHarvest\ConsoleOutput\ConsoleWriter;
 use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyFactory;
 use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface;
 use VuFindHarvest\ResponseProcessor\ResponseProcessorInterface;
@@ -127,14 +128,15 @@ class HarvesterFactory
         if (empty($settings['url'])) {
             throw new \Exception("Missing base URL for {$target}.");
         }
-        // We only want the communicator to output messages if we are NOT in
-        // silent mode and we ARE in verbose mode. (i.e. silence overrides
-        // verbosity; communicator messages are considered verbose output).
-        $silent = isset($settings['silent']) ? $settings['silent'] : true;
-        if (!isset($settings['verbose']) || !$settings['verbose']) {
-            $silent = true;
+        $comm = new Communicator($settings['url'], $client, $processor);
+        // We only want the communicator to output messages if we are in verbose
+        // mode; communicator messages are considered verbose output.
+        if (isset($settings['verbose']) && $settings['verbose']
+            && $writer = $this->getConsoleWriter($settings)
+        ) {
+            $comm->setOutputWriter($writer);
         }
-        return new Communicator($settings['url'], $client, $processor, $silent);
+        return $comm;
     }
 
     /**
@@ -153,10 +155,27 @@ class HarvesterFactory
         // Load set names if we're going to need them:
         if ($formatter->needsSetNames()) {
             $loader = $this->getSetLoader($communicator, $settings);
+            if ($writer = $this->getConsoleWriter($settings)) {
+                $loader->setOutputWriter($writer);
+            }
             $formatter->setSetNames($loader->getNames());
         }
 
         return $formatter;
+    }
+
+    /**
+     * Get console output writer (if applicable).
+     *
+     * @param array $settings OAI-PMH settings
+     *
+     * @return ConsoleWriter
+     */
+    protected function getConsoleWriter($settings)
+    {
+        // Don't create a writer if we're in silent mode.
+        return isset($settings['silent']) && $settings['silent']
+            ?  null : new ConsoleWriter();
     }
 
     /**
@@ -249,6 +268,10 @@ class HarvesterFactory
             ->getStrategy($basePath, $settings);
         $writer = $this->getWriter($strategy, $formatter, $settings);
         $stateManager = $this->getStateManager($basePath);
-        return new Harvester($communicator, $writer, $stateManager, $settings);
+        $harvester = new Harvester($communicator, $writer, $stateManager, $settings);
+        if ($writer = $this->getConsoleWriter($settings)) {
+            $harvester->setOutputWriter($writer);
+        }
+        return $harvester;
     }
 }

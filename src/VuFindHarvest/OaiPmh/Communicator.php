@@ -27,7 +27,7 @@
  */
 namespace VuFindHarvest\OaiPmh;
 use VuFindHarvest\ResponseProcessor\ResponseProcessorInterface;
-use VuFindHarvest\WriterTrait;
+use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
 use Zend\Http\Client, Zend\Uri\Http;
 
 /**
@@ -41,7 +41,7 @@ use Zend\Http\Client, Zend\Uri\Http;
  */
 class Communicator
 {
-    use WriterTrait;
+    use WriterAwareTrait;
 
     /**
      * HTTP client
@@ -70,15 +70,13 @@ class Communicator
      * @param string                     $uri       Base URI for OAI-PMH server
      * @param Client                     $client    HTTP client
      * @param ResponseProcessorInterface $processor Response processor (optional)
-     * @param bool                       $silent    Should we suppress output?
      */
     public function __construct($uri, Client $client,
-        ResponseProcessorInterface $processor = null, $silent = true
+        ResponseProcessorInterface $processor = null
     ) {
         $this->baseUrl = $uri;
         $this->client = $client;
         $this->responseProcessor = $processor;
-        $this->isSilent($silent);
     }
 
     /**

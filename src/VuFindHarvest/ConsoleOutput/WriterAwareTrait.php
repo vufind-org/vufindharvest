@@ -25,8 +25,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-namespace VuFindHarvest;
-use Zend\Console\Console;
+namespace VuFindHarvest\ConsoleOutput;
 
 /**
  * Trait for shared output functionality.
@@ -37,32 +36,29 @@ use Zend\Console\Console;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
-trait WriterTrait
+trait WriterAwareTrait
 {
     /**
-     * Should we suppress output?
+     * Writer helper
      *
-     * @var bool
+     * @var WriterInterface
      */
-    protected $silent = true;
+    protected $outputWriter = null;
 
     /**
-     * Set/retrieve silence setting.
+     * Set an object to accept console output messages.
      *
-     * @param bool $silent Should we be silent? Pass null to keep existing setting.
+     * @param WriterInterface $writer Writer object
      *
-     * @return bool
+     * @return void
      */
-    protected function isSilent($silent = null)
+    public function setOutputWriter(WriterInterface $writer)
     {
-        if (null !== $silent) {
-            $this->silent = $silent;
-        }
-        return $this->silent;
+        $this->outputWriter = $writer;
     }
 
     /**
-     * Write a string to the Console.
+     * Write a string to the console output writer (if set).
      *
      * @param string $str String to write.
      *
@@ -71,13 +67,13 @@ trait WriterTrait
     protected function write($str)
     {
         // Bypass output when silent:
-        if (!$this->isSilent()) {
-            Console::write($str);
+        if ($this->outputWriter) {
+            $this->outputWriter->write($str);
         }
     }
 
     /**
-     * Write a string w/newline to the Console.
+     * Write a string w/newline to the console output writer (if set).
      *
      * @param string $str String to write.
      *
@@ -86,8 +82,8 @@ trait WriterTrait
     protected function writeLine($str)
     {
         // Bypass output when silent:
-        if (!$this->isSilent()) {
-            Console::writeLine($str);
+        if ($this->outputWriter) {
+            $this->outputWriter->writeLine($str);
         }
     }
 }

@@ -26,7 +26,8 @@
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
 namespace VuFindHarvest\OaiPmh;
-use VuFindHarvest\WriterTrait;
+use VuFindHarvest\ConsoleOutput\ConsoleWriter;
+use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
 use Zend\Console\Getopt;
 use Zend\Http\Client;
 
@@ -43,7 +44,7 @@ use Zend\Http\Client;
  */
 class HarvesterConsoleRunner
 {
-    use WriterTrait;
+    use WriterAwareTrait;
 
     /**
      * Console options
@@ -90,7 +91,9 @@ class HarvesterConsoleRunner
         $this->client = $client ?: new Client();
         $this->harvestRoot = $harvestRoot ?: getcwd();
         $this->factory = $factory ?: new HarvesterFactory();
-        $this->isSilent($silent);
+        if (!$silent) {
+            $this->setOutputWriter(new ConsoleWriter());
+        }
     }
 
     /**

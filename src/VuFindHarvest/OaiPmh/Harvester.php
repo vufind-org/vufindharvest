@@ -26,7 +26,7 @@
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
 namespace VuFindHarvest\OaiPmh;
-use VuFindHarvest\WriterTrait;
+use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
 
 /**
  * OAI-PMH Harvest Tool
@@ -39,7 +39,7 @@ use VuFindHarvest\WriterTrait;
  */
 class Harvester
 {
-    use WriterTrait;
+    use WriterAwareTrait;
 
     /**
      * Record writer
@@ -115,9 +115,6 @@ class Harvester
         $this->communicator = $communicator;
         $this->writer = $writer;
         $this->stateManager = $stateManager;
-
-        // Store silence setting (configure WriterTrait):
-        $this->isSilent(isset($settings['silent']) ? $settings['silent'] : true);
 
         // Store other settings
         $this->storeDateSettings($settings);
