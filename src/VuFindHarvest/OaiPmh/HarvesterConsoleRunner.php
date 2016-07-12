@@ -105,8 +105,31 @@ class HarvesterConsoleRunner
                 'from-s' => 'Harvest start date',
                 'until-s' => 'Harvest end date',
                 'ini-s' => '.ini file to load',
+                'url-s' => 'Base URL of OAI-PMH server',
+                'set-s' => 'Set name to harvest',
+                'metadataPrefix-s' => 'Metadata prefix to harvest',
+                'timeout-i' => 'HTTP timeout (in seconds)',
             ]
         );
+    }
+
+    /**
+     * Use command-line switches to add/override settings found in the .ini
+     * file, if necessary.
+     *
+     * @param array $settings Incoming settings
+     *
+     * @return array
+     */
+    protected function updateSettingsWithConsoleOptions($settings)
+    {
+        $directMapSettings = ['url', 'set', 'metadataPrefix', 'timeout'];
+        foreach ($directMapSettings as $setting) {
+            if ($value = $this->opts->getOption($setting)) {
+                $settings[$setting] = $value;
+            }
+        }
+        return $settings;
     }
 
     /**
@@ -121,9 +144,11 @@ class HarvesterConsoleRunner
         }
 
         // Loop through all the settings and perform harvests:
-        $processed = 0;
-        foreach ($allSettings as $target => $settings) {
+        $processed = $skipped = 0;
+        foreach ($allSettings as $target => $baseSettings) {
+            $settings = $this->updateSettingsWithConsoleOptions($baseSettings);
             if (empty($target) || empty($settings)) {
+                $skipped++;
                 continue;
             }
             $this->writeLine("Processing {$target}...");
@@ -137,6 +162,13 @@ class HarvesterConsoleRunner
         }
 
         // All done.
+        if ($processed == 0 && $skipped > 0) {
+            $this->writeLine(
+                'No valid settings found; '
+                . 'please set url and metadataPrefix at minimum.'
+            );
+            return false;
+        }
         $this->writeLine(
             "Completed without errors -- {$processed} source(s) processed."
         );
@@ -164,23 +196,21 @@ class HarvesterConsoleRunner
     }
 
     /**
-     * Load the harvest settings. Return false on error.
+     * Load configuration from an .ini file (or return false on error)
+     *
+     * @param string      $ini     Configuration file to load
+     * @param string|bool $section Section of .ini to load (or false for all)
      *
      * @return array|bool
      */
-    protected function getSettings()
+    protected function getSettingsFromIni($ini, $section)
     {
-        if (!($ini = $this->opts->getOption('ini'))) {
-            $this->writeLine('Please specify an .ini file with the --ini flag.');
-            return false;
-        }
         $oaiSettings = @parse_ini_file($ini, true);
         if (empty($oaiSettings)) {
             $this->writeLine("Please add OAI-PMH settings to {$ini}.");
             return false;
         }
-        $argv = $this->opts->getRemainingArgs();
-        if ($section = isset($argv[0]) ? $argv[0] : false) {
+        if ($section) {
             if (!isset($oaiSettings[$section])) {
                 $this->writeLine("$section not found in $ini.");
                 return false;
@@ -188,6 +218,28 @@ class HarvesterConsoleRunner
             $oaiSettings = [$section => $oaiSettings[$section]];
         }
         return $oaiSettings;
+    }
+
+    /**
+     * Load the harvest settings. Return false on error.
+     *
+     * @return array|bool
+     */
+    protected function getSettings()
+    {
+        $ini = $this->opts->getOption('ini');
+        $argv = $this->opts->getRemainingArgs();
+        $section = isset($argv[0]) ? $argv[0] : false;
+        if (!$ini && !$section) {
+            $this->writeLine(
+                'Please specify an .ini file with the --ini flag'
+                . ' or a target directory with the first parameter.'
+            );
+            return false;
+        }
+        return $ini
+            ? $this->getSettingsFromIni($ini, $section)
+            : [$section => []];
     }
 
     /**
