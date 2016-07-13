@@ -313,7 +313,10 @@ XML;
     public function testListRecordsWithResumption()
     {
         $comm = $this->getMockCommunicator();
-        $expectedSettings0 = ['metadataPrefix' => 'oai_dc', 'set' => 'xyzzy'];
+        $expectedSettings0 = [
+            'metadataPrefix' => 'oai_dc', 'set' => 'xyzzy',
+            'from' => '2016-07-01', 'until' => '2016-07-31',
+        ];
         $comm->expects($this->at(0))->method('request')
             ->with($this->equalTo('ListRecords'), $this->equalTo($expectedSettings0))
             ->will($this->returnValue(simplexml_load_string($this->getFakeResponseWithToken())));
@@ -326,10 +329,13 @@ XML;
             ->with($this->isInstanceOf('SimpleXMLElement'));
         $sm = $this->getMockStateManager();
         $sm->expects($this->once())->method('saveState')
-            ->with($this->equalTo('xyzzy'), $this->equalTo('more'), $this->equalTo(null));
+            ->with($this->equalTo('xyzzy'), $this->equalTo('more'), $this->equalTo('2016-07-01'));
         $sm->expects($this->once())->method('clearState');
         $harvester = $this->getHarvester(
-            ['set' => 'xyzzy', 'dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'],
+            [
+                'set' => 'xyzzy', 'dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ',
+                'from' => '2016-07-01', 'until' => '2016-07-31',
+            ],
             $comm, $writer, $sm
         );
         $harvester->launch();
