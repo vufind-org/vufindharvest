@@ -42,6 +42,34 @@ use VuFindHarvest\OaiPmh\Harvester;
 class HarvesterTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * Time zone setting used with setup/tearDown
+     *
+     * @var string
+     */
+    protected $oldTz;
+
+    /**
+     * Setup function -- standardize timezone for consistent results
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        $this->oldTz = date_default_timezone_get();
+        date_default_timezone_set('America/New_York');
+    }
+
+    /**
+     * Teardown function -- restore previous timezone setting
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        date_default_timezone_set($this->oldTz);
+    }
+
+    /**
      * Get mock communicator object
      *
      * @return \VuFindHarvest\OaiPmh\Communicator
@@ -270,7 +298,7 @@ XML;
             ->will($this->returnValue(1468434382));
         $sm = $this->getMockStateManager();
         $sm->expects($this->once())->method('saveDate')
-            ->with($this->equalTo('2016-07-13T18:26:22Z'));
+            ->with($this->equalTo('2016-07-13T14:26:22Z'));
         $harvester = $this->getHarvester(
             ['dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'], $comm, $writer, $sm
         );
