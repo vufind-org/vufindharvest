@@ -148,6 +148,26 @@ class HarvesterTest extends \PHPUnit_Framework_TestCase
 XML;
     }
 
+    /**
+     * Get an arbitrary OAI-PMH error
+     *
+     * @return string
+     */
+    protected function getArbitraryErrorResponse()
+    {
+        return <<<XML
+<?xml version="1.0"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2016-07-13T14:11:24Z</responseDate><request verb="ListRecords" resumptionToken="foo">http://fake/OAI/Server</request>
+<error code="foo">bar</error>
+</OAI-PMH>
+XML;
+    }
+
+    /**
+     * Get a token error
+     *
+     * @return string
+     */
     protected function getTokenErrorResponse()
     {
         return <<<XML
@@ -254,6 +274,31 @@ XML;
         $sm->expects($this->once())->method('clearState');
         $harvester = $this->getHarvester(
             ['dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'], $comm, null, $sm
+        );
+        $harvester->launch();
+    }
+
+    /**
+     * Test a generic error.
+     *
+     * @return void
+     *
+     * @expectedException        Exception
+     * @expectedExceptionMessage OAI-PMH error -- code: foo, value: bar
+     */
+    public function testArbitraryOaiError()
+    {
+        $comm = $this->getMockCommunicator();
+        $expectedSettings = ['metadataPrefix' => 'oai_dc'];
+        $comm->expects($this->once())->method('request')
+            ->with($this->equalTo('ListRecords'), $this->equalTo($expectedSettings))
+            ->will(
+                $this->returnValue(
+                    simplexml_load_string($this->getArbitraryErrorResponse())
+                )
+            );
+        $harvester = $this->getHarvester(
+            ['dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'], $comm
         );
         $harvester->launch();
     }
