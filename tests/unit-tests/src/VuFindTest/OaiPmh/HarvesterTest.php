@@ -207,6 +207,30 @@ XML;
     }
 
     /**
+     * Get XML ListRecords response for testing (with resumption token).
+     *
+     * @return string
+     */
+    protected function getFakeResponseWithToken()
+    {
+        return <<<XML
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2016-07-12T16:22:05Z</responseDate><request verb="ListRecords" metadataPrefix="oai_dc">http://fake/OAI/Server</request>
+    <ListRecords>
+        <record>
+            <header>
+                <identifier>fake:foo0</identifier>
+            </header>
+            <metadata>
+                <foo />
+           </metadata>
+        </record>
+        <resumptionToken>more</resumptionToken>
+    </ListRecords>
+</OAI-PMH>
+XML;
+    }
+
+    /**
      * Test that granularity is autoloaded by default.
      *
      * @return void
@@ -242,9 +266,43 @@ XML;
             ->will($this->returnValue(simplexml_load_string($this->getFakeResponse())));
         $writer = $this->getMockRecordWriter();
         $writer->expects($this->once())->method('write')
-            ->with($this->isInstanceOf('SimpleXMLElement'));
+            ->with($this->isInstanceOf('SimpleXMLElement'))
+            ->will($this->returnValue(1468434382));
+        $sm = $this->getMockStateManager();
+        $sm->expects($this->once())->method('saveDate')
+            ->with($this->equalTo('2016-07-13T18:26:22Z'));
         $harvester = $this->getHarvester(
-            ['dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'], $comm, $writer
+            ['dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'], $comm, $writer, $sm
+        );
+        $harvester->launch();
+    }
+
+    /**
+     * Test that we can retrieve two pages of results.
+     *
+     * @return void
+     */
+    public function testListRecordsWithResumption()
+    {
+        $comm = $this->getMockCommunicator();
+        $expectedSettings0 = ['metadataPrefix' => 'oai_dc', 'set' => 'xyzzy'];
+        $comm->expects($this->at(0))->method('request')
+            ->with($this->equalTo('ListRecords'), $this->equalTo($expectedSettings0))
+            ->will($this->returnValue(simplexml_load_string($this->getFakeResponseWithToken())));
+        $expectedSettings1 = ['resumptionToken' => 'more'];
+        $comm->expects($this->at(1))->method('request')
+            ->with($this->equalTo('ListRecords'), $this->equalTo($expectedSettings1))
+            ->will($this->returnValue(simplexml_load_string($this->getFakeResponse())));
+        $writer = $this->getMockRecordWriter();
+        $writer->expects($this->exactly(2))->method('write')
+            ->with($this->isInstanceOf('SimpleXMLElement'));
+        $sm = $this->getMockStateManager();
+        $sm->expects($this->once())->method('saveState')
+            ->with($this->equalTo('xyzzy'), $this->equalTo('more'), $this->equalTo(null));
+        $sm->expects($this->once())->method('clearState');
+        $harvester = $this->getHarvester(
+            ['set' => 'xyzzy', 'dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'],
+            $comm, $writer, $sm
         );
         $harvester->launch();
     }
