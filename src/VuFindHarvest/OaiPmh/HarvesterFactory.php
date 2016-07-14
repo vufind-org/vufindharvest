@@ -56,6 +56,21 @@ class HarvesterFactory
         $options = [
             'timeout' => isset($settings['timeout']) ? $settings['timeout'] : 60,
         ];
+        if (isset($settings['autosslca']) && $settings['autosslca']) {
+            // RedHat/CentOS:
+            if (file_exists('/etc/pki/tls/cert.pem')) {
+                $options['sslcafile'] = '/etc/pki/tls/cert.pem';
+            }
+            // Debian/Ubuntu:
+            if (file_exists('/etc/ssl/certs')) {
+                $options['sslcapath'] = '/etc/ssl/certs';
+            }
+        }
+        foreach (['sslcafile', 'sslcapath'] as $sslSetting) {
+            if (isset($settings[$sslSetting])) {
+                $options[$sslSetting] = $settings[$sslSetting];
+            }
+        }
         if (isset($settings['sslverifypeer']) && !$settings['sslverifypeer']) {
             $options['sslverifypeer'] = false;
         }

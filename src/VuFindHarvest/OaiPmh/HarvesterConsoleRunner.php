@@ -131,6 +131,9 @@ class HarvesterConsoleRunner
                     . '"auto" (default)',
                 'harvestedIdLog-s' => 'Filename (relative to harvest directory)'
                     . ' to store log of harvested IDs.',
+                'autosslca' => 'Attempt to autodetect SSL certificate file/path',
+                'sslcapath-s' => 'Path to SSL certificate authority directory',
+                'sslcafile-s' => 'Path to SSL certificate authority file',
                 'nosslverifypeer' => 'Disable SSL verification',
                 'sanitize' => 'Strip illegal characters from XML',
                 'badXMLLog-s' => 'Filename (relative to harvest directory) to log'
@@ -154,7 +157,7 @@ class HarvesterConsoleRunner
             'url', 'set', 'metadataPrefix', 'timeout', 'combineRecordsTag',
             'injectDate', 'injectId', 'injectSetName', 'injectSetSpec',
             'idSearch', 'idReplace', 'dateGranularity', 'harvestedIdLog',
-            'badXMLLog', 'httpUser', 'httpPass',
+            'badXMLLog', 'httpUser', 'httpPass', 'sslcapath', 'sslcafile',
         ];
         foreach ($directMapSettings as $setting) {
             if ($value = $this->opts->getOption($setting)) {
@@ -164,6 +167,7 @@ class HarvesterConsoleRunner
         $flagSettings = [
             'combineRecords' => ['combineRecords', true],
             'v' => ['verbose', true],
+            'autosslca' => ['autosslca', true],
             'nosslverifypeer' => ['sslverifypeer', false],
             'sanitize' => ['sanitize', true],
         ];

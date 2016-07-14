@@ -101,6 +101,9 @@ namespace to help with standard status output tasks.
 Changelog
 ---------
 
+###v2.1.0
+* Added better support for SSL certificate configuration
+
 ###v2.0.0
 * Complete rewrite of code for better separation of concerns
 * Expanded command-line functionality
