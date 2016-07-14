@@ -50,11 +50,11 @@ command-line, or else a .ini file containing saved options may be loaded using t
 
 For the most basic harvest, you need to specify the `--url` and `--metadataPrefix`
 options and include a target parameter specifying where records should be
-harvested. For additional options, run `bin/harvest_oai.php --help`.
+harvested. For additional options, run `php bin/harvest_oai.php --help`.
 
 Example:
 
-`bin/harvest_oai.php --url=http://example.com/oai_server --metadataPrefix=oai_dc my_target_dir`
+`php bin/harvest_oai.php --url=http://example.com/oai_server --metadataPrefix=oai_dc my_target_dir`
 
 ### Harvesting with an .ini file
 
@@ -71,7 +71,7 @@ If you specify a parameter following the option list when using an .ini file,
 only the section of the configuration file matching the parameter will be used,
 and records will be harvested to a directory with a matching name. For example:
 
-`bin/harvest_oai.php --ini=/etc/oai.ini OJS`
+`php bin/harvest_oai.php --ini=/etc/oai.ini OJS`
 
 If you omit the parameter, all sections of the .ini file will be harvested in
 sequence.
