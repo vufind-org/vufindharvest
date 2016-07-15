@@ -13,7 +13,8 @@ Installation
 ------------
 The recommended method for incorporating this library into your project is to use
 Composer (http://getcomposer.org). If you wish to use this as a stand-alone tool,
-simply clone the repository and run `composer install` to download dependencies.
+simply clone the repository and run `composer install` or `php composer.phar install`
+(depending on your Composer setup) to download dependencies.
 
 
 Concept
