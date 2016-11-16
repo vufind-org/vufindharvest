@@ -53,11 +53,11 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
     protected $badXmlLog = false;
     
     /**
-     * An array of regex strings used to santize XML
+     * Regex string used to sanitize XML
      *
-     * @var array
+     * @var string
      */
-    protected $sanitizeRegex = [];
+    protected $sanitizeRegex;
 
     /**
      * Constructor
