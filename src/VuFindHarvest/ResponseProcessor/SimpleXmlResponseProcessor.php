@@ -57,7 +57,7 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
      *
      * @var array
      */
-    protected $regex = [];
+    protected $sanitizeRegex = [];
 
     /**
      * Constructor
@@ -71,8 +71,9 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
             ? $settings['sanitize'] : false;
         $this->badXmlLog = isset($settings['badXMLLog'])
             ? $basePath . $settings['badXMLLog'] : false;
-        $this->regex = isset($settings['sanitizeRegex'])
-            ? $settings['sanitizeRegex'] : [];
+        $this->sanitizeRegex = isset($settings['sanitizeRegex'])
+            ? $settings['sanitizeRegex']
+            : '/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u';
     }
 
     /**
@@ -102,8 +103,7 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
     protected function sanitizeXml($xml)
     {
         // Sanitize the XML if requested:
-        $this->regex[] = '/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u';
-        $newXML = trim(preg_replace($this->regex[], ' ', $xml, -1, $count));
+        $newXML = trim(preg_replace($this->sanitizeRegex, ' ', $xml, -1, $count));
 
         if ($count > 0 && $this->badXmlLog) {
             $this->logBadXML($xml);
