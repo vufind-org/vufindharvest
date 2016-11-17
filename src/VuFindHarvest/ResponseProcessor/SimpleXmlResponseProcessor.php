@@ -53,11 +53,11 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
     protected $badXmlLog = false;
     
     /**
-     * Regex string used to sanitize XML
+     * An array of regex strings used to santize XML
      *
-     * @var string
+     * @var array
      */
-    protected $sanitizeRegex;
+    protected $sanitizeRegex = [];
 
     /**
      * Constructor
@@ -73,7 +73,7 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
             ? $basePath . $settings['badXMLLog'] : false;
         $this->sanitizeRegex = isset($settings['sanitizeRegex'])
             ? $settings['sanitizeRegex']
-            : '/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u';
+            : ['/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u'];
     }
 
     /**
