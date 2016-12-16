@@ -136,6 +136,8 @@ class HarvesterConsoleRunner
                 'sslcafile-s' => 'Path to SSL certificate authority file',
                 'nosslverifypeer' => 'Disable SSL verification',
                 'sanitize' => 'Strip illegal characters from XML',
+                'sanitizeRegex-s' =>
+                    'Optional regular expression defining XML characters to remove',
                 'badXMLLog-s' => 'Filename (relative to harvest directory) to log'
                     . ' XML fixed by sanitize setting'
                 
@@ -158,6 +160,7 @@ class HarvesterConsoleRunner
             'injectDate', 'injectId', 'injectSetName', 'injectSetSpec',
             'idSearch', 'idReplace', 'dateGranularity', 'harvestedIdLog',
             'badXMLLog', 'httpUser', 'httpPass', 'sslcapath', 'sslcafile',
+            'sanitizeRegex',
         ];
         foreach ($directMapSettings as $setting) {
             if ($value = $this->opts->getOption($setting)) {
