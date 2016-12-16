@@ -90,7 +90,7 @@ class Communicator
     protected function sendRequest($verb, $params)
     {
         // Set up the request:
-        $this->client->resetParameters(false, false);
+        $this->client->resetParameters(false, false); // keep cookies/auth
         $this->client->setUri($this->baseUrl);
 
         // Load request parameters:
