@@ -202,7 +202,7 @@ class HarvesterFactory
     {
         // Don't create a writer if we're in silent mode.
         return isset($settings['silent']) && $settings['silent']
-            ?  null : new ConsoleWriter();
+            ? null : new ConsoleWriter();
     }
 
     /**

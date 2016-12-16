@@ -7,10 +7,9 @@ php:
   - 7.0
 
 before_script:
-  - pear channel-discover pear.phing.info
-  - pear install phing/phing
   - phpenv config-rm xdebug.ini
   - phpenv rehash
+  - composer install
 
 script:
-  - phing startup phpunitfast phpcs-console php-cs-fixer-dryrun
+  - vendor/bin/phing startup phpunitfast phpcs-console php-cs-fixer-dryrun
