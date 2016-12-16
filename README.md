@@ -102,6 +102,10 @@ namespace to help with standard status output tasks.
 Changelog
 ---------
 
+###v2.2.0
+* Added sanitizeRegex setting to optionally allow override of default XML sanitization regular expression.
+* Fixed bug: authentication credentials cleared between requests.
+
 ###v2.1.0
 * Added better support for SSL certificate configuration
 
