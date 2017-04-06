@@ -39,6 +39,20 @@ namespace VuFindHarvest\OaiPmh;
 class RecordXmlFormatter
 {
     /**
+     * Search strings for global search-and-replace.
+     *
+     * @var array
+     */
+    protected $globalSearch = [];
+
+    /**
+     * Replacement strings for global search-and-replace.
+     *
+     * @var array
+     */
+    protected $globalReplace = [];
+
+    /**
      * Tag to use for injecting IDs into XML (false for none)
      *
      * @var string|bool
@@ -89,6 +103,7 @@ class RecordXmlFormatter
     {
         // Settings that may be mapped directly from $settings to class properties:
         $mappableSettings = [
+            'globalSearch', 'globalReplace',
             'injectId', 'injectDate', 'injectHeaderElements',
             'injectSetName', 'injectSetSpec',
         ];
@@ -98,10 +113,10 @@ class RecordXmlFormatter
             }
         }
 
-        // Normalize injectHeaderElements to an array:
-        if (!is_array($this->injectHeaderElements)) {
-            $this->injectHeaderElements = [$this->injectHeaderElements];
-        }
+        // Where appropriate, normalize elements to array format:
+        $this->globalSearch = (array)$this->globalSearch;
+        $this->globalReplace = (array)$this->globalReplace;
+        $this->injectHeaderElements = (array)$this->injectHeaderElements;
     }
 
     /**
@@ -242,6 +257,20 @@ class RecordXmlFormatter
     }
 
     /**
+     * Perform global search and replace.
+     *
+     * @param string $xml XML to update.
+     *
+     * @return string
+     */
+    protected function performGlobalReplace($xml)
+    {
+        return empty($this->globalSearch)
+            ? $xml
+            : preg_replace($this->globalSearch, $this->globalReplace, $xml);
+    }
+
+    /**
      * Save a record to disk.
      *
      * @param string $id        ID of record to save.
@@ -259,8 +288,13 @@ class RecordXmlFormatter
 
         // Extract the actual metadata from inside the <metadata></metadata> tags;
         // there is probably a cleaner way to do this, but this simple method avoids
-        // the complexity of dealing with namespaces in SimpleXML:
-        $record = preg_replace('/(^<metadata[^\>]*>)|(<\/metadata>$)/m', '', $raw);
+        // the complexity of dealing with namespaces in SimpleXML.
+        //
+        // We should also apply global search and replace at this time, if
+        // applicable.
+        $record = $this->performGlobalReplace(
+            preg_replace('/(^<metadata[^\>]*>)|(<\/metadata>$)/m', '', $raw)
+        );
 
         // Collect attributes (for proper namespace resolution):
         $metadataAttributes = $this->extractMetadataAttributes($raw, $record);

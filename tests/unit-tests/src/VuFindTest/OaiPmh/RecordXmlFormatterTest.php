@@ -190,6 +190,28 @@ class RecordXmlFormatterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test global search and replace.
+     *
+     * @return void
+     */
+    public function testGlobalSearchAndReplace()
+    {
+        $formatter = new RecordXmlFormatter(
+            [
+                'globalSearch' => '/leader/',
+                'globalReplace' => 'bloop',
+            ]
+        );
+        $result = $formatter->format('foo', $this->getRecordFromFixture());
+        $xml = simplexml_load_string($result);
+
+        // If search-and-replace worked, the <leader> should have been changed
+        // to <bloop>, affecting the final parsed XML.
+        $this->assertEquals(0, count($xml->leader));
+        $this->assertEquals(1, count($xml->bloop));
+    }
+
+    /**
      * Get a record from the test fixture.
      *
      * @param string $fixture Filename of fixture (inside fixture directory).

@@ -120,6 +120,8 @@ class HarvesterConsoleRunner
                 'combineRecordsTag-s' => 'Specify the XML tag wrapped around'
                     . ' multiple records in combineRecords mode'
                     . ' (default = <collection>)',
+                'globalSearch-s' => 'Regular expression to replace in raw XML',
+                'globalReplace-s' => 'String to replace globalSearch regex matches',
                 'injectDate-s' => 'Inject date from header into specified tag',
                 'injectId-s' => 'Inject ID from header into specified tag',
                 'injectSetName-s' => 'Inject setName from header into specified tag',
