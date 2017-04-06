@@ -212,6 +212,22 @@ class RecordXmlFormatterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test namespace correction by loading a record with a namespace issue
+     * and confirming that it loads as a valid XML object.
+     *
+     * @return void
+     */
+    public function testNamespaceCorrection()
+    {
+        $formatter = new RecordXmlFormatter();
+        $result = $formatter->format(
+            'foo', $this->getRecordFromFixture('oai_doaj.xml')
+        );
+        $xml = simplexml_load_string($result);
+        $this->assertTrue(is_object($xml));
+    }
+
+    /**
      * Get a record from the test fixture.
      *
      * @param string $fixture Filename of fixture (inside fixture directory).

@@ -140,7 +140,7 @@ class RecordXmlFormatter
             }
         }
         if (!empty($attr)) {
-            $xml = preg_replace('/>/', $attr . '>', $xml, 1);
+            $xml = preg_replace('/>/', ' ' . $attr . '>', $xml, 1);
         }
         return $xml;
     }
