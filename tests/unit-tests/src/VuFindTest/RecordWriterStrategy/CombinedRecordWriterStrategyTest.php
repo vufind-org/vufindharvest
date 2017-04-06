@@ -48,11 +48,11 @@ class CombinedRecordWriterStrategyTest extends \PHPUnit_Framework_TestCase
      */
     public function testStrategy()
     {
-        $mock = $this->getMock(
-            'VuFindHarvest\RecordWriterStrategy\CombinedRecordWriterStrategy',
-            ['saveDeletedRecords', 'saveFile'],
-            ['foo', '<wrapper test="true">']
-        );
+        $mock = $this->getMockBuilder(
+            'VuFindHarvest\RecordWriterStrategy\CombinedRecordWriterStrategy'
+        )->setMethods(['saveDeletedRecords', 'saveFile'])
+            ->setConstructorArgs(['foo', '<wrapper test="true">'])
+            ->getMock();
         $expectedXml = '<wrapper test="true"><foo1 /><foo2 /></wrapper>';
         $mock->expects($this->once())->method('saveDeletedRecords')
             ->with($this->equalTo(['d1', 'd2']));

@@ -69,7 +69,8 @@ class RecordWriterTest extends \PHPUnit_Framework_TestCase
      */
     protected function getMockFormatter()
     {
-        return $this->getMock('VuFindHarvest\OaiPmh\RecordXmlFormatter');
+        return $this->getMockBuilder('VuFindHarvest\OaiPmh\RecordXmlFormatter')
+            ->getMock();
     }
 
     /**
@@ -79,9 +80,9 @@ class RecordWriterTest extends \PHPUnit_Framework_TestCase
      */
     protected function getMockStrategy()
     {
-        return $this->getMock(
+        return $this->getMockBuilder(
             'VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface'
-        );
+        )->getMock();
     }
 
     /**

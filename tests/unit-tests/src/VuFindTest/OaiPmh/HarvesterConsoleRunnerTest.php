@@ -131,7 +131,7 @@ class HarvesterConsoleRunnerTest extends \PHPUnit_Framework_TestCase
     public function testRunFromIniFile()
     {
         $basePath = '/foo/bar';
-        $client = $this->getMock('Zend\Http\Client');
+        $client = $this->getMockBuilder('Zend\Http\Client')->getMock();
         $harvester = $this->getMockHarvester();
         $expectedSettings = [
             'url' => 'http://bar',
@@ -140,7 +140,8 @@ class HarvesterConsoleRunnerTest extends \PHPUnit_Framework_TestCase
             'until' => null,
             'silent' => false
         ];
-        $factory = $this->getMock('VuFindHarvest\OaiPmh\HarvesterFactory');
+        $factory = $this->getMockBuilder('VuFindHarvest\OaiPmh\HarvesterFactory')
+            ->getMock();
         $factory->expects($this->once())
             ->method('getHarvester')
             ->with(
@@ -166,7 +167,7 @@ class HarvesterConsoleRunnerTest extends \PHPUnit_Framework_TestCase
     public function testRunFromIniFileWithOptionOverrides()
     {
         $basePath = '/foo/bar';
-        $client = $this->getMock('Zend\Http\Client');
+        $client = $this->getMockBuilder('Zend\Http\Client')->getMock();
         $harvester = $this->getMockHarvester();
         $expectedSettings = [
             'url' => 'http://bar',
@@ -177,7 +178,8 @@ class HarvesterConsoleRunnerTest extends \PHPUnit_Framework_TestCase
             'verbose' => true,
             'timeout' => 45,
         ];
-        $factory = $this->getMock('VuFindHarvest\OaiPmh\HarvesterFactory');
+        $factory = $this->getMockBuilder('VuFindHarvest\OaiPmh\HarvesterFactory')
+            ->getMock();
         $factory->expects($this->once())
             ->method('getHarvester')
             ->with(

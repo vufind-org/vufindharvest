@@ -48,11 +48,10 @@ class IndividualRecordWriterStrategyTest extends \PHPUnit_Framework_TestCase
      */
     public function testStrategy()
     {
-        $mock = $this->getMock(
-            'VuFindHarvest\RecordWriterStrategy\IndividualRecordWriterStrategy',
-            ['saveDeletedRecords', 'saveFile'],
-            ['foo']
-        );
+        $mock = $this->getMockBuilder(
+            'VuFindHarvest\RecordWriterStrategy\IndividualRecordWriterStrategy'
+        )->setMethods(['saveDeletedRecords', 'saveFile'])
+            ->setConstructorArgs(['foo'])->getMock();
         $mock->expects($this->at(0))->method('saveDeletedRecords')
             ->with($this->equalTo('d1'));
         $mock->expects($this->at(1))->method('saveFile')
