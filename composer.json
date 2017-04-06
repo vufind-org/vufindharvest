@@ -29,7 +29,7 @@
         "squizlabs/php_codesniffer": "2.8.1"
     },
     "autoload": {
-        "psr-0": {
+        "psr-4": {
             "VuFindHarvest\\": "src/"
         }
     }
