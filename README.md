@@ -101,6 +101,10 @@ namespace to help with standard status output tasks.
 
 Changelog
 ---------
+###v2.3.0
+* Dropped support for PHP 5.4 and 5.5.
+* Added new globalSearch / globalReplace parameters.
+* Fixed bug: xmlns namespace attributes injected incorrectly.
 
 ###v2.2.0
 * Added sanitizeRegex setting to optionally allow override of default XML sanitization regular expression.
