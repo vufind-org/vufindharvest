@@ -83,19 +83,19 @@ Architecture
 If you wish to incorporate this code into another project, or extend it to
 support more options, here are the most important top-level classes:
 
-* [VuFindHarvester\OaiPmh\HarvesterConsoleRunner](https://github.com/vufind-org/vufindharvest/blob/master/src/VuFindHarvest/OaiPmh/HarvesterConsoleRunner.php) - Provides command-line interface around VuFindHarvester\OaiPmh\Harvester
-* [VuFindHarvester\OaiPmh\HarvesterFactory](https://github.com/vufind-org/vufindharvest/blob/master/src/VuFindHarvest/OaiPmh/HarvesterFactory.php) - Factory class to create VuFindHarvester\OaiPmh\Harvester objects with all dependencies injected
-* [VuFindHarvester\OaiPmh\Harvester](https://github.com/vufind-org/vufindharvest/blob/master/src/VuFindHarvest/OaiPmh/Harvester.php) - Class to perform a single harvest of a single OAI-PMH repository.
+* [VuFindHarvester\OaiPmh\HarvesterConsoleRunner](https://github.com/vufind-org/vufindharvest/blob/master/src/OaiPmh/HarvesterConsoleRunner.php) - Provides command-line interface around VuFindHarvester\OaiPmh\Harvester
+* [VuFindHarvester\OaiPmh\HarvesterFactory](https://github.com/vufind-org/vufindharvest/blob/master/src/OaiPmh/HarvesterFactory.php) - Factory class to create VuFindHarvester\OaiPmh\Harvester objects with all dependencies injected
+* [VuFindHarvester\OaiPmh\Harvester](https://github.com/vufind-org/vufindharvest/blob/master/src/OaiPmh/Harvester.php) - Class to perform a single harvest of a single OAI-PMH repository.
 
 Here are key dependencies used by VuFindHarvester\OaiPmh\Harvester:
 
-* [VuFindHarvester\OaiPmh\Communicator](https://github.com/vufind-org/vufindharvest/blob/master/src/VuFindHarvest/OaiPmh/Communicator.php) - Wrapper around the HTTP communication used by the OAI-PMH protocol (also uses a [response processor](https://github.com/vufind-org/vufindharvest/tree/master/src/VuFindHarvest/ResponseProcessor) to manipulate retrieved results)
-* [VuFindHarvester\OaiPmh\RecordWriter](https://github.com/vufind-org/vufindharvest/blob/master/src/VuFindHarvest/OaiPmh/RecordWriter.php) - Class to manage writing OAI-PMH records to disk; utilizes one of the available [record writer strategies](https://github.com/vufind-org/vufindharvest/tree/master/src/VuFindHarvest/RecordWriterStrategy)
-* [VuFindHarvester\OaiPmh\RecordXmlFormatter](https://github.com/vufind-org/vufindharvest/blob/master/src/VuFindHarvest/OaiPmh/RecordXmlFormatter.php) - Class to process/fix/augment harvested XML data prior to writing it to disk
-* [VuFindHarvester\OaiPmh\SetLoader](https://github.com/vufind-org/vufindharvest/blob/master/src/VuFindHarvest/OaiPmh/SetLoader.php) - Class to retrieve a list of set information from an OAI-PMH server (used for certain types of optional XML augmentation)
-* [VuFindHarvester\OaiPmh\StateManager](https://github.com/vufind-org/vufindharvest/blob/master/src/VuFindHarvest/OaiPmh/StateManager.php) - Class for managing harvest state (last harvest date, current resumption token) on disk to assist incremental harvests and recovery from problems
+* [VuFindHarvester\OaiPmh\Communicator](https://github.com/vufind-org/vufindharvest/blob/master/src/OaiPmh/Communicator.php) - Wrapper around the HTTP communication used by the OAI-PMH protocol (also uses a [response processor](https://github.com/vufind-org/vufindharvest/tree/master/src/VuFindHarvest/ResponseProcessor) to manipulate retrieved results)
+* [VuFindHarvester\OaiPmh\RecordWriter](https://github.com/vufind-org/vufindharvest/blob/master/src/OaiPmh/RecordWriter.php) - Class to manage writing OAI-PMH records to disk; utilizes one of the available [record writer strategies](https://github.com/vufind-org/vufindharvest/tree/master/src/VuFindHarvest/RecordWriterStrategy)
+* [VuFindHarvester\OaiPmh\RecordXmlFormatter](https://github.com/vufind-org/vufindharvest/blob/master/src/OaiPmh/RecordXmlFormatter.php) - Class to process/fix/augment harvested XML data prior to writing it to disk
+* [VuFindHarvester\OaiPmh\SetLoader](https://github.com/vufind-org/vufindharvest/blob/master/src/OaiPmh/SetLoader.php) - Class to retrieve a list of set information from an OAI-PMH server (used for certain types of optional XML augmentation)
+* [VuFindHarvester\OaiPmh\StateManager](https://github.com/vufind-org/vufindharvest/blob/master/src/OaiPmh/StateManager.php) - Class for managing harvest state (last harvest date, current resumption token) on disk to assist incremental harvests and recovery from problems
 
-Several classes make use of the traits and classes in the [VuFindHarvester\ConsoleOutput](https://github.com/vufind-org/vufindharvest/tree/master/src/VuFindHarvest/ConsoleOutput)
+Several classes make use of the traits and classes in the [VuFindHarvester\ConsoleOutput](https://github.com/vufind-org/vufindharvest/tree/master/src/ConsoleOutput)
 namespace to help with standard status output tasks.
 
 
