@@ -20,7 +20,7 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "1.11.6",
-        "phpdocumentor/phpdocumentor": "2.9.0",
+        "pear/http_request2": "2.3.0",
         "phploc/phploc": "3.0.1",
         "phpmd/phpmd": "2.6.0",
         "phpunit/phpunit": "5.7.15",
