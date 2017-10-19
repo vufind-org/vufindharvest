@@ -51,7 +51,7 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
      * @var string|bool
      */
     protected $badXmlLog = false;
-    
+
     /**
      * An array of regex strings used to sanitize XML
      *

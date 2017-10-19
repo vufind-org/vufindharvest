@@ -26,6 +26,7 @@
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
 namespace VuFindHarvest\OaiPmh;
+
 use VuFindHarvest\ConsoleOutput\ConsoleWriter;
 use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
 use Zend\Console\Getopt;
@@ -142,7 +143,7 @@ class HarvesterConsoleRunner
                     'Optional regular expression defining XML characters to remove',
                 'badXMLLog-s' => 'Filename (relative to harvest directory) to log'
                     . ' XML fixed by sanitize setting'
-                
+
             ]
         );
     }

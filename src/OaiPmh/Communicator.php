@@ -26,9 +26,11 @@
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
 namespace VuFindHarvest\OaiPmh;
-use VuFindHarvest\ResponseProcessor\ResponseProcessorInterface;
+
 use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
-use Zend\Http\Client, Zend\Uri\Http;
+use VuFindHarvest\ResponseProcessor\ResponseProcessorInterface;
+use Zend\Http\Client;
+use Zend\Uri\Http;
 
 /**
  * OAI-PMH Communicator (handles low-level request/response processing).
@@ -133,7 +135,7 @@ class Communicator
                     );
                     sleep($delay);
                 }
-            } else if (!$result->isSuccess()) {
+            } elseif (!$result->isSuccess()) {
                 throw new \Exception('HTTP Error ' . $result->getStatusCode());
             }
         } while ($result->getStatusCode() == 503);

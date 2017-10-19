@@ -26,6 +26,7 @@
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
 namespace VuFindHarvest\OaiPmh;
+
 use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
 
 /**
@@ -137,6 +138,7 @@ class Harvester
     {
         $this->harvestEndDate = $date;
     }
+
     /**
      * Set a start date for the harvest (only harvest records AFTER this date).
      *
@@ -286,7 +288,7 @@ class Harvester
             && !empty($response->ListRecords->resumptionToken)
         ) {
             return $response->ListRecords->resumptionToken;
-        } else if (isset($endDate) && $endDate > 0) {
+        } elseif (isset($endDate) && $endDate > 0) {
             $dateFormat = ($this->granularity == 'YYYY-MM-DD') ?
                 'Y-m-d' : 'Y-m-d\TH:i:s\Z';
             $this->stateManager->saveDate(date($dateFormat, $endDate));
