@@ -40,7 +40,7 @@ use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
-class ConsoleWriterTest extends \PHPUnit_Framework_TestCase
+class ConsoleWriterTest extends \PHPUnit\Framework\TestCase
 {
     use WriterAwareTrait;
 

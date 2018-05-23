@@ -39,7 +39,7 @@ use VuFindHarvest\OaiPmh\Harvester;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
-class HarvesterTest extends \PHPUnit_Framework_TestCase
+class HarvesterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Time zone setting used with setup/tearDown

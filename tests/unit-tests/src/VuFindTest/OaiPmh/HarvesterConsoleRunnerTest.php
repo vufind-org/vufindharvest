@@ -39,7 +39,7 @@ use VuFindHarvest\OaiPmh\HarvesterConsoleRunner;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
-class HarvesterConsoleRunnerTest extends \PHPUnit_Framework_TestCase
+class HarvesterConsoleRunnerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Get mock harvester object

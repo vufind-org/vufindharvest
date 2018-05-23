@@ -39,7 +39,7 @@ use VuFindHarvest\OaiPmh\StateManager;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
-class StateManagerTest extends \PHPUnit_Framework_TestCase
+class StateManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test date functionality.

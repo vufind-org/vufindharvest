@@ -39,7 +39,7 @@ use VuFindHarvest\OaiPmh\RecordXmlFormatter;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
-class RecordXmlFormatterTest extends \PHPUnit_Framework_TestCase
+class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Return protected or private property.

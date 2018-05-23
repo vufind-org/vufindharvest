@@ -39,7 +39,7 @@ use VuFindHarvest\RecordWriterStrategy\CombinedRecordWriterStrategy;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
-class IndividualRecordWriterStrategyTest extends \PHPUnit_Framework_TestCase
+class IndividualRecordWriterStrategyTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test strategy

@@ -39,7 +39,7 @@ use VuFindHarvest\ResponseProcessor\SimpleXmlResponseProcessor;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
-class SimpleXmlResponseProcessorTest extends \PHPUnit_Framework_TestCase
+class SimpleXmlResponseProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test behavior related to bad XML (without sanitization).

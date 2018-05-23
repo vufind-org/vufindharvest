@@ -40,7 +40,7 @@ use VuFindHarvest\RecordWriterStrategy\CombinedRecordWriterStrategy;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
-class RecordWriterStrategyFactoryTest extends \PHPUnit_Framework_TestCase
+class RecordWriterStrategyFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test creating a real file with the combined record writer strategy.
