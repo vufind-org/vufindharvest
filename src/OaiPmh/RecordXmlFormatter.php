@@ -186,7 +186,7 @@ class RecordXmlFormatter
                 $insert .= $this->createTag($this->injectSetSpec, $set);
             }
             if ($this->injectSetName) {
-                $name = isset($this->setNames[$set]) ? $this->setNames[$set] : $set;
+                $name = $this->setNames[$set] ?? $set;
                 $insert .= $this->createTag($this->injectSetName, $name);
             }
         }
