@@ -3,7 +3,7 @@
  * Abstract record writer strategy (shared base for standard vs. combined modes
  * of saving records).
  *
- * PHP version 5
+ * PHP version 7
  *
  * Copyright (c) Demian Katz 2016.
  *

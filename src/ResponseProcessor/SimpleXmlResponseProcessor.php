@@ -2,7 +2,7 @@
 /**
  * Class for processing API responses into SimpleXML objects.
  *
- * PHP version 5
+ * PHP version 7
  *
  * Copyright (c) Demian Katz 2016.
  *

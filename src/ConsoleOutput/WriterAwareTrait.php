@@ -2,7 +2,7 @@
 /**
  * Trait for shared output functionality.
  *
- * PHP version 5
+ * PHP version 7
  *
  * Copyright (c) Demian Katz 2016.
  *

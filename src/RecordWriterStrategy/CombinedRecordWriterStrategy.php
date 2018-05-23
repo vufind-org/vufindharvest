@@ -2,7 +2,7 @@
 /**
  * Strategy for writing records to disk as a combined file.
  *
- * PHP version 5
+ * PHP version 7
  *
  * Copyright (c) Demian Katz 2016.
  *
