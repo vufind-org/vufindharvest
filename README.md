@@ -99,27 +99,6 @@ Several classes make use of the traits and classes in the [VuFindHarvester\Conso
 namespace to help with standard status output tasks.
 
 
-Changelog
----------
-###v2.3.0
-* Dropped support for PHP 5.4 and 5.5.
-* Added new globalSearch / globalReplace parameters.
-* Fixed bug: xmlns namespace attributes injected incorrectly.
-
-###v2.2.0
-* Added sanitizeRegex setting to optionally allow override of default XML sanitization regular expression.
-* Fixed bug: authentication credentials cleared between requests.
-
-###v2.1.0
-* Added better support for SSL certificate configuration
-
-###v2.0.0
-* Complete rewrite of code for better separation of concerns
-* Expanded command-line functionality
-* Added documentation and more complete test suite
-
-###v1.1.0
-* Added simple stand-alone console interface
-
-###v1.0.0
-* Initial extraction of library code from the [VuFind](https://github.com/vufind-org/vufind) project
+History
+-------
+See [CHANGELOG.md](https://github.com/vufind-org/vufindharvest/blob/master/CHANGELOG.md)
