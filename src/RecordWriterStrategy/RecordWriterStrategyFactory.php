@@ -49,8 +49,7 @@ class RecordWriterStrategyFactory
     public function getStrategy($basePath, $settings = [])
     {
         if (isset($settings['combineRecords']) && $settings['combineRecords']) {
-            $combineTag = isset($settings['combineRecordsTag'])
-                ? $settings['combineRecordsTag'] : null;
+            $combineTag = $settings['combineRecordsTag'] ?? null;
             return new CombinedRecordWriterStrategy($basePath, $combineTag);
         }
         return new IndividualRecordWriterStrategy($basePath);

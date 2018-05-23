@@ -15,10 +15,12 @@ $rules = [
     'concat_space' => ['spacing' => 'one'],
     'elseif' => true,
     'encoding' => true,
+    'ereg_to_preg' => true,
     'full_opening_tag' => true,
     'function_declaration' => true,
     'function_typehint_space' => true,
     'indentation_type' => true,
+    'is_null' => true,
     'line_ending' => true,
     'linebreak_after_opening_tag' => true,
     'lowercase_cast' => true,
@@ -51,6 +53,7 @@ $rules = [
     'no_useless_return' => true,
     'no_whitespace_before_comma_in_array' => true,
     'no_whitespace_in_blank_line' => true,
+    'non_printable_character' => true,
     'ordered_imports' => true,
     'phpdoc_no_access' => true,
     'single_blank_line_at_eof' => true,
@@ -62,9 +65,17 @@ $rules = [
     'switch_case_semicolon_to_colon' => true,
     'switch_case_space' => true,
     'ternary_operator_spaces' => true,
+    'ternary_to_null_coalescing' => true,
     'visibility_required' => true,
 ];
 
+$cacheDir = __DIR__ . '/../.php_cs_cache';
+if (!is_dir($cacheDir)) {
+    mkdir($cacheDir);
+}
+
 return PhpCsFixer\Config::create()
+    ->setCacheFile($cacheDir . '/.code.cache')
+    ->setRiskyAllowed(true)
     ->setRules($rules)
     ->setFinder($finder);

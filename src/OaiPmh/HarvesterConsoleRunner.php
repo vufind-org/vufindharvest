@@ -307,7 +307,7 @@ class HarvesterConsoleRunner
     {
         $ini = $this->opts->getOption('ini');
         $argv = $this->opts->getRemainingArgs();
-        $section = isset($argv[0]) ? $argv[0] : false;
+        $section = $argv[0] ?? false;
         if (!$ini && !$section) {
             $this->writeLine(
                 'Please specify an .ini file with the --ini flag'

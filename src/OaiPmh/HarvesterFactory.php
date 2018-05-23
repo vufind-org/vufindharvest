@@ -74,7 +74,7 @@ class HarvesterFactory
     protected function getClientOptions(array $settings)
     {
         $options = [
-            'timeout' => isset($settings['timeout']) ? $settings['timeout'] : 60,
+            'timeout' => $settings['timeout'] ?? 60,
         ];
         if (isset($settings['autosslca']) && $settings['autosslca']) {
             $this->addAutoSslOptions($options);

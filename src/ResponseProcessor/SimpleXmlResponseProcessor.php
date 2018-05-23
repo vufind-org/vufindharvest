@@ -67,13 +67,11 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
      */
     public function __construct($basePath, $settings = [])
     {
-        $this->sanitize = isset($settings['sanitize'])
-            ? $settings['sanitize'] : false;
+        $this->sanitize = $settings['sanitize'] ?? false;
         $this->badXmlLog = isset($settings['badXMLLog'])
             ? $basePath . $settings['badXMLLog'] : false;
-        $this->sanitizeRegex = isset($settings['sanitizeRegex'])
-            ? $settings['sanitizeRegex']
-            : ['/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u'];
+        $this->sanitizeRegex = $settings['sanitizeRegex']
+            ?? ['/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u'];
     }
 
     /**
