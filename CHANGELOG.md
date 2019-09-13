@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.4.1 - 2019-09-13
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Bug: each batch of IDs in log file was missing trailing line break.
+
 ## 2.4.0 - 2018-05-23
 
 ### Added

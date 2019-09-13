@@ -164,7 +164,7 @@ class RecordWriter
             if (!$file) {
                 throw new \Exception("Problem opening {$this->harvestedIdLog}.");
             }
-            fputs($file, implode(PHP_EOL, $harvestedIds));
+            fputs($file, implode(PHP_EOL, $harvestedIds) . PHP_EOL);
             fclose($file);
         }
     }
