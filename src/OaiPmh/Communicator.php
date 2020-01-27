@@ -27,10 +27,10 @@
  */
 namespace VuFindHarvest\OaiPmh;
 
+use Laminas\Http\Client;
+use Laminas\Uri\Http;
 use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
 use VuFindHarvest\ResponseProcessor\ResponseProcessorInterface;
-use Zend\Http\Client;
-use Zend\Uri\Http;
 
 /**
  * OAI-PMH Communicator (handles low-level request/response processing).

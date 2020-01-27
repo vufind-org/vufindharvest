@@ -131,7 +131,7 @@ class HarvesterConsoleRunnerTest extends \PHPUnit\Framework\TestCase
     public function testRunFromIniFile()
     {
         $basePath = '/foo/bar';
-        $client = $this->getMockBuilder('Zend\Http\Client')->getMock();
+        $client = $this->getMockBuilder('Laminas\Http\Client')->getMock();
         $harvester = $this->getMockHarvester();
         $expectedSettings = [
             'url' => 'http://bar',
@@ -167,7 +167,7 @@ class HarvesterConsoleRunnerTest extends \PHPUnit\Framework\TestCase
     public function testRunFromIniFileWithOptionOverrides()
     {
         $basePath = '/foo/bar';
-        $client = $this->getMockBuilder('Zend\Http\Client')->getMock();
+        $client = $this->getMockBuilder('Laminas\Http\Client')->getMock();
         $harvester = $this->getMockHarvester();
         $expectedSettings = [
             'url' => 'http://bar',

@@ -30,7 +30,7 @@ namespace VuFindTest\Harvest\OaiPmh;
 
 use VuFindHarvest\OaiPmh\Harvester;
 use VuFindHarvest\OaiPmh\HarvesterFactory;
-use Zend\Http\Client;
+use Laminas\Http\Client;
 
 /**
  * OAI-PMH harvester factory integration test.
@@ -204,7 +204,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
         $response->expects($this->any())
             ->method('getBody')
             ->will($this->returnValue($this->getIdentifyResponse()));
-        $header = $this->getMockBuilder('Zend\Http\Header\RetryAfter')->getMock();
+        $header = $this->getMockBuilder('Laminas\Http\Header\RetryAfter')->getMock();
         $header->expects($this->once())
             ->method('getDeltaSeconds')
             ->will($this->returnValue(1));
@@ -272,21 +272,21 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * Get a fake HTTP client
      *
-     * @return \Zend\Http\Client
+     * @return \Laminas\Http\Client
      */
     protected function getMockClient()
     {
-        $query = $this->getMockBuilder('Zend\Stdlib\Parameters')->getMock();
-        $request = $this->getMockBuilder('Zend\Http\Request')->getMock();
+        $query = $this->getMockBuilder('Laminas\Stdlib\Parameters')->getMock();
+        $request = $this->getMockBuilder('Laminas\Http\Request')->getMock();
         $request->expects($this->any())
             ->method('getQuery')
             ->will($this->returnValue($query));
-        $headers = $this->getMockBuilder('Zend\Http\Headers')->getMock();
-        $response = $this->getMockBuilder('Zend\Http\Response')->getMock();
+        $headers = $this->getMockBuilder('Laminas\Http\Headers')->getMock();
+        $response = $this->getMockBuilder('Laminas\Http\Response')->getMock();
         $response->expects($this->any())
             ->method('getHeaders')
             ->will($this->returnValue($headers));
-        $client = $this->getMockBuilder('Zend\Http\Client')->getMock();
+        $client = $this->getMockBuilder('Laminas\Http\Client')->getMock();
         $client->expects($this->any())
             ->method('getRequest')
             ->will($this->returnValue($request));
