@@ -27,12 +27,12 @@
  */
 namespace VuFindHarvest\OaiPmh;
 
+use Laminas\Http\Client;
 use VuFindHarvest\ConsoleOutput\ConsoleWriter;
 use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyFactory;
 use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface;
 use VuFindHarvest\ResponseProcessor\ResponseProcessorInterface;
 use VuFindHarvest\ResponseProcessor\SimpleXmlResponseProcessor;
-use Zend\Http\Client;
 
 /**
  * Factory for OAI-PMH Harvest Tool

@@ -27,10 +27,10 @@
  */
 namespace VuFindHarvest\OaiPmh;
 
+use Laminas\Console\Getopt;
+use Laminas\Http\Client;
 use VuFindHarvest\ConsoleOutput\ConsoleWriter;
 use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
-use Zend\Console\Getopt;
-use Zend\Http\Client;
 
 /**
  * OAI Class

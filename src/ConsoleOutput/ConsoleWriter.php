@@ -27,7 +27,7 @@
  */
 namespace VuFindHarvest\ConsoleOutput;
 
-use Zend\Console\Console;
+use Laminas\Console\Console;
 
 /**
  * Thin wrapper around console output
