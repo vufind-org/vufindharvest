@@ -27,7 +27,7 @@
  */
 namespace VuFindHarvest\ConsoleOutput;
 
-use Laminas\Console\Console;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Thin wrapper around console output
@@ -41,6 +41,23 @@ use Laminas\Console\Console;
 class ConsoleWriter implements WriterInterface
 {
     /**
+     * Output interface
+     *
+     * @var OutputInterface
+     */
+    protected $output;
+
+    /**
+     * Constructor
+     *
+     * @param OutputInterface $output Output interface
+     */
+    public function __construct(OutputInterface $output)
+    {
+        $this->output = $output;
+    }
+
+    /**
      * Output a string to the Console.
      *
      * @param string $str String to write.
@@ -49,7 +66,7 @@ class ConsoleWriter implements WriterInterface
      */
     public function write($str)
     {
-        Console::write($str);
+        $this->output->write($str);
     }
 
     /**
@@ -61,6 +78,6 @@ class ConsoleWriter implements WriterInterface
      */
     public function writeLine($str)
     {
-        Console::writeLine($str);
+        $this->output->writeln($str);
     }
 }

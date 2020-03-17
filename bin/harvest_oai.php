@@ -29,5 +29,11 @@ use VuFindHarvest\OaiPmh\HarvesterConsoleRunner;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$runner = new HarvesterConsoleRunner();
-$runner->run();
+use VuFindHarvest\OaiPmh\HarvesterCommand;
+use Symfony\Component\Console\Application;
+
+$command = new HarvesterCommand();
+$application = new Application();
+$application->add($command);
+$application->setDefaultCommand($command->getName(), true);
+return $application->run();

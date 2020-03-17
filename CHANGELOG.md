@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 4.0.0 - in development
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Raised minimum PHP requirement to version 7.2.
+- Replaced Laminas\Console with Symfony\Console.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 3.0.0 - 2020-01-27
 
 ### Added
