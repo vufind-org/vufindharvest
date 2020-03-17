@@ -28,6 +28,7 @@
  */
 namespace VuFindTest\Harvest\ConsoleOutput;
 
+use Symfony\Component\Console\Output\OutputInterface;
 use VuFindHarvest\ConsoleOutput\ConsoleWriter;
 use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
 
@@ -51,14 +52,16 @@ class ConsoleWriterTest extends \PHPUnit\Framework\TestCase
      */
     public function testWriter()
     {
-        $this->setOutputWriter(new ConsoleWriter());
-        ob_start();
-        $this->write('test');
-        $this->assertEquals('test', ob_get_contents());
-        ob_end_clean();
-        ob_start();
-        $this->writeLine('test');
-        $this->assertEquals("test\n", ob_get_contents());
-        ob_end_clean();
+        $mockOutput = $this->getMockBuilder(OutputInterface::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['write', 'writeln'])
+            ->getMock();
+        $mockOutput->expects($this->once())->method('write')
+            ->with($this->equalTo('writeTest'));
+        $mockOutput->expects($this->once())->method('writeln')
+            ->with($this->equalTo('writelnTest'));
+        $this->setOutputWriter(new ConsoleWriter($mockOutput));
+        $this->write('writeTest');
+        $this->writeLine('writelnTest');
     }
 }

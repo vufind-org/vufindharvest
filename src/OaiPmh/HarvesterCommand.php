@@ -442,15 +442,16 @@ class HarvesterCommand extends Command
     /**
      * Harvest a single repository.
      *
-     * @param InputInterface $input    Input object
-     * @param string         $target   Name of repo (used for target directory)
-     * @param array          $settings Settings for the harvester.
+     * @param InputInterface  $input    Input object
+     * @param OutputInterface $output   Output object
+     * @param string          $target   Name of repo (used for target directory)
+     * @param array           $settings Settings for the harvester.
      *
      * @return void
      * @throws \Exception
      */
-    protected function harvestSingleRepository(InputInterface $input, $target,
-        $settings
+    protected function harvestSingleRepository(InputInterface $input,
+        OutputInterface $output, $target, $settings
     ) {
         $settings['from'] = $input->getOption('from');
         $settings['until'] = $input->getOption('until');
@@ -459,7 +460,8 @@ class HarvesterCommand extends Command
             $target,
             $this->getHarvestRoot(),
             $this->getHttpClient(),
-            $settings
+            $settings,
+            $output
         );
         $harvest->launch();
     }

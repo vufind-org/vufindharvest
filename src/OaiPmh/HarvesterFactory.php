@@ -28,6 +28,7 @@
 namespace VuFindHarvest\OaiPmh;
 
 use Laminas\Http\Client;
+use Symfony\Component\Console\Output\OutputInterface;
 use VuFindHarvest\ConsoleOutput\ConsoleWriter;
 use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyFactory;
 use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface;
@@ -147,11 +148,13 @@ class HarvesterFactory
      * @param ResponseProcessorInterface $processor Response processor
      * @param string                     $target    Target being configured (used for
      * error messages)
+     * @param OutputInterface            $output    Output interface
      *
      * @return Communicator
      */
     protected function getCommunicator(Client $client, array $settings,
-        ResponseProcessorInterface $processor, $target
+        ResponseProcessorInterface $processor, $target,
+        OutputInterface $output = null
     ) {
         if (empty($settings['url'])) {
             throw new \Exception("Missing base URL for {$target}.");
@@ -160,7 +163,7 @@ class HarvesterFactory
         // We only want the communicator to output messages if we are in verbose
         // mode; communicator messages are considered verbose output.
         if (isset($settings['verbose']) && $settings['verbose']
-            && $writer = $this->getConsoleWriter($settings)
+            && $writer = $this->getConsoleWriter($output, $settings)
         ) {
             $comm->setOutputWriter($writer);
         }
@@ -170,20 +173,22 @@ class HarvesterFactory
     /**
      * Get the record XML formatter.
      *
-     * @param Communicator $communicator Communicator
-     * @param array        $settings     Additional settings
+     * @param Communicator   $communicator Communicator
+     * @param array          $settings     Additional settings
+     * @param OutputInterface $output      Output interface
      *
      * @return RecordXmlFormatter
      */
-    protected function getFormatter(Communicator $communicator, array $settings)
-    {
+    protected function getFormatter(Communicator $communicator, array $settings,
+        OutputInterface $output = null
+    ) {
         // Build the formatter:
         $formatter = new RecordXmlFormatter($settings);
 
         // Load set names if we're going to need them:
         if ($formatter->needsSetNames()) {
             $loader = $this->getSetLoader($communicator, $settings);
-            if ($writer = $this->getConsoleWriter($settings)) {
+            if ($writer = $this->getConsoleWriter($output, $settings)) {
                 $loader->setOutputWriter($writer);
             }
             $formatter->setSetNames($loader->getNames());
@@ -195,15 +200,17 @@ class HarvesterFactory
     /**
      * Get console output writer (if applicable).
      *
-     * @param array $settings OAI-PMH settings
+     * @param OutputInterface $output   Output interface
+     * @param array           $settings OAI-PMH settings
      *
      * @return ConsoleWriter
      */
-    protected function getConsoleWriter($settings)
+    protected function getConsoleWriter(?OutputInterface $output, $settings)
     {
-        // Don't create a writer if we're in silent mode.
-        return isset($settings['silent']) && $settings['silent']
-            ? null : new ConsoleWriter();
+        // Don't create a writer if we're in silent mode or have no
+        // available output interface.
+        return (($settings['silent'] ?? false) || $output === null)
+            ? null : new ConsoleWriter($output);
     }
 
     /**
@@ -272,32 +279,33 @@ class HarvesterFactory
     /**
      * Get the harvester
      *
-     * @param string $target      Name of source being harvested (used as directory
-     * name for storing harvested data inside $harvestRoot)
-     * @param string $harvestRoot Root directory containing harvested data.
-     * @param Client $client      HTTP client
-     * @param array  $settings    Additional settings
+     * @param string          $target      Name of source being harvested (used as
+     * directory name for storing harvested data inside $harvestRoot)
+     * @param string          $harvestRoot Root directory containing harvested data.
+     * @param Client          $client      HTTP client
+     * @param array           $settings    Additional settings
+     * @param OutputInterface $output      Output interface (optional)
      *
      * @return Harvester
      *
      * @throws \Exception
      */
     public function getHarvester($target, $harvestRoot, Client $client = null,
-        array $settings = []
+        array $settings = [], OutputInterface $output = null
     ) {
         $basePath = $this->getBasePath($harvestRoot, $target);
         $responseProcessor = $this->getResponseProcessor($basePath, $settings);
         $communicator = $this->getCommunicator(
             $this->configureClient($client, $settings),
-            $settings, $responseProcessor, $target
+            $settings, $responseProcessor, $target, $output
         );
-        $formatter = $this->getFormatter($communicator, $settings);
+        $formatter = $this->getFormatter($communicator, $settings, $output);
         $strategy = $this->getWriterStrategyFactory()
             ->getStrategy($basePath, $settings);
         $writer = $this->getWriter($strategy, $formatter, $settings);
         $stateManager = $this->getStateManager($basePath);
         $harvester = new Harvester($communicator, $writer, $stateManager, $settings);
-        if ($writer = $this->getConsoleWriter($settings)) {
+        if ($writer = $this->getConsoleWriter($output, $settings)) {
             $harvester->setOutputWriter($writer);
         }
         return $harvester;
