@@ -54,7 +54,6 @@ class ConsoleWriterTest extends \PHPUnit\Framework\TestCase
     {
         $mockOutput = $this->getMockBuilder(OutputInterface::class)
             ->disableOriginalConstructor()
-            ->setMethods(['write', 'writeln'])
             ->getMock();
         $mockOutput->expects($this->once())->method('write')
             ->with($this->equalTo('writeTest'));
