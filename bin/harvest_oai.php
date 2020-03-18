@@ -25,9 +25,13 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
-use VuFindHarvest\OaiPmh\HarvesterConsoleRunner;
-
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$runner = new HarvesterConsoleRunner();
-$runner->run();
+use Symfony\Component\Console\Application;
+use VuFindHarvest\OaiPmh\HarvesterCommand;
+
+$command = new HarvesterCommand();
+$application = new Application();
+$application->add($command);
+$application->setDefaultCommand($command->getName(), true);
+return $application->run();

@@ -15,13 +15,13 @@
     },
     "config": {
         "platform": {
-            "php": "7.0.8"
+            "php": "7.2"
         }
     },
     "require": {
         "php": ">=7.0.8",
-        "laminas/laminas-console": ">=2.2",
-        "laminas/laminas-http": ">=2.2"
+        "laminas/laminas-http": ">=2.2",
+        "symfony/console": "^4.0||^5.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "2.16.1",
@@ -29,8 +29,8 @@
         "phing/phing": "2.16.2",
         "phploc/phploc": "4.0.1",
         "phpmd/phpmd": "2.8.1",
-        "phpunit/phpunit": "6.5.14",
-        "sebastian/phpcpd": "3.0.1",
+        "phpunit/phpunit": "8.5.2",
+        "sebastian/phpcpd": "4.1.0",
         "squizlabs/php_codesniffer": "3.5.3"
     },
     "autoload": {

@@ -53,7 +53,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->oldTz = date_default_timezone_get();
         date_default_timezone_set('America/New_York');
@@ -64,7 +64,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         date_default_timezone_set($this->oldTz);
     }
