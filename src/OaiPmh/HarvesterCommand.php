@@ -275,8 +275,8 @@ class HarvesterCommand extends Command
      * Use command-line switches to add/override settings found in the .ini
      * file, if necessary.
      *
-     * @param InputInterface  $input    Input object
-     * @param array           $settings Incoming settings
+     * @param InputInterface $input    Input object
+     * @param array          $settings Incoming settings
      *
      * @return array
      */

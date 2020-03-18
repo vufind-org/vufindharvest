@@ -173,9 +173,9 @@ class HarvesterFactory
     /**
      * Get the record XML formatter.
      *
-     * @param Communicator   $communicator Communicator
-     * @param array          $settings     Additional settings
-     * @param OutputInterface $output      Output interface
+     * @param Communicator    $communicator Communicator
+     * @param array           $settings     Additional settings
+     * @param OutputInterface $output       Output interface
      *
      * @return RecordXmlFormatter
      */
