@@ -37,8 +37,6 @@ use VuFindHarvest\ConsoleOutput\ConsoleWriter;
 use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
 
 /**
- * OAI Class
- *
  * OAI-PMH Harvest Tool (Symfony Console Command)
  *
  * @category VuFind
@@ -117,17 +115,12 @@ class HarvesterCommand extends Command
         $this
             ->setDescription('OAI-PMH harvester')
             ->setHelp('Harvests metadata using the OAI-PMH protocol.')
-            )->addArgument(
+            ->addArgument(
                 'target',
                 InputArgument::OPTIONAL,
                 'the name of a section of the configuration specified by the ini '
-                . 'option, or a directory to harvest into if no .ini file is used. '
-                . 'If <target> is omitted, all .ini sections will be processed.'
-            )->addOption(
-                'verbose',
-                'v',
-                InputOption::VALUE_NONE,
-                'Display verbose output'
+                . "option,\nor a directory to harvest into if no .ini file is used. "
+                . "If <target> is\nomitted, all .ini sections will be processed."
             )->addOption(
                 'from',
                 null,
@@ -183,7 +176,7 @@ class HarvesterCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Specify the XML tag wrapped around multiple records in '
-                . 'combineRecords mode (default = <collection> if this '
+                . "combineRecords\nmode (default = <collection> if this "
                 . 'option is omitted)'
             )->addOption(
                 'globalSearch',
@@ -304,13 +297,13 @@ class HarvesterCommand extends Command
         }
         $flagSettings = [
             'combineRecords' => ['combineRecords', true],
-            'v' => ['verbose', true],
+            'verbose' => ['verbose', true],
             'autosslca' => ['autosslca', true],
             'nosslverifypeer' => ['sslverifypeer', false],
             'sanitize' => ['sanitize', true],
         ];
         foreach ($flagSettings as $in => $details) {
-            if ($input->getOption($in)) {
+            if ($input->hasOption($in) && $input->getOption($in)) {
                 list($out, $val) = $details;
                 $settings[$out] = $val;
             }
@@ -349,7 +342,7 @@ class HarvesterCommand extends Command
             }
             $this->writeLine("Processing {$target}...");
             try {
-                $this->harvestSingleRepository($input, $target, $settings);
+                $this->harvestSingleRepository($input, $output, $target, $settings);
             } catch (\Exception $e) {
                 $this->writeLine($e->getMessage());
                 return 1;

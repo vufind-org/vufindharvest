@@ -1,11 +1,11 @@
 <?php
 
 /**
- * OAI-PMH harvester console runner unit test.
+ * OAI-PMH harvester command unit test.
  *
  * PHP version 7
  *
- * Copyright (C) Villanova University 2016.
+ * Copyright (C) Villanova University 2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -28,7 +28,9 @@
  */
 namespace VuFindTest\Harvest\OaiPmh;
 
-use VuFindHarvest\OaiPmh\HarvesterConsoleRunner;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Tester\CommandTester;
+use VuFindHarvest\OaiPmh\HarvesterCommand;
 
 /**
  * OAI-PMH harvester console runner unit test.
@@ -39,7 +41,7 @@ use VuFindHarvest\OaiPmh\HarvesterConsoleRunner;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
-class HarvesterConsoleRunnerTest extends \PHPUnit\Framework\TestCase
+class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Get mock harvester object
@@ -54,19 +56,18 @@ class HarvesterConsoleRunnerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test help screen
+     * Get command tester
      *
-     * @return void
+     * @param array            $params  Parameters to pass to tester
+     * @param HarvesterCommand $command Command object to test (null to create one)
+     *
+     * @return CommandTester
      */
-    public function testHelp()
+    protected function getCommandTester($params = [], $command = null)
     {
-        $opts = HarvesterConsoleRunner::getDefaultOptions();
-        $opts->setArguments(['--help']);
-        $runner = new HarvesterConsoleRunner($opts);
-        ob_start();
-        $this->assertTrue($runner->run());
-        $this->assertEquals('Usage:', substr(ob_get_contents(), 0, 6));
-        ob_end_clean();
+        $tester = new CommandTester($command ?? new HarvesterCommand());
+        $tester->execute($params);
+        return $tester;
     }
 
     /**
@@ -76,10 +77,13 @@ class HarvesterConsoleRunnerTest extends \PHPUnit\Framework\TestCase
      */
     public function testMissingParameters()
     {
-        $opts = HarvesterConsoleRunner::getDefaultOptions();
-        $opts->setArguments([]);
-        $runner = new HarvesterConsoleRunner($opts, null, null, null, true);
-        $this->assertFalse($runner->run());
+        $commandTester = $this->getCommandTester();
+        $this->assertEquals(
+            'Please specify an .ini file with the --ini flag or a target directory'
+            . " with the first parameter.\n",
+            $commandTester->getDisplay()
+        );
+        $this->assertEquals(1, $commandTester->getStatusCode());
     }
 
     /**
@@ -89,10 +93,13 @@ class HarvesterConsoleRunnerTest extends \PHPUnit\Framework\TestCase
      */
     public function testIncompleteParameters()
     {
-        $opts = HarvesterConsoleRunner::getDefaultOptions();
-        $opts->setArguments(['foo']);
-        $runner = new HarvesterConsoleRunner($opts, null, null, null, true);
-        $this->assertFalse($runner->run());
+        $commandTester = $this->getCommandTester(['foo']);
+        $this->assertEquals(
+            'Please specify an .ini file with the --ini flag or a target directory'
+            . " with the first parameter.\n",
+            $commandTester->getDisplay()
+        );
+        $this->assertEquals(1, $commandTester->getStatusCode());
     }
 
     /**
@@ -102,11 +109,15 @@ class HarvesterConsoleRunnerTest extends \PHPUnit\Framework\TestCase
      */
     public function testInvalidIniSection()
     {
-        $opts = HarvesterConsoleRunner::getDefaultOptions();
         $ini = realpath(__DIR__ . '/../../../../fixtures/test.ini');
-        $opts->setArguments(['--ini=' . $ini, 'badsection']);
-        $runner = new HarvesterConsoleRunner($opts, null, null, null, true);
-        $this->assertFalse($runner->run());
+        $commandTester = $this->getCommandTester(
+            ['--ini' => $ini, 'target' => 'badsection']
+        );
+        $this->assertEquals(
+            "badsection not found in $ini.\n",
+            $commandTester->getDisplay()
+        );
+        $this->assertEquals(1, $commandTester->getStatusCode());
     }
 
     /**
@@ -116,11 +127,14 @@ class HarvesterConsoleRunnerTest extends \PHPUnit\Framework\TestCase
      */
     public function testInvalidIniFile()
     {
-        $opts = HarvesterConsoleRunner::getDefaultOptions();
         $ini = realpath(__DIR__ . '/../../../../fixtures/test-doesnotexist.ini');
-        $opts->setArguments(['--ini=' . $ini]);
-        $runner = new HarvesterConsoleRunner($opts, null, null, null, true);
-        $this->assertFalse($runner->run());
+        $commandTester = $this->getCommandTester(['--ini' => $ini]);
+        $this->assertEquals(
+            'Please specify an .ini file with the --ini flag or a target directory'
+            . " with the first parameter.\n",
+            $commandTester->getDisplay()
+        );
+        $this->assertEquals(1, $commandTester->getStatusCode());
     }
 
     /**
@@ -149,13 +163,12 @@ class HarvesterConsoleRunnerTest extends \PHPUnit\Framework\TestCase
                 $this->equalTo($client), $this->equalTo($expectedSettings)
             )
             ->will($this->returnValue($harvester));
-        $opts = HarvesterConsoleRunner::getDefaultOptions();
         $ini = realpath(__DIR__ . '/../../../../fixtures/test.ini');
-        $opts->setArguments(['--ini=' . $ini]);
-        $runner = new HarvesterConsoleRunner(
-            $opts, $client, $basePath, $factory, true
+        $commandTester = $this->getCommandTester(
+            ['--ini' => $ini],
+            new HarvesterCommand($client, $basePath, $factory)
         );
-        $this->assertTrue($runner->run());
+        $this->assertEquals(0, $commandTester->getStatusCode());
     }
 
     /**
@@ -187,12 +200,46 @@ class HarvesterConsoleRunnerTest extends \PHPUnit\Framework\TestCase
                 $this->equalTo($client), $this->equalTo($expectedSettings)
             )
             ->will($this->returnValue($harvester));
-        $opts = HarvesterConsoleRunner::getDefaultOptions();
         $ini = realpath(__DIR__ . '/../../../../fixtures/test.ini');
-        $opts->setArguments(['--ini=' . $ini, '-v', '--timeout=45', 'foo']);
-        $runner = new HarvesterConsoleRunner(
-            $opts, $client, $basePath, $factory, true
+        $commandTester = $this->getCommandTester(
+            [
+                '--ini' => $ini,
+                '--verbose' => true,
+                '--timeout' => 45,
+                'target' => 'foo'
+            ],
+            new VerboseHarvesterCommand($client, $basePath, $factory)
         );
-        $this->assertTrue($runner->run());
+        $this->assertEquals(0, $commandTester->getStatusCode());
+    }
+}
+
+/**
+ * Since the Symfony framework adds the 'verbose' option at a higher level than
+ * the command, we need to add the option in this fake subclass in order to test
+ * verbosity here.
+ *
+ * @category VuFind
+ * @package  Harvest_Tools
+ * @author   Demian Katz <demian.katz@villanova.edu>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
+ */
+class VerboseHarvesterCommand extends HarvesterCommand
+{
+    /**
+     * Configure the command.
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        parent::configure();
+        $this->addOption(
+            'verbose',
+            'v',
+            InputOption::VALUE_NONE,
+            'Verbose mode'
+        );
     }
 }

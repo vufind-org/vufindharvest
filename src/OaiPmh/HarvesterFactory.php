@@ -162,7 +162,7 @@ class HarvesterFactory
         $comm = new Communicator($settings['url'], $client, $processor);
         // We only want the communicator to output messages if we are in verbose
         // mode; communicator messages are considered verbose output.
-        if (isset($settings['verbose']) && $settings['verbose']
+        if (($settings['verbose'] ?? false)
             && $writer = $this->getConsoleWriter($output, $settings)
         ) {
             $comm->setOutputWriter($writer);
