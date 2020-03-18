@@ -2,16 +2,17 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 4.0.0 - in development
+## 4.0.0 - 2020-03-18
 
 ### Added
 
-- Nothing.
+- VuFindHarvest\OaiPmh\HarvesterCommand class (for Symfony\Console integration).
 
 ### Changed
 
 - Raised minimum PHP requirement to version 7.2.
-- Replaced Laminas\Console with Symfony\Console.
+- Replaced Laminas\Console with Symfony\Console as console interaction framework.
+- VuFindHarvest\ConsoleOutput\ConsoleWriter class is now a wrapper around Symfony\Component\Console\Output\OutputInterface (which also impacts some of the internals of VuFindHarvest\OaiPmh\HarvesterFactory).
 
 ### Deprecated
 
@@ -19,7 +20,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- Nothing.
+- VuFindHarvest\OaiPmh\HarvesterConsoleRunner class (for Laminas\Console integration).
 
 ### Fixed
 
