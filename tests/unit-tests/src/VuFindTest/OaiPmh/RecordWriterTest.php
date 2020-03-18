@@ -29,8 +29,8 @@
 namespace VuFindTest\Harvest\OaiPmh;
 
 use VuFindHarvest\OaiPmh\RecordWriter;
-use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface;
 use VuFindHarvest\OaiPmh\RecordXmlFormatter;
+use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface;
 
 /**
  * OAI-PMH record writer unit test.

@@ -28,9 +28,9 @@
  */
 namespace VuFindTest\Harvest\OaiPmh;
 
+use Laminas\Http\Client;
 use VuFindHarvest\OaiPmh\Harvester;
 use VuFindHarvest\OaiPmh\HarvesterFactory;
-use Laminas\Http\Client;
 
 /**
  * OAI-PMH harvester factory integration test.
@@ -63,7 +63,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * 
+     *
      * @param string $target      Name of source being harvested (used as directory
      * name for storing harvested data inside $harvestRoot)
      * @param string $harvestRoot Root directory containing harvested data.
@@ -227,11 +227,12 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      *
-     * @expectedException        Exception
-     * @expectedExceptionMessage HTTP Error
      */
     public function testHTTPErrorDetection()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('HTTP Error');
+
         $client = $this->getMockClient();
         $response = $client->send();
         $response->expects($this->any())
@@ -244,16 +245,17 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-    /**
+     * /**
      * Test that a missing URL throws an exception.
      *
      * @return void
      *
-     * @expectedException        Exception
-     * @expectedExceptionMessage Missing base URL for test.
      */
     public function testMissingURLThrowsException()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Missing base URL for test.');
+
         $oai = $this->getHarvester('test', sys_get_temp_dir(), [], $this->getMockClient());
     }
 

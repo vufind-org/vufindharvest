@@ -28,8 +28,6 @@
  */
 namespace VuFindTest\Harvest\RecordWriterStrategy;
 
-use VuFindHarvest\RecordWriterStrategy\CombinedRecordWriterStrategy;
-
 /**
  * IndividualRecordWriterStrategy unit test.
  *

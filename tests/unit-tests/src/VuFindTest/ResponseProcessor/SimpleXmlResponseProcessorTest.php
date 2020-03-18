@@ -46,11 +46,12 @@ class SimpleXmlResponseProcessorTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      *
-     * @expectedException        Exception
-     * @expectedExceptionMessage Problem loading XML: Char 0x0 out of allowed range
      */
     public function testBadXmlWithoutSanitization()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Problem loading XML: Char 0x0 out of allowed range');
+
         $badXml = '<illegal value="' . chr(0) . '" />';
         $noSanitize = new SimpleXmlResponseProcessor('/foo/bar');
         $noSanitize->process($badXml);
@@ -82,11 +83,12 @@ class SimpleXmlResponseProcessorTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      *
-     * @expectedException        Exception
-     * @expectedExceptionMessage Problem opening /definitely/does/not/exist/foo/bar/xyzzy/foo.log
      */
     public function testBadXmlWithSanitizationAndBadLogDir()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Problem opening /definitely/does/not/exist/foo/bar/xyzzy/foo.log');
+
         $badXml = '<illegal value="' . chr(0) . '" />';
         $basePath = '/definitely/does/not/exist/foo/bar/xyzzy/';
         $options = ['sanitize' => true, 'badXMLLog' => 'foo.log'];
