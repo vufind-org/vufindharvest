@@ -227,11 +227,12 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      *
-     * @expectedException        Exception
-     * @expectedExceptionMessage HTTP Error
      */
     public function testHTTPErrorDetection()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('HTTP Error');
+
         $client = $this->getMockClient();
         $response = $client->send();
         $response->expects($this->any())
@@ -249,11 +250,12 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      *
-     * @expectedException        Exception
-     * @expectedExceptionMessage Missing base URL for test.
      */
     public function testMissingURLThrowsException()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Missing base URL for test.');
+
         $oai = $this->getHarvester('test', sys_get_temp_dir(), [], $this->getMockClient());
     }
 

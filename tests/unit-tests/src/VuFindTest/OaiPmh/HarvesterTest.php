@@ -346,11 +346,12 @@ XML;
      *
      * @return void
      *
-     * @expectedException        Exception
-     * @expectedExceptionMessage Token expired; removing last_state.txt. Please restart harvest.
      */
     public function testBadResumptionToken()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Token expired; removing last_state.txt. Please restart harvest.');
+
         $comm = $this->getMockCommunicator();
         $expectedSettings = ['resumptionToken' => 'foo'];
         $comm->expects($this->once())->method('request')
@@ -375,11 +376,12 @@ XML;
      *
      * @return void
      *
-     * @expectedException        Exception
-     * @expectedExceptionMessage OAI-PMH error -- code: foo, value: bar
      */
     public function testArbitraryOaiError()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('OAI-PMH error -- code: foo, value: bar');
+
         $comm = $this->getMockCommunicator();
         $expectedSettings = ['metadataPrefix' => 'oai_dc'];
         $comm->expects($this->once())->method('request')

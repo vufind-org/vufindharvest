@@ -180,11 +180,12 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      *
-     * @expectedException        Exception
-     * @expectedExceptionMessage Unexpected missing record metadata.
      */
     public function testMissingMetadataException()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Unexpected missing record metadata.');
+
         $formatter = new RecordXmlFormatter();
         $formatter->format('foo', simplexml_load_string('<empty />'));
     }
