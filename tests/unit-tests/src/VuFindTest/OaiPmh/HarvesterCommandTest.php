@@ -127,11 +127,10 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
      */
     public function testInvalidIniFile()
     {
-        $ini = realpath(__DIR__ . '/../../../../fixtures/test-doesnotexist.ini');
+        $ini = realpath(__DIR__ . '/../../../../fixtures') . '/test-doesnotexist.ini';
         $commandTester = $this->getCommandTester(['--ini' => $ini]);
         $this->assertEquals(
-            'Please specify an .ini file with the --ini flag or a target directory'
-            . " with the first parameter.\n",
+            "Please add OAI-PMH settings to $ini.\n",
             $commandTester->getDisplay()
         );
         $this->assertEquals(1, $commandTester->getStatusCode());
