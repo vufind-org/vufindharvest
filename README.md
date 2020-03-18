@@ -83,7 +83,7 @@ Architecture
 If you wish to incorporate this code into another project, or extend it to
 support more options, here are the most important top-level classes:
 
-* [VuFindHarvester\OaiPmh\HarvesterConsoleRunner](https://github.com/vufind-org/vufindharvest/blob/master/src/OaiPmh/HarvesterConsoleRunner.php) - Provides command-line interface around VuFindHarvester\OaiPmh\Harvester
+* [VuFindHarvester\OaiPmh\HarvesterCommand](https://github.com/vufind-org/vufindharvest/blob/master/src/OaiPmh/HarvesterCommand.php) - Provides command-line interface around VuFindHarvester\OaiPmh\Harvester
 * [VuFindHarvester\OaiPmh\HarvesterFactory](https://github.com/vufind-org/vufindharvest/blob/master/src/OaiPmh/HarvesterFactory.php) - Factory class to create VuFindHarvester\OaiPmh\Harvester objects with all dependencies injected
 * [VuFindHarvester\OaiPmh\Harvester](https://github.com/vufind-org/vufindharvest/blob/master/src/OaiPmh/Harvester.php) - Class to perform a single harvest of a single OAI-PMH repository.
 
