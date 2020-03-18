@@ -28,8 +28,8 @@
  */
 namespace VuFindTest\Harvest\RecordWriterStrategy;
 
-use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyFactory;
 use VuFindHarvest\RecordWriterStrategy\CombinedRecordWriterStrategy;
+use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyFactory;
 
 /**
  * Record writer strategy factory integration test.

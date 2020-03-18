@@ -28,9 +28,9 @@
  */
 namespace VuFindTest\Harvest\OaiPmh;
 
+use Laminas\Http\Client;
 use VuFindHarvest\OaiPmh\Harvester;
 use VuFindHarvest\OaiPmh\HarvesterFactory;
-use Laminas\Http\Client;
 
 /**
  * OAI-PMH harvester factory integration test.
@@ -63,7 +63,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * 
+     *
      * @param string $target      Name of source being harvested (used as directory
      * name for storing harvested data inside $harvestRoot)
      * @param string $harvestRoot Root directory containing harvested data.
@@ -244,7 +244,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-    /**
+     * /**
      * Test that a missing URL throws an exception.
      *
      * @return void
