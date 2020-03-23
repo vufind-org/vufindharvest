@@ -135,7 +135,8 @@ class HarvesterCommand extends Command
                 'ini',
                 null,
                 InputOption::VALUE_REQUIRED,
-                '.ini file to load'
+                '.ini file to load; if you set other more specific options, they'
+                . " will\noverride equivalent settings loaded from the .ini file."
             )->addOption(
                 'url',
                 null,
@@ -267,8 +268,6 @@ class HarvesterCommand extends Command
                 'Filename (relative to harvest directory) to log'
                 . ' XML fixed by sanitize setting'
             );
-        $options = "[ options ] may be selected from those below,\n"
-            . "and will override .ini settings where applicable.";
     }
 
     /**

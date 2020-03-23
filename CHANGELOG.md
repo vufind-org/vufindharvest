@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 4.0.1 - in development
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Improved help message for --ini option.
+
 ## 4.0.0 - 2020-03-18
 
 ### Added
