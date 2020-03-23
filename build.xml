@@ -92,6 +92,8 @@
       </then>
     </if>
     <mkdir dir="${builddir}/apidocs"/>
+    <mkdir dir="${builddir}/docs_cache" />
+    <!-- Old embedded version; no longer works correctly...
     <phpdoc2 title="VuFindHarvest API Documentation"
       pharlocation="${srcdir}/vendor/bin/phpDocumentor-${phpdoc_version}.phar"
       destdir="${builddir}/apidocs">
@@ -99,6 +101,8 @@
         <include name="src/**/*.php" />
       </fileset>
     </phpdoc2>
+    -->
+    <exec command="php ${srcdir}/vendor/bin/phpDocumentor-${phpdoc_version}.phar --cache-folder=${builddir}/docs_cache --title=&quot;VuFindHarvest API Documentation&quot; -t ${builddir}/apidocs -d ${srcdir}/src" passthru="true" />
   </target>
 
   <!-- PHPUnit -->
