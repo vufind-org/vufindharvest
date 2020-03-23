@@ -109,6 +109,8 @@ class HarvesterCommand extends Command
      * Configure the command.
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function configure()
     {
