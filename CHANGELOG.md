@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 4.0.1 - in development
+## 4.0.1 - 2020-03-23
 
 ### Added
 
