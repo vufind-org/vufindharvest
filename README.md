@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/vufind-org/vufindharvest.svg?branch=dev)](https://travis-ci.org/vufind-org/vufindharvest)
+[![Build Status](https://travis-ci.com/vufind-org/vufindharvest.svg?branch=dev)](https://travis-ci.com/vufind-org/vufindharvest)
 VuFindHarvest
 =============
 
