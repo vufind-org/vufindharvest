@@ -4,7 +4,8 @@
   <property name="package"  value="${phing.project.name}" override="true" />
   <property name="builddir" value="${tmp}/build/${phing.project.name}" override="true" />
   <property name="srcdir"   value="${project.basedir}" override="true" />
-  <property name="phpdoc_version" value="3.0.0-rc" />
+  <property name="skip_phpdoc" value="false" />
+  <property name="phpdoc_version" value="3.0.0" />
 
   <!-- Main Target -->
   <target name="main" description="main target">
@@ -36,6 +37,7 @@
     <phingcall target="phpmd"/>
     <phingcall target="pdepend"/>
     <phingcall target="phploc"/>
+    <phingcall target="phpstan-checkstyle"/>
   </target>
 
   <!-- Report rule violations with PHPMD (mess detector) -->
@@ -69,6 +71,14 @@
     <exec command="${srcdir}/vendor/bin/phpcs --standard=${srcdir}/tests/phpcs.xml" escape="false" passthru="true" checkreturn="true" />
   </target>
 
+  <!-- Phpstan -->
+  <target name="phpstan-checkstyle">
+    <exec command="${srcdir}/vendor/bin/phpstan --configuration=${srcdir}/tests/phpstan.neon --memory-limit=2G --error-format=checkstyle analyse &gt; ${builddir}/reports/phpstan-checkstyle.xml" escape="false" passthru="true" checkreturn="true" />
+  </target>
+  <target name="phpstan-console">
+    <exec command="${srcdir}/vendor/bin/phpstan --configuration=${srcdir}/tests/phpstan.neon --memory-limit=2G analyse" escape="false" passthru="true" checkreturn="true" />
+  </target>
+
   <!-- php-cs-fixer (first task applies fixes, second task simply checks if they are needed) -->
   <target name="php-cs-fixer">
     <exec command="${srcdir}/vendor/bin/php-cs-fixer fix --config=${srcdir}/tests/vufind.php_cs --verbose" passthru="true" escape="false" />
@@ -91,18 +101,25 @@
         </chmod>
       </then>
     </if>
-    <mkdir dir="${builddir}/apidocs"/>
-    <mkdir dir="${builddir}/docs_cache" />
-    <!-- Old embedded version; no longer works correctly...
-    <phpdoc2 title="VuFindHarvest API Documentation"
-      pharlocation="${srcdir}/vendor/bin/phpDocumentor-${phpdoc_version}.phar"
-      destdir="${builddir}/apidocs">
-      <fileset dir=".">
-        <include name="src/**/*.php" />
-      </fileset>
-    </phpdoc2>
-    -->
-    <exec command="php ${srcdir}/vendor/bin/phpDocumentor-${phpdoc_version}.phar --cache-folder=${builddir}/docs_cache --title=&quot;VuFindHarvest API Documentation&quot; -t ${builddir}/apidocs -d ${srcdir}/src" passthru="true" />
+    <!-- Run phpdoc -->
+    <!-- Skip the whole phpdoc task when disabled -->
+    <if>
+      <not><istrue value="${skip_phpdoc}" /></not>
+      <then>
+        <mkdir dir="${builddir}/apidocs" />
+        <mkdir dir="${builddir}/docs_cache" />
+        <!-- Old embedded version; no longer works correctly...
+        <phpdoc2 title="VuFindHarvest API Documentation"
+          pharlocation="${srcdir}/vendor/bin/phpDocumentor-${phpdoc_version}.phar"
+          destdir="${builddir}/apidocs">
+          <fileset dir=".">
+            <include name="src/**/*.php" />
+          </fileset>
+        </phpdoc2>
+        -->
+        <exec command="php ${srcdir}/vendor/bin/phpDocumentor-${phpdoc_version}.phar --cache-folder=${builddir}/docs_cache --title=&quot;VuFindHarvest API Documentation&quot; -t ${builddir}/apidocs -d ${srcdir}/src" passthru="true" />
+      </then>
+    </if>
   </target>
 
   <!-- PHPUnit -->
@@ -120,7 +137,7 @@
     <exec command="composer install" />
   </target>
 
-  <!-- Uninstall and Deactivate VuFind -->
+  <!-- Clean up -->
   <target name="shutdown" description="clean up file system">
     <delete dir="${srcdir}/vendor" includeemptydirs="true" failonerror="true" />
     <delete file="${srcdir}/composer.lock" failonerror="true" />

@@ -305,7 +305,7 @@ class HarvesterCommand extends Command
         ];
         foreach ($flagSettings as $in => $details) {
             if ($input->hasOption($in) && $input->getOption($in)) {
-                list($out, $val) = $details;
+                [$out, $val] = $details;
                 $settings[$out] = $val;
             }
         }

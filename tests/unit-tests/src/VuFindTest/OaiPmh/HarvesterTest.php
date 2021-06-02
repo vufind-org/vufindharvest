@@ -317,13 +317,16 @@ XML;
             'metadataPrefix' => 'oai_dc', 'set' => 'xyzzy',
             'from' => '2016-07-01', 'until' => '2016-07-31',
         ];
-        $comm->expects($this->at(0))->method('request')
-            ->with($this->equalTo('ListRecords'), $this->equalTo($expectedSettings0))
-            ->will($this->returnValue(simplexml_load_string($this->getFakeResponseWithToken())));
         $expectedSettings1 = ['resumptionToken' => 'more'];
-        $comm->expects($this->at(1))->method('request')
-            ->with($this->equalTo('ListRecords'), $this->equalTo($expectedSettings1))
-            ->will($this->returnValue(simplexml_load_string($this->getFakeResponse())));
+        $comm->expects($this->exactly(2))->method('request')
+            ->withConsecutive(
+                ['ListRecords', $expectedSettings0],
+                ['ListRecords', $expectedSettings1],
+            )
+            ->willReturnOnConsecutiveCalls(
+                simplexml_load_string($this->getFakeResponseWithToken()),
+                simplexml_load_string($this->getFakeResponse())
+            );
         $writer = $this->getMockRecordWriter();
         $writer->expects($this->exactly(2))->method('write')
             ->with($this->isInstanceOf('SimpleXMLElement'));
