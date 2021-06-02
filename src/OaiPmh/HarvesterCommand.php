@@ -332,7 +332,7 @@ class HarvesterCommand extends Command
         }
 
         // Loop through all the settings and perform harvests:
-        $processed = $skipped = 0;
+        $processed = $skipped = $errors = 0;
         foreach ($allSettings as $target => $baseSettings) {
             $settings = $this->updateSettingsWithConsoleOptions(
                 $input, $baseSettings
@@ -346,7 +346,7 @@ class HarvesterCommand extends Command
                 $this->harvestSingleRepository($input, $output, $target, $settings);
             } catch (\Exception $e) {
                 $this->writeLine($e->getMessage());
-                return 1;
+                $errors++;
             }
             $processed++;
         }
@@ -356,6 +356,13 @@ class HarvesterCommand extends Command
             $this->writeLine(
                 'No valid settings found; '
                 . 'please set url and metadataPrefix at minimum.'
+            );
+            return 1;
+        }
+        if ($errors > 0) {
+            $this->writeLine(
+                "Completed with {$errors} error(s) -- "
+                . "{$processed} source(s) processed."
             );
             return 1;
         }

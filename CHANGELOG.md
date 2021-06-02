@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- The failure to harvest from one OAI source no longer causes the entire batch to fail.
 
 ## 4.0.1 - 2020-03-23
 
