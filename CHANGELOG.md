@@ -2,15 +2,16 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## Next Release - TBD
+## 4.1.0 - TBD
 
 ### Added
 
-- Nothing.
+- The VuFindHarvest\Exception\OaiException class, for finer-grained error handling.
 
 ### Changed
 
 - The minimum PHP version requirement has been raised to 7.3.
+- The noRecordsMatch error is no longer treated as a fatal problem.
 
 ### Deprecated
 

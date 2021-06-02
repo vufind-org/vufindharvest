@@ -35,6 +35,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use VuFindHarvest\ConsoleOutput\ConsoleWriter;
 use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
+use VuFindHarvest\Exception\OaiException;
 
 /**
  * OAI-PMH Harvest Tool (Symfony Console Command)
@@ -345,8 +346,14 @@ class HarvesterCommand extends Command
             try {
                 $this->harvestSingleRepository($input, $output, $target, $settings);
             } catch (\Exception $e) {
-                $this->writeLine($e->getMessage());
-                $errors++;
+                if ($e instanceof OaiException
+                    && strtolower($e->getOaiCode()) == 'norecordsmatch'
+                ) {
+                    $this->writeLine("No new records found.");
+                } else {
+                    $this->writeLine($e->getMessage());
+                    $errors++;
+                }
             }
             $processed++;
         }
