@@ -167,7 +167,7 @@ class Harvester
         // Load last state, if applicable (used to recover from server failure).
         if ($state = $this->stateManager->loadState()) {
             $this->write("Found saved state; attempting to resume.\n");
-            list($resumeSet, $resumeToken, $this->startDate) = $state;
+            [$resumeSet, $resumeToken, $this->startDate] = $state;
         }
 
         // Loop through all of the selected sets:
