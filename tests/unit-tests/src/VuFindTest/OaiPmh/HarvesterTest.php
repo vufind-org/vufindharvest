@@ -76,7 +76,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getMockCommunicator()
     {
-        return $this->getMockBuilder('VuFindHarvest\OaiPmh\Communicator')
+        return $this->getMockBuilder(\VuFindHarvest\OaiPmh\Communicator::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -88,7 +88,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getMockRecordWriter()
     {
-        return $this->getMockBuilder('VuFindHarvest\OaiPmh\RecordWriter')
+        return $this->getMockBuilder(\VuFindHarvest\OaiPmh\RecordWriter::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -100,7 +100,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getMockStateManager()
     {
-        return $this->getMockBuilder('VuFindHarvest\OaiPmh\StateManager')
+        return $this->getMockBuilder(\VuFindHarvest\OaiPmh\StateManager::class)
             ->disableOriginalConstructor()
             ->getMock();
     }

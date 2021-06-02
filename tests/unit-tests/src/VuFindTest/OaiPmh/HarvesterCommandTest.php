@@ -50,7 +50,7 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
      */
     protected function getMockHarvester()
     {
-        return $this->getMockBuilder('VuFindHarvest\OaiPmh\Harvester')
+        return $this->getMockBuilder(\VuFindHarvest\OaiPmh\Harvester::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -144,7 +144,7 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
     public function testRunFromIniFile()
     {
         $basePath = '/foo/bar';
-        $client = $this->getMockBuilder('Laminas\Http\Client')->getMock();
+        $client = $this->getMockBuilder(\Laminas\Http\Client::class)->getMock();
         $harvester = $this->getMockHarvester();
         $expectedSettings = [
             'url' => 'http://bar',
@@ -153,7 +153,8 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
             'until' => null,
             'silent' => false
         ];
-        $factory = $this->getMockBuilder('VuFindHarvest\OaiPmh\HarvesterFactory')
+        $factory = $this
+            ->getMockBuilder(\VuFindHarvest\OaiPmh\HarvesterFactory::class)
             ->getMock();
         $factory->expects($this->once())
             ->method('getHarvester')
@@ -179,7 +180,7 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
     public function testRunFromIniFileWithOptionOverrides()
     {
         $basePath = '/foo/bar';
-        $client = $this->getMockBuilder('Laminas\Http\Client')->getMock();
+        $client = $this->getMockBuilder(\Laminas\Http\Client::class)->getMock();
         $harvester = $this->getMockHarvester();
         $expectedSettings = [
             'url' => 'http://bar',
@@ -190,7 +191,8 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
             'verbose' => true,
             'timeout' => 45,
         ];
-        $factory = $this->getMockBuilder('VuFindHarvest\OaiPmh\HarvesterFactory')
+        $factory = $this
+            ->getMockBuilder(\VuFindHarvest\OaiPmh\HarvesterFactory::class)
             ->getMock();
         $factory->expects($this->once())
             ->method('getHarvester')

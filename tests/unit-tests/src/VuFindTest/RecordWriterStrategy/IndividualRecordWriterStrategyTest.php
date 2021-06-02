@@ -47,7 +47,7 @@ class IndividualRecordWriterStrategyTest extends \PHPUnit\Framework\TestCase
     public function testStrategy()
     {
         $mock = $this->getMockBuilder(
-            'VuFindHarvest\RecordWriterStrategy\IndividualRecordWriterStrategy'
+            \VuFindHarvest\RecordWriterStrategy\IndividualRecordWriterStrategy::class
         )->onlyMethods(['saveDeletedRecords', 'saveFile'])
             ->setConstructorArgs(['foo'])->getMock();
         $mock->expects($this->exactly(2))->method('saveDeletedRecords')

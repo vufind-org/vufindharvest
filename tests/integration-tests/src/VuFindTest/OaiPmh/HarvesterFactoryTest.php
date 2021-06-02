@@ -204,7 +204,8 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
         $response->expects($this->any())
             ->method('getBody')
             ->will($this->returnValue($this->getIdentifyResponse()));
-        $header = $this->getMockBuilder('Laminas\Http\Header\RetryAfter')->getMock();
+        $header = $this->getMockBuilder(\Laminas\Http\Header\RetryAfter::class)
+            ->getMock();
         $header->expects($this->once())
             ->method('getDeltaSeconds')
             ->will($this->returnValue(1));
@@ -278,17 +279,17 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected function getMockClient()
     {
-        $query = $this->getMockBuilder('Laminas\Stdlib\Parameters')->getMock();
-        $request = $this->getMockBuilder('Laminas\Http\Request')->getMock();
+        $query = $this->getMockBuilder(\Laminas\Stdlib\Parameters::class)->getMock();
+        $request = $this->getMockBuilder(\Laminas\Http\Request::class)->getMock();
         $request->expects($this->any())
             ->method('getQuery')
             ->will($this->returnValue($query));
-        $headers = $this->getMockBuilder('Laminas\Http\Headers')->getMock();
-        $response = $this->getMockBuilder('Laminas\Http\Response')->getMock();
+        $headers = $this->getMockBuilder(\Laminas\Http\Headers::class)->getMock();
+        $response = $this->getMockBuilder(\Laminas\Http\Response::class)->getMock();
         $response->expects($this->any())
             ->method('getHeaders')
             ->will($this->returnValue($headers));
-        $client = $this->getMockBuilder('Laminas\Http\Client')->getMock();
+        $client = $this->getMockBuilder(\Laminas\Http\Client::class)->getMock();
         $client->expects($this->any())
             ->method('getRequest')
             ->will($this->returnValue($request));

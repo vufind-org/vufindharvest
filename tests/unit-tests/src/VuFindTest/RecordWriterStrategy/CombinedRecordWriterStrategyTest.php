@@ -49,7 +49,7 @@ class CombinedRecordWriterStrategyTest extends \PHPUnit\Framework\TestCase
     public function testStrategy()
     {
         $mock = $this->getMockBuilder(
-            'VuFindHarvest\RecordWriterStrategy\CombinedRecordWriterStrategy'
+            \VuFindHarvest\RecordWriterStrategy\CombinedRecordWriterStrategy::class
         )->onlyMethods(['saveDeletedRecords', 'saveFile'])
             ->setConstructorArgs(['foo', '<wrapper test="true">'])
             ->getMock();
