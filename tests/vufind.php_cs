@@ -1,8 +1,8 @@
 <?php
 
 $finder = new PhpCsFixer\Finder();
-$finder->in(__DIR__ . '/../bin');
-    ->in(__DIR__ . '/../src');
+$finder->in(__DIR__ . '/../bin')
+    ->in(__DIR__ . '/../src')
     ->in(__DIR__ . '/../tests');
 
 $rules = [
