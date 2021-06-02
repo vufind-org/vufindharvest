@@ -198,9 +198,9 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
         $response->expects($this->any())
             ->method('isSuccess')
             ->will($this->returnValue(true));
-        $response->expects($this->at(1))
+        $response->expects($this->exactly(2))
             ->method('getStatusCode')
-            ->will($this->returnValue(503));
+            ->willReturnOnConsecutiveCalls(503, 200);
         $response->expects($this->any())
             ->method('getBody')
             ->will($this->returnValue($this->getIdentifyResponse()));

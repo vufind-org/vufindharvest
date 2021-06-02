@@ -50,7 +50,7 @@ class CombinedRecordWriterStrategyTest extends \PHPUnit\Framework\TestCase
     {
         $mock = $this->getMockBuilder(
             'VuFindHarvest\RecordWriterStrategy\CombinedRecordWriterStrategy'
-        )->setMethods(['saveDeletedRecords', 'saveFile'])
+        )->onlyMethods(['saveDeletedRecords', 'saveFile'])
             ->setConstructorArgs(['foo', '<wrapper test="true">'])
             ->getMock();
         $expectedXml = '<wrapper test="true"><foo1 /><foo2 /></wrapper>';

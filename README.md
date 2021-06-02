@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/vufind-org/vufindharvest.svg?branch=dev)](https://travis-ci.com/vufind-org/vufindharvest)
+[![CI Status](https://github.com/vufind-org/vufindharvest/actions/workflows/ci.yaml/badge.svg?branch=dev)](https://github.com/vufind-org/vufindharvest/actions/workflows/ci.yaml)
 VuFindHarvest
 =============
 

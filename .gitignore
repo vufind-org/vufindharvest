@@ -1,4 +1,5 @@
 vendor
 composer.lock
 .php_cs_cache
+.phpstan_cache
 .phpunit.result.cache

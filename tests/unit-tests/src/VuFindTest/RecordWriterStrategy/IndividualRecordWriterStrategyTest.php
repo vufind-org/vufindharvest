@@ -48,16 +48,12 @@ class IndividualRecordWriterStrategyTest extends \PHPUnit\Framework\TestCase
     {
         $mock = $this->getMockBuilder(
             'VuFindHarvest\RecordWriterStrategy\IndividualRecordWriterStrategy'
-        )->setMethods(['saveDeletedRecords', 'saveFile'])
+        )->onlyMethods(['saveDeletedRecords', 'saveFile'])
             ->setConstructorArgs(['foo'])->getMock();
-        $mock->expects($this->at(0))->method('saveDeletedRecords')
-            ->with($this->equalTo('d1'));
-        $mock->expects($this->at(1))->method('saveFile')
-            ->with($this->equalTo('r1'), $this->equalTo('<foo1 />'));
-        $mock->expects($this->at(2))->method('saveDeletedRecords')
-            ->with($this->equalTo('d2'));
-        $mock->expects($this->at(3))->method('saveFile')
-            ->with($this->equalTo('r2'), $this->equalTo('<foo2 />'));
+        $mock->expects($this->exactly(2))->method('saveDeletedRecords')
+            ->withConsecutive(['d1'], ['d2']);
+        $mock->expects($this->exactly(2))->method('saveFile')
+            ->withConsecutive(['r1'], ['r2']);
         $mock->beginWrite();
         $mock->addDeletedRecord('d1');
         $mock->addRecord('r1', '<foo1 />');
