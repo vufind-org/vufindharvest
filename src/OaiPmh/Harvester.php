@@ -28,6 +28,7 @@
 namespace VuFindHarvest\OaiPmh;
 
 use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
+use VuFindHarvest\Exception\OaiException;
 
 /**
  * OAI-PMH Harvest Tool
@@ -238,6 +239,7 @@ class Harvester
      * @return void
      *
      * @throws \Exception
+     * @throws OaiException
      */
     protected function checkResponseForErrors($result)
     {
@@ -255,10 +257,7 @@ class Harvester
                     "Token expired; removing last_state.txt. Please restart harvest."
                 );
             }
-            throw new \Exception(
-                "OAI-PMH error -- code: {$attribs['code']}, " .
-                "value: {$result->error}"
-            );
+            throw new OaiException($attribs['code'], $result->error);
         }
     }
 

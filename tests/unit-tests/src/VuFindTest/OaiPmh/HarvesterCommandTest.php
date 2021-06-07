@@ -30,6 +30,7 @@ namespace VuFindTest\Harvest\OaiPmh;
 
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Tester\CommandTester;
+use VuFindHarvest\Exception\OaiException;
 use VuFindHarvest\OaiPmh\HarvesterCommand;
 
 /**
@@ -162,6 +163,60 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
                 $this->equalTo('foo'), $this->equalTo($basePath),
                 $this->equalTo($client), $this->equalTo($expectedSettings)
             )
+            ->will($this->returnValue($harvester));
+        $ini = realpath(__DIR__ . '/../../../../fixtures/test.ini');
+        $commandTester = $this->getCommandTester(
+            ['--ini' => $ini],
+            new HarvesterCommand($client, $basePath, $factory)
+        );
+        $this->assertEquals(0, $commandTester->getStatusCode());
+    }
+
+    /**
+     * Test that an unexpected exception causes a bad return code.
+     *
+     * @return void
+     */
+    public function testExceptionHandling()
+    {
+        $basePath = '/foo/bar';
+        $client = $this->getMockBuilder(\Laminas\Http\Client::class)->getMock();
+        $harvester = $this->getMockHarvester();
+        $harvester->expects($this->once())->method('launch')->will(
+            $this->throwException(new \Exception('kablooie'))
+        );
+        $factory = $this
+            ->getMockBuilder(\VuFindHarvest\OaiPmh\HarvesterFactory::class)
+            ->getMock();
+        $factory->expects($this->once())
+            ->method('getHarvester')
+            ->will($this->returnValue($harvester));
+        $ini = realpath(__DIR__ . '/../../../../fixtures/test.ini');
+        $commandTester = $this->getCommandTester(
+            ['--ini' => $ini],
+            new HarvesterCommand($client, $basePath, $factory)
+        );
+        $this->assertEquals(1, $commandTester->getStatusCode());
+    }
+
+    /**
+     * Test that an OAI "noRecordsMatch" exception does not cause a bad return code.
+     *
+     * @return void
+     */
+    public function testNoMatchExceptionHandling()
+    {
+        $basePath = '/foo/bar';
+        $client = $this->getMockBuilder(\Laminas\Http\Client::class)->getMock();
+        $harvester = $this->getMockHarvester();
+        $harvester->expects($this->once())->method('launch')->will(
+            $this->throwException(new OaiException('noRecordsMatch', 'empty!'))
+        );
+        $factory = $this
+            ->getMockBuilder(\VuFindHarvest\OaiPmh\HarvesterFactory::class)
+            ->getMock();
+        $factory->expects($this->once())
+            ->method('getHarvester')
             ->will($this->returnValue($harvester));
         $ini = realpath(__DIR__ . '/../../../../fixtures/test.ini');
         $commandTester = $this->getCommandTester(
