@@ -287,10 +287,8 @@ class Harvester
             && !empty($response->ListRecords->resumptionToken)
         ) {
             return $response->ListRecords->resumptionToken;
-        } elseif (isset($endDate) && $endDate > 0) {
-            $dateFormat = ($this->granularity == 'YYYY-MM-DD') ?
-                'Y-m-d' : 'Y-m-d\TH:i:s\Z';
-            $this->stateManager->saveDate(date($dateFormat, $endDate));
+        } elseif (!empty($this->harvestEndDate)) {
+            $this->stateManager->saveDate($this->harvestEndDate);
         }
         return false;
     }
@@ -343,7 +341,10 @@ class Harvester
         // Set up start/end dates:
         $from = empty($settings['from'])
             ? $this->stateManager->loadDate() : $settings['from'];
-        $until = empty($settings['until']) ? null : $settings['until'];
+        // If no end-date is specified use the current date. Tracking an explict
+        // end-date helps manage state infomation between harvests. 
+        $now = date($this->granularity == 'YYYY-MM-DD' ? 'Y-m-d' : 'Y-m-d\TH:i:s\Z');
+        $until = empty($settings['until']) ? $now : $settings['until'];
         $this->setStartDate($from);
         $this->setEndDate($until);
     }
