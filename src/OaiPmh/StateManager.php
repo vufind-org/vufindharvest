@@ -124,14 +124,15 @@ class StateManager
     /**
      * Save a harvest state.
      *
-     * @param string $set       Set being harvested
-     * @param string $token     Current resumption token
-     * @param string $startDate Start date of harvest
+     * @param string $set             Set being harvested
+     * @param string $token           Current resumption token
+     * @param string $startDate       Start date of harvest
+     * @param string $harvestEndDate  End date of harvest
      *
      * @return void
      */
-    public function saveState($set, $token, $startDate)
+    public function saveState($set, $token, $startDate, $harvestEndDate)
     {
-        file_put_contents($this->lastStateFile, "$set\t$token\t$startDate");
+        file_put_contents($this->lastStateFile, "$set\t$token\t$startDate\t$harvestEndDate");
     }
 }

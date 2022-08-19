@@ -168,7 +168,7 @@ class Harvester
         // Load last state, if applicable (used to recover from server failure).
         if ($state = $this->stateManager->loadState()) {
             $this->write("Found saved state; attempting to resume.\n");
-            [$resumeSet, $resumeToken, $this->startDate] = $state;
+            [$resumeSet, $resumeToken, $this->startDate, $this->harvestEndDate] = $state;
         }
 
         // Loop through all of the selected sets:
@@ -192,7 +192,7 @@ class Harvester
             // Keep harvesting as long as a resumption token is provided:
             while ($token !== false) {
                 // Save current state in case we need to resume later:
-                $this->stateManager->saveState($set, $token, $this->startDate);
+                $this->stateManager->saveState($set, $token, $this->startDate, $this->harvestEndDate);
                 $token = $this->getRecordsByToken($token);
             }
         }
