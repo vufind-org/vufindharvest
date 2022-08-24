@@ -119,13 +119,8 @@ class Harvester
         $this->stateManager = $stateManager;
 
         // Store other settings
-        $this->storeDateSettings($settings);
         $this->storeMiscSettings($settings);
-
-        // Autoload granularity if necessary:
-        if ($this->granularity == 'auto') {
-            $this->loadGranularity();
-        }
+        $this->storeDateSettings($settings);
     }
 
     /**
@@ -197,8 +192,11 @@ class Harvester
             }
         }
 
-        // If we made it this far, all was successful, so we should clean up
-        // the stored state.
+        // If we made it this far, all was successful. Save last harvest info
+        // and clean up the stored state.
+        if (!empty($this->harvestEndDate)) {
+            $this->stateManager->saveDate($this->harvestEndDate);
+        }
         $this->stateManager->clearState();
     }
 
@@ -220,6 +218,8 @@ class Harvester
 
     /**
      * Load date granularity from the server.
+     * 
+     * @deprecated Moved to VuFindHarvest\OaiPmh\Harvester::storeDateSettings()
      *
      * @return void
      */
@@ -287,8 +287,6 @@ class Harvester
             && !empty($response->ListRecords->resumptionToken)
         ) {
             return $response->ListRecords->resumptionToken;
-        } elseif (!empty($this->harvestEndDate)) {
-            $this->stateManager->saveDate($this->harvestEndDate);
         }
         return false;
     }
@@ -338,13 +336,20 @@ class Harvester
      */
     protected function storeDateSettings($settings)
     {
+        // Get identity information, including current OAI host time.
+        $response = $this->sendRequest('Identify');
+        $servertime = (string)$response->responseDate;
+        // Autoload granularity if necessary:
+        if ($this->granularity == 'auto') {
+            $this->granularity = (string)$response->Identify->granularity;
+        }
         // Set up start/end dates:
         $from = empty($settings['from'])
             ? $this->stateManager->loadDate() : $settings['from'];
-        // If no end-date is specified use the current date. Tracking an explict
-        // end-date helps manage state infomation between harvests. 
-        $now = date($this->granularity == 'YYYY-MM-DD' ? 'Y-m-d' : 'Y-m-d\TH:i:s\Z');
-        $until = empty($settings['until']) ? $now : $settings['until'];
+        // If no end-date is specified use the current server time. Tracking an
+        // explict end-date helps precisely manage state infomation between
+        // harvests in a predictable way. 
+        $until = empty($settings['until']) ? $servertime : $settings['until'];
         $this->setStartDate($from);
         $this->setEndDate($until);
     }
