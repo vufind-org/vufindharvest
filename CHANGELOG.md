@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Added
 
 - Nothing.
+
 ### Changed
 
 - The minimum PHP version requirement has been raised to 7.4.1.
