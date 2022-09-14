@@ -96,8 +96,12 @@ class HarvesterCommand extends Command
      * @param string|null      $name        The name of the command; passing null
      * means it must be set in configure()
      */
-    public function __construct($client = null, $harvestRoot = null,
-        HarvesterFactory $factory = null, $silent = false, $name = null
+    public function __construct(
+        $client = null,
+        $harvestRoot = null,
+        HarvesterFactory $factory = null,
+        $silent = false,
+        $name = null
     ) {
         $this->client = $client ?: new Client();
         $this->harvestRoot = $harvestRoot ?: getcwd();
@@ -282,7 +286,8 @@ class HarvesterCommand extends Command
      *
      * @return array
      */
-    protected function updateSettingsWithConsoleOptions(InputInterface $input,
+    protected function updateSettingsWithConsoleOptions(
+        InputInterface $input,
         $settings
     ) {
         $directMapSettings = [
@@ -336,7 +341,8 @@ class HarvesterCommand extends Command
         $processed = $skipped = $errors = 0;
         foreach ($allSettings as $target => $baseSettings) {
             $settings = $this->updateSettingsWithConsoleOptions(
-                $input, $baseSettings
+                $input,
+                $baseSettings
             );
             if (empty($target) || empty($settings)) {
                 $skipped++;
@@ -458,8 +464,11 @@ class HarvesterCommand extends Command
      * @return void
      * @throws \Exception
      */
-    protected function harvestSingleRepository(InputInterface $input,
-        OutputInterface $output, $target, $settings
+    protected function harvestSingleRepository(
+        InputInterface $input,
+        OutputInterface $output,
+        $target,
+        $settings
     ) {
         $settings['from'] = $input->getOption('from');
         $settings['until'] = $input->getOption('until');

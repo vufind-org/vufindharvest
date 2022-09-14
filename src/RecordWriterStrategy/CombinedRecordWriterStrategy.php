@@ -148,7 +148,8 @@ class CombinedRecordWriterStrategy extends AbstractRecordWriterStrategy
     {
         if (false !== $this->firstHarvestedId) {
             $this->saveFile(
-                $this->firstHarvestedId, $this->getCombinedXML($this->innerXML)
+                $this->firstHarvestedId,
+                $this->getCombinedXML($this->innerXML)
             );
         }
 

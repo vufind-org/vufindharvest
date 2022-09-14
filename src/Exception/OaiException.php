@@ -62,7 +62,10 @@ class OaiException extends \RuntimeException
      * @param int        $code       Error code
      * @param ?Throwable $previous   Previous exception
      */
-    public function __construct(string $oaiCode, string $oaiMessage, int $code = 0,
+    public function __construct(
+        string $oaiCode,
+        string $oaiMessage,
+        int $code = 0,
         ?Throwable $previous = null
     ) {
         $this->oaiCode = $oaiCode;
