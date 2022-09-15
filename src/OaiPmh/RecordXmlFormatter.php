@@ -242,7 +242,8 @@ class RecordXmlFormatter
         $attributes = [];
         preg_match_all(
             '/(^| )([^"]*"?[^"]*"|[^\']*\'?[^\']*\')/',
-            $extractedNs[1], $attributes
+            $extractedNs[1],
+            $attributes
         );
         $extractedAttributes = '';
         foreach ($attributes[0] as $attribute) {
@@ -309,7 +310,9 @@ class RecordXmlFormatter
         // Build the final record:
         return trim(
             $this->fixNamespaces(
-                $xml, $recordObj->getDocNamespaces(), $metadataAttributes
+                $xml,
+                $recordObj->getDocNamespaces(),
+                $metadataAttributes
             )
         );
     }

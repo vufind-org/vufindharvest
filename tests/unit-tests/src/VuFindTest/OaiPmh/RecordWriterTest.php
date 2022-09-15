@@ -94,7 +94,8 @@ class RecordWriterTest extends \PHPUnit\Framework\TestCase
      *
      * @return RecordWriter
      */
-    protected function getWriter(array $config = [],
+    protected function getWriter(
+        array $config = [],
         RecordWriterStrategyInterface $strategy = null,
         RecordXmlFormatter $formatter = null
     ) {

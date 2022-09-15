@@ -129,7 +129,8 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
         $result = $formatter->format('foo', $this->getRecordFromFixture());
         $xml = simplexml_load_string($result);
         $this->assertEquals(
-            'oai:urm_publish:9925821506101791', (string)$xml->identifier
+            'oai:urm_publish:9925821506101791',
+            (string)$xml->identifier
         );
     }
 
@@ -222,7 +223,8 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
     {
         $formatter = new RecordXmlFormatter();
         $result = $formatter->format(
-            'foo', $this->getRecordFromFixture('oai_doaj.xml')
+            'foo',
+            $this->getRecordFromFixture('oai_doaj.xml')
         );
         $xml = simplexml_load_string($result);
         $this->assertTrue(is_object($xml));
