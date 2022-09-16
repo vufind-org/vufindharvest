@@ -154,8 +154,11 @@ class HarvesterFactory
      *
      * @return Communicator
      */
-    protected function getCommunicator(Client $client, array $settings,
-        ResponseProcessorInterface $processor, $target,
+    protected function getCommunicator(
+        Client $client,
+        array $settings,
+        ResponseProcessorInterface $processor,
+        $target,
         OutputInterface $output = null
     ) {
         if (empty($settings['url'])) {
@@ -181,7 +184,9 @@ class HarvesterFactory
      *
      * @return RecordXmlFormatter
      */
-    protected function getFormatter(Communicator $communicator, array $settings,
+    protected function getFormatter(
+        Communicator $communicator,
+        array $settings,
         OutputInterface $output = null
     ) {
         // Build the formatter:
@@ -262,8 +267,10 @@ class HarvesterFactory
      *
      * @return RecordWriter
      */
-    protected function getWriter(RecordWriterStrategyInterface $strategy,
-        RecordXmlFormatter $formatter, array $settings
+    protected function getWriter(
+        RecordWriterStrategyInterface $strategy,
+        RecordXmlFormatter $formatter,
+        array $settings
     ) {
         return new RecordWriter($strategy, $formatter, $settings);
     }
@@ -292,14 +299,21 @@ class HarvesterFactory
      *
      * @throws \Exception
      */
-    public function getHarvester($target, $harvestRoot, Client $client = null,
-        array $settings = [], OutputInterface $output = null
+    public function getHarvester(
+        $target,
+        $harvestRoot,
+        Client $client = null,
+        array $settings = [],
+        OutputInterface $output = null
     ) {
         $basePath = $this->getBasePath($harvestRoot, $target);
         $responseProcessor = $this->getResponseProcessor($basePath, $settings);
         $communicator = $this->getCommunicator(
             $this->configureClient($client, $settings),
-            $settings, $responseProcessor, $target, $output
+            $settings,
+            $responseProcessor,
+            $target,
+            $output
         );
         $formatter = $this->getFormatter($communicator, $settings, $output);
         $strategy = $this->getWriterStrategyFactory()

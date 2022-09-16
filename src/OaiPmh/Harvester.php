@@ -107,8 +107,11 @@ class Harvester
      * @param StateManager $stateManager State manager
      * @param array        $settings     OAI-PMH settings
      */
-    public function __construct(Communicator $communicator, RecordWriter $writer,
-        StateManager $stateManager, $settings = []
+    public function __construct(
+        Communicator $communicator,
+        RecordWriter $writer,
+        StateManager $stateManager,
+        $settings = []
     ) {
         // Don't time out during harvest!!
         set_time_limit(0);
@@ -185,7 +188,9 @@ class Harvester
             } else {
                 // ...otherwise, start harvesting at the requested date:
                 $token = $this->getRecordsByDate(
-                    $this->startDate, $set, $this->harvestEndDate
+                    $this->startDate,
+                    $set,
+                    $this->harvestEndDate
                 );
             }
 

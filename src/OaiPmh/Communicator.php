@@ -73,7 +73,9 @@ class Communicator
      * @param Client                     $client    HTTP client
      * @param ResponseProcessorInterface $processor Response processor (optional)
      */
-    public function __construct($uri, Client $client,
+    public function __construct(
+        $uri,
+        Client $client,
         ResponseProcessorInterface $processor = null
     ) {
         $this->baseUrl = $uri;

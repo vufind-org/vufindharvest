@@ -160,8 +160,10 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
         $factory->expects($this->once())
             ->method('getHarvester')
             ->with(
-                $this->equalTo('foo'), $this->equalTo($basePath),
-                $this->equalTo($client), $this->equalTo($expectedSettings)
+                $this->equalTo('foo'),
+                $this->equalTo($basePath),
+                $this->equalTo($client),
+                $this->equalTo($expectedSettings)
             )
             ->will($this->returnValue($harvester));
         $ini = realpath(__DIR__ . '/../../../../fixtures/test.ini');
@@ -252,8 +254,10 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
         $factory->expects($this->once())
             ->method('getHarvester')
             ->with(
-                $this->equalTo('foo'), $this->equalTo($basePath),
-                $this->equalTo($client), $this->equalTo($expectedSettings)
+                $this->equalTo('foo'),
+                $this->equalTo($basePath),
+                $this->equalTo($client),
+                $this->equalTo($expectedSettings)
             )
             ->will($this->returnValue($harvester));
         $ini = realpath(__DIR__ . '/../../../../fixtures/test.ini');

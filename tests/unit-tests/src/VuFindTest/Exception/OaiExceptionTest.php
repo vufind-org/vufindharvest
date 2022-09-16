@@ -52,7 +52,8 @@ class OaiExceptionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('code', $exception->getOaiCode());
         $this->assertEquals('message', $exception->getOaiMessage());
         $this->assertEquals(
-            'OAI-PMH error -- code: code, value: message', $exception->getMessage()
+            'OAI-PMH error -- code: code, value: message',
+            $exception->getMessage()
         );
         $this->assertEquals(0, $exception->getCode());
         $this->assertNull($exception->getPrevious());
