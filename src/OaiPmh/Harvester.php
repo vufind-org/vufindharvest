@@ -154,6 +154,8 @@ class Harvester
      * Harvest all available documents.
      *
      * @return void
+     * 
+     * @throws \Exception
      */
     public function launch()
     {
@@ -166,6 +168,13 @@ class Harvester
         // Load last state, if applicable (used to recover from server failure).
         if ($state = $this->stateManager->loadState()) {
             $this->write("Found saved state; attempting to resume.\n");
+            // State data must contain 4 values for reliable resumption.
+            if (count($state) !== 4) {
+              $this->stateManager->clearState();
+              throw new \Exception(
+                  "Corrupt or incomplete state data detected and removed. Please initiate a new harvest request."
+              );
+            }
             [$resumeSet, $resumeToken, $this->startDate, $this->harvestEndDate] = $state;
         }
 
