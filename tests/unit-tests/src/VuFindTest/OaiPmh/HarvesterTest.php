@@ -134,8 +134,11 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
      *
      * @return Harvester
      */
-    protected function getHarvester($settings = [], $communicator = null,
-        $writer = null, $stateManager = null
+    protected function getHarvester(
+        $settings = [],
+        $communicator = null,
+        $writer = null,
+        $stateManager = null
     ) {
         return new Harvester(
             $communicator ?: $this->getMockCommunicator(),
@@ -275,7 +278,8 @@ XML;
             );
         $harvester = $this->getHarvester([], $comm);
         $this->assertEquals(
-            'YYYY-MM-DDThh:mm:ssZ', $this->getProperty($harvester, 'granularity')
+            'YYYY-MM-DDThh:mm:ssZ',
+            $this->getProperty($harvester, 'granularity')
         );
     }
 
@@ -300,7 +304,10 @@ XML;
         $sm->expects($this->once())->method('saveDate')
             ->with($this->equalTo('2016-07-13T14:26:22Z'));
         $harvester = $this->getHarvester(
-            ['dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'], $comm, $writer, $sm
+            ['dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'],
+            $comm,
+            $writer,
+            $sm
         );
         $harvester->launch();
     }
@@ -339,7 +346,9 @@ XML;
                 'set' => 'xyzzy', 'dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ',
                 'from' => '2016-07-01', 'until' => '2016-07-31',
             ],
-            $comm, $writer, $sm
+            $comm,
+            $writer,
+            $sm
         );
         $harvester->launch();
     }
@@ -369,7 +378,10 @@ XML;
             ->will($this->returnValue([null, 'foo', 'bar']));
         $sm->expects($this->once())->method('clearState');
         $harvester = $this->getHarvester(
-            ['dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'], $comm, null, $sm
+            ['dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'],
+            $comm,
+            null,
+            $sm
         );
         $harvester->launch();
     }
@@ -395,7 +407,8 @@ XML;
                 )
             );
         $harvester = $this->getHarvester(
-            ['dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'], $comm
+            ['dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'],
+            $comm
         );
         $harvester->launch();
     }

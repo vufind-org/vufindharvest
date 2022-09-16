@@ -92,12 +92,16 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
             'dateGranularity' => 'mygranularity',
         ];
         $oai = $this->getHarvester(
-            'test', sys_get_temp_dir(), $config, $this->getMockClient()
+            'test',
+            sys_get_temp_dir(),
+            $config,
+            $this->getMockClient()
         );
 
         // Special cases where config key != class property:
         $this->assertEquals(
-            $config['dateGranularity'], $this->getProperty($oai, 'granularity')
+            $config['dateGranularity'],
+            $this->getProperty($oai, 'granularity')
         );
         unset($config['dateGranularity']);
         unset($config['url']);
@@ -133,13 +137,15 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
         $writer = $this->getProperty($oai, 'writer');
         $formatter = $this->getProperty($writer, 'recordFormatter');
         $this->assertEquals(
-            $config['injectSetName'], $this->getProperty($formatter, 'injectSetName')
+            $config['injectSetName'],
+            $this->getProperty($formatter, 'injectSetName')
         );
         $this->assertEquals(
             [
                 'Audio (Music)' => 'Audio (Music)',
                 'Audio (Non-Music)' => 'Audio (Non-Music)'
-            ], $this->getProperty($formatter, 'setNames')
+            ],
+            $this->getProperty($formatter, 'setNames')
         );
     }
 
@@ -182,7 +188,8 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
         ];
         $oai = $this->getHarvester('test', sys_get_temp_dir(), $config, $client);
         $this->assertEquals(
-            'YYYY-MM-DDThh:mm:ssZ', $this->getProperty($oai, 'granularity')
+            'YYYY-MM-DDThh:mm:ssZ',
+            $this->getProperty($oai, 'granularity')
         );
     }
 
@@ -219,7 +226,8 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
         ];
         $oai = $this->getHarvester('test', sys_get_temp_dir(), $config, $client);
         $this->assertEquals(
-            'YYYY-MM-DDThh:mm:ssZ', $this->getProperty($oai, 'granularity')
+            'YYYY-MM-DDThh:mm:ssZ',
+            $this->getProperty($oai, 'granularity')
         );
     }
 
