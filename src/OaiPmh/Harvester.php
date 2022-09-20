@@ -100,6 +100,13 @@ class Harvester
     protected $granularity = 'auto';
 
     /**
+     * Identify information from OAI host
+     *
+     * @var stdClass
+     */
+    protected $identifyResponse = null;
+
+    /**
      * Constructor.
      *
      * @param Communicator $communicator Low-level API client
@@ -154,7 +161,7 @@ class Harvester
      * Harvest all available documents.
      *
      * @return void
-     * 
+     *
      * @throws \Exception
      */
     public function launch()
@@ -232,7 +239,7 @@ class Harvester
 
     /**
      * Load date granularity from the server.
-     * 
+     *
      * @deprecated Moved to VuFindHarvest\OaiPmh\Harvester::storeDateSettings()
      *
      * @return void
@@ -342,6 +349,33 @@ class Harvester
     }
 
     /**
+     * Get identify information from OAI-PMH host. Unless $reset = TRUE, this
+     * method will only invoke an OAI-PMH call upon its first usage and will
+     * return cached data after that.
+     *
+     * @param boolean $reset  Whether-or-not to reset identity information
+     *                        already fetched during this request.
+     *
+     * @return stdClass       An object of response properties as defined by
+     *                        http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify
+     *                        plus a 'responseDate' property representing the
+     *                        datestamp of the identify response in the form
+     *                        YYYY-MM-DDThh:mm:ssZ
+     *
+     * @see http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify
+     */
+    protected function getIdentifyResponse($reset = FALSE) {
+        if (!$this->identifyResponse || $reset) {
+            $response = $this->sendRequest('Identify');
+            // Save callers the burden of casting XML elements by preparing a
+            // flat list of string properties.
+            $this->identifyResponse = (object)(array)$response->Identify;
+            $this->identifyResponse->responseDate = (string)$response->responseDate;
+        }
+        return $this->identifyResponse;
+    }
+
+    /**
      * Set date range configuration (support method for constructor).
      *
      * @param array $settings Configuration
@@ -362,7 +396,7 @@ class Harvester
             ? $this->stateManager->loadDate() : $settings['from'];
         // If no end-date is specified use the current server time. Tracking an
         // explict end-date helps precisely manage state infomation between
-        // harvests in a predictable way. 
+        // harvests in a predictable way.
         $until = empty($settings['until']) ? $servertime : $settings['until'];
         $this->setStartDate($from);
         $this->setEndDate($until);
