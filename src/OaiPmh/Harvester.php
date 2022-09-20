@@ -238,21 +238,6 @@ class Harvester
     }
 
     /**
-     * Load date granularity from the server.
-     *
-     * @deprecated Moved to VuFindHarvest\OaiPmh\Harvester::storeDateSettings()
-     *
-     * @return void
-     */
-    protected function loadGranularity()
-    {
-        $this->write("Autodetecting date granularity... ");
-        $response = $this->sendRequest('Identify');
-        $this->granularity = (string)$response->Identify->granularity;
-        $this->writeLine("found {$this->granularity}.");
-    }
-
-    /**
      * Check an OAI-PMH response for errors that need to be handled.
      *
      * @param object $result OAI-PMH response (SimpleXML object)
@@ -384,20 +369,10 @@ class Harvester
      */
     protected function storeDateSettings($settings)
     {
-        // Get identity information, including current OAI host time.
-        $response = $this->sendRequest('Identify');
-        $servertime = (string)$response->responseDate;
-        // Autoload granularity if necessary:
-        if ($this->granularity == 'auto') {
-            $this->granularity = (string)$response->Identify->granularity;
-        }
         // Set up start/end dates:
         $from = empty($settings['from'])
             ? $this->stateManager->loadDate() : $settings['from'];
-        // If no end-date is specified use the current server time. Tracking an
-        // explict end-date helps precisely manage state infomation between
-        // harvests in a predictable way.
-        $until = empty($settings['until']) ? $servertime : $settings['until'];
+        $until = empty($settings['until']) ? null : $settings['until'];
         $this->setStartDate($from);
         $this->setEndDate($until);
     }
