@@ -129,8 +129,8 @@ class Harvester
         $this->stateManager = $stateManager;
 
         // Store other settings
-        $this->storeMiscSettings($settings);
         $this->storeDateSettings($settings);
+        $this->storeMiscSettings($settings);
     }
 
     /**
@@ -172,6 +172,17 @@ class Harvester
             $sets = [null];
         }
 
+        // The harvestEndDate may be null. Some OAI-PMH hosts may depend on a
+        // null value for backwards compatibility and relaibility for various
+        // edge cases, so we allow a null value to be used during the initial
+        // records request. However, we still need to track an explicit end
+        // date, based on the current server time, as the basis for future
+        // harvest start ranges. Note that this value can also be declared via
+        // state data as it should always track the time the harvest was
+        // first started.
+        // @see https://github.com/vufind-org/vufindharvest/issues/7
+        $explicitHarvestEndDate = empty($this->harvestEndDate) ? $this->getIdentifyResponse()->responseDate : $this->harvestEndDate;
+
         // Load last state, if applicable (used to recover from server failure).
         if ($state = $this->stateManager->loadState()) {
             $this->write("Found saved state; attempting to resume.\n");
@@ -179,10 +190,10 @@ class Harvester
             if (count($state) !== 4) {
               $this->stateManager->clearState();
               throw new \Exception(
-                  "Corrupt or incomplete state data detected and removed. Please initiate a new harvest request."
+                  "Corrupt or incomplete state data detected; removing last_state.txt. Please restart harvest."
               );
             }
-            [$resumeSet, $resumeToken, $this->startDate, $this->harvestEndDate] = $state;
+            [$resumeSet, $resumeToken, $this->startDate, $explicitHarvestEndDate] = $state;
         }
 
         // Loop through all of the selected sets:
@@ -208,16 +219,14 @@ class Harvester
             // Keep harvesting as long as a resumption token is provided:
             while ($token !== false) {
                 // Save current state in case we need to resume later:
-                $this->stateManager->saveState($set, $token, $this->startDate, $this->harvestEndDate);
+                $this->stateManager->saveState($set, $token, $this->startDate, $explicitHarvestEndDate);
                 $token = $this->getRecordsByToken($token);
             }
         }
 
         // If we made it this far, all was successful. Save last harvest info
         // and clean up the stored state.
-        if (!empty($this->harvestEndDate)) {
-            $this->stateManager->saveDate($this->harvestEndDate);
-        }
+        $this->stateManager->saveDate($explicitHarvestEndDate);
         $this->stateManager->clearState();
     }
 
@@ -350,7 +359,7 @@ class Harvester
      * @see http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify
      */
     protected function getIdentifyResponse($reset = FALSE) {
-        if (!$this->identifyResponse || $reset) {
+        if (empty($this->identifyResponse) || $reset) {
             $response = $this->sendRequest('Identify');
             // Save callers the burden of casting XML elements by preparing a
             // flat list of string properties.
