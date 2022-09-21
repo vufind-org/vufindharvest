@@ -173,7 +173,7 @@ class Harvester
         }
 
         // The harvestEndDate may be null. Some OAI-PMH hosts may depend on a
-        // null value for backwards compatibility and relaibility for various
+        // null value for backwards compatibility and reliability for various
         // edge cases, so we allow a null value to be used during the initial
         // records request. However, we still need to track an explicit end
         // date, based on the current server time, as the basis for future
@@ -188,10 +188,10 @@ class Harvester
             $this->write("Found saved state; attempting to resume.\n");
             // State data must contain 4 values for reliable resumption.
             if (count($state) !== 4) {
-              $this->stateManager->clearState();
-              throw new \Exception(
-                  "Corrupt or incomplete state data detected; removing last_state.txt. Please restart harvest."
-              );
+                $this->stateManager->clearState();
+                throw new \Exception(
+                    "Corrupt or incomplete state data detected; removing last_state.txt. Please restart harvest."
+                );
             }
             [$resumeSet, $resumeToken, $this->startDate, $explicitHarvestEndDate] = $state;
         }
@@ -358,7 +358,8 @@ class Harvester
      *
      * @see http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify
      */
-    protected function getIdentifyResponse($reset = FALSE) {
+    protected function getIdentifyResponse($reset = false)
+    {
         if (empty($this->identifyResponse) || $reset) {
             $response = $this->sendRequest('Identify');
             // Save callers the burden of casting XML elements by preparing a
