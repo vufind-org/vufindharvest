@@ -64,10 +64,11 @@ class StateManagerTest extends \PHPUnit\Framework\TestCase
     public function testState()
     {
         $tmp = sys_get_temp_dir() . '/';
-        $date = '2016-07-12';
+        $startDate = '2016-07-12';
+        $endDate = '2016-08-01';
         $manager = new StateManager($tmp);
-        $manager->saveState('foo', 'bar', $date);
-        $this->assertEquals(['foo', 'bar', $date], $manager->loadState());
+        $manager->saveState('foo', 'bar', $startDate, $endDate);
+        $this->assertEquals(['foo', 'bar', $startDate, $endDate], $manager->loadState());
         $this->assertTrue(file_exists($tmp . 'last_state.txt'));
         $manager->clearState();
         $this->assertFalse(file_exists($tmp . 'last_state.txt'));
