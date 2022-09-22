@@ -176,7 +176,7 @@ class Harvester
         // null value for backwards compatibility and reliability for various
         // edge cases, so we allow a null value to be used during the initial
         // records request. However, we still need to track an explicit end
-        // date, based on the current host time, as the basis for future
+        // date, based on the current OAI server time, as the basis for future
         // harvest start ranges. Note that this value can also be declared via
         // state data as it should always track the time the harvest was
         // first started.
