@@ -176,12 +176,22 @@ class Harvester
         // null value for backwards compatibility and reliability for various
         // edge cases, so we allow a null value to be used during the initial
         // records request. However, we still need to track an explicit end
-        // date, based on the current server time, as the basis for future
+        // date, based on the current host time, as the basis for future
         // harvest start ranges. Note that this value can also be declared via
         // state data as it should always track the time the harvest was
         // first started.
         // @see https://github.com/vufind-org/vufindharvest/issues/7
-        $explicitHarvestEndDate = empty($this->harvestEndDate) ? $this->getIdentifyResponse()->responseDate : $this->harvestEndDate;
+        if (empty($this->harvestEndDate)) {
+            $explicitHarvestEndDate = $this->getIdentifyResponse()->responseDate;
+            // Add support for OAI-PMH hosts that require day granularity by
+            // converting the date format if necessary.
+            $granularity = $this->granularity == 'auto' ? $this->getIdentifyResponse()->granularity : $this->granularity;
+            if ($granularity == 'YYYY-MM-DD') {
+                $explicitHarvestEndDate = (substr($explicitHarvestEndDate, 0, 10));
+            }
+        } else {
+            $explicitHarvestEndDate = $this->harvestEndDate;
+        }
 
         // Load last state, if applicable (used to recover from server failure).
         if ($state = $this->stateManager->loadState()) {
