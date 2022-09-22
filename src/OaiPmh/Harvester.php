@@ -187,7 +187,7 @@ class Harvester
             // converting the date format if necessary.
             $granularity = $this->granularity == 'auto' ? $this->getIdentifyResponse()->granularity : $this->granularity;
             if ($granularity == 'YYYY-MM-DD') {
-                $explicitHarvestEndDate = (substr($explicitHarvestEndDate, 0, 10));
+                $explicitHarvestEndDate = substr($explicitHarvestEndDate, 0, 10);
             }
         } else {
             $explicitHarvestEndDate = $this->harvestEndDate;
