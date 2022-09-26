@@ -357,8 +357,8 @@ class Harvester
      * method will only invoke an OAI-PMH call upon its first usage and will
      * return cached data after that.
      *
-     * @param boolean $reset  Whether-or-not to reset identity information
-     *                        already fetched during this request.
+     * @param boolean $reset Whether-or-not to reset identity information
+     *                       already fetched during this request.
      *
      * @return stdClass       An object of response properties as defined by
      *                        http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify

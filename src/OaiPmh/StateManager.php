@@ -124,10 +124,10 @@ class StateManager
     /**
      * Save a harvest state.
      *
-     * @param string $set             Set being harvested
-     * @param string $token           Current resumption token
-     * @param string $startDate       Start date of harvest
-     * @param string $harvestEndDate  End date of harvest
+     * @param string $set            Set being harvested
+     * @param string $token          Current resumption token
+     * @param string $startDate      Start date of harvest
+     * @param string $harvestEndDate End date of harvest
      *
      * @return void
      */
