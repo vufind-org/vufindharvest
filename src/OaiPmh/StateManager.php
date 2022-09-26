@@ -133,6 +133,9 @@ class StateManager
      */
     public function saveState($set, $token, $startDate, $harvestEndDate)
     {
-        file_put_contents($this->lastStateFile, "$set\t$token\t$startDate\t$harvestEndDate");
+        file_put_contents(
+            $this->lastStateFile,
+            "$set\t$token\t$startDate\t$harvestEndDate"
+        );
     }
 }

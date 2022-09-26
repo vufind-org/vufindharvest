@@ -185,7 +185,8 @@ class Harvester
             $explicitHarvestEndDate = $this->getIdentifyResponse()->responseDate;
             // Add support for OAI-PMH hosts that require day granularity by
             // converting the date format if necessary.
-            $granularity = $this->granularity == 'auto' ? $this->getIdentifyResponse()->granularity : $this->granularity;
+            $granularity = $this->granularity == 'auto' ?
+                $this->getIdentifyResponse()->granularity : $this->granularity;
             if ($granularity == 'YYYY-MM-DD') {
                 $explicitHarvestEndDate = substr($explicitHarvestEndDate, 0, 10);
             }
@@ -200,10 +201,16 @@ class Harvester
             if (count($state) !== 4) {
                 $this->stateManager->clearState();
                 throw new \Exception(
-                    "Corrupt or incomplete state data detected; removing last_state.txt. Please restart harvest."
+                    "Corrupt or incomplete state data detected; "
+                    . "removing last_state.txt. Please restart harvest."
                 );
             }
-            [$resumeSet, $resumeToken, $this->startDate, $explicitHarvestEndDate] = $state;
+            [
+                $resumeSet,
+                $resumeToken,
+                $this->startDate,
+                $explicitHarvestEndDate
+            ] = $state;
         }
 
         // Loop through all of the selected sets:
@@ -229,7 +236,12 @@ class Harvester
             // Keep harvesting as long as a resumption token is provided:
             while ($token !== false) {
                 // Save current state in case we need to resume later:
-                $this->stateManager->saveState($set, $token, $this->startDate, $explicitHarvestEndDate);
+                $this->stateManager->saveState(
+                    $set,
+                    $token,
+                    $this->startDate,
+                    $explicitHarvestEndDate
+                );
                 $token = $this->getRecordsByToken($token);
             }
         }
