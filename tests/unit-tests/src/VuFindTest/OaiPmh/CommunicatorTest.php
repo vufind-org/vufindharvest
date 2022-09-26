@@ -29,11 +29,10 @@
 namespace VuFindTest\Harvest\OaiPmh;
 
 use Laminas\Http\Client;
-use VuFindHarvest\OaiPmh\Harvester;
-use VuFindHarvest\OaiPmh\HarvesterFactory;
+use VuFindHarvest\OaiPmh\Communicator;
 
 /**
- * OAI-PMH harvester factory integration test.
+ * OAI-PMH communicator test.
  *
  * @category VuFind
  * @package  Tests
@@ -41,83 +40,28 @@ use VuFindHarvest\OaiPmh\HarvesterFactory;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
-class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
+class CommunicatorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * Return protected or private property.
-     *
-     * Uses PHP's reflection API in order to modify property accessibility.
-     *
-     * @param object|string $object   Object or class name
-     * @param string        $property Property name
-     *
-     * @throws \ReflectionException Property does not exist
-     *
-     * @return mixed
-     */
-    protected function getProperty($object, $property)
-    {
-        $reflectionProperty = new \ReflectionProperty($object, $property);
-        $reflectionProperty->setAccessible(true);
-        return $reflectionProperty->getValue($object);
-    }
 
     /**
+     * Get Communicator
      *
-     * @param string $target      Name of source being harvested (used as directory
-     * name for storing harvested data inside $harvestRoot)
-     * @param string $harvestRoot Root directory containing harvested data.
-     * @param array  $config      Additional settings
-     * @param Client $client      HTTP client
+     * @param string                     $uri       Base URI for OAI-PMH server
+     * @param Client                     $client    HTTP client
      *
      * @return type
      */
-    protected function getHarvester($target, $harvestRoot, $config, $client)
+    protected function getCommunicator($uri, $client)
     {
-        $factory = new HarvesterFactory();
-        return $factory->getHarvester($target, $harvestRoot, $client, $config);
+        return new Communicator($uri, $client);
     }
 
     /**
-     * Test configuration.
+     * Test a simple communicator request.
      *
      * @return void
      */
-    public function testConfig()
-    {
-        $config = [
-            'url' => 'http://localhost',
-            'set' => 'myset',
-            'metadataPrefix' => 'fakemdprefix',
-            'dateGranularity' => 'mygranularity',
-        ];
-        $oai = $this->getHarvester(
-            'test',
-            sys_get_temp_dir(),
-            $config,
-            $this->getMockClient()
-        );
-
-        // Special cases where config key != class property:
-        $this->assertEquals(
-            $config['dateGranularity'],
-            $this->getProperty($oai, 'granularity')
-        );
-        unset($config['dateGranularity']);
-        unset($config['url']);
-
-        // Generic case for remaining configs:
-        foreach ($config as $key => $value) {
-            $this->assertEquals($value, $this->getProperty($oai, $key));
-        }
-    }
-
-    /**
-     * Test the injectSetName configuration.
-     *
-     * @return void
-     */
-    public function testInjectSetNameConfig()
+    public function testSimpleRequest()
     {
         $client = $this->getMockClient();
         $response = $client->send();
@@ -126,60 +70,70 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue(true));
         $response->expects($this->any())
             ->method('getBody')
-            ->will($this->returnValue('<?xml version="1.0"?><OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2013-10-11T10:06:06Z</responseDate><request verb="ListSets" metadataPrefix="oai_dc" resumptionToken="" submit="Go">http://vu61162/vufind3/OAI/Server</request><ListSets><set><setSpec>Audio (Music)</setSpec><setName>Audio (Music)</setName></set><set><setSpec>Audio (Non-Music)</setSpec><setName>Audio (Non-Music)</setName></set></ListSets></OAI-PMH>'));
-        $config = [
-            'url' => 'http://localhost',
-            'injectSetName' => 'setnametag',
-            'dateGranularity' => 'mygranularity',
-            'silent' => true,
-        ];
-        $oai = $this->getHarvester('test', sys_get_temp_dir(), $config, $client);
-        $writer = $this->getProperty($oai, 'writer');
-        $formatter = $this->getProperty($writer, 'recordFormatter');
+            ->will($this->returnValue($this->getIdentifyResponse()));
+        $uri = 'http://localhost';
+        $comm = $this->getCommunicator($uri, $client);
         $this->assertEquals(
-            $config['injectSetName'],
-            $this->getProperty($formatter, 'injectSetName')
-        );
-        $this->assertEquals(
-            [
-                'Audio (Music)' => 'Audio (Music)',
-                'Audio (Non-Music)' => 'Audio (Non-Music)'
-            ],
-            $this->getProperty($formatter, 'setNames')
+            $comm->request('Identify'),
+            $this->getIdentifyResponse()
         );
     }
 
     /**
-     * Test the sslverifypeer configuration.
+     * Test communicator request w/503 retry.
      *
      * @return void
      */
-    public function testSSLVerifyPeer()
+    public function test503Retry()
     {
         $client = $this->getMockClient();
-        $client->expects($this->once())
-            ->method('setOptions')
-            ->with($this->equalTo(['sslverifypeer' => false, 'timeout' => 60]));
-        $config = [
-            'url' => 'http://localhost',
-            'sslverifypeer' => false,
-            'dateGranularity' => 'mygranularity',
-        ];
-        $this->getHarvester('test', sys_get_temp_dir(), $config, $client);
+        $response = $client->send();
+        $response->expects($this->any())
+            ->method('isSuccess')
+            ->will($this->returnValue(true));
+        $response->expects($this->exactly(2))
+            ->method('getStatusCode')
+            ->willReturnOnConsecutiveCalls(503, 200);
+        $response->expects($this->any())
+            ->method('getBody')
+            ->will($this->returnValue($this->getIdentifyResponse()));
+        $header = $this->getMockBuilder(\Laminas\Http\Header\RetryAfter::class)
+            ->getMock();
+        $header->expects($this->once())
+            ->method('getDeltaSeconds')
+            ->will($this->returnValue(1));
+        $headers = $response->getHeaders();
+        $headers->expects($this->any())
+            ->method('get')
+            ->with($this->equalTo('Retry-After'))
+            ->will($this->returnValue($header));
+        $uri = 'http://localhost';
+        $comm = $this->getCommunicator($uri, $client);
+        $this->assertEquals(
+            $comm->request('Identify'),
+            $this->getIdentifyResponse()
+        );
     }
 
     /**
-     * Test that a missing URL throws an exception.
+     * Test communicator HTTP error detection.
      *
      * @return void
      *
      */
-    public function testMissingURLThrowsException()
+    public function testHTTPErrorDetection()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Missing base URL for test.');
+        $this->expectExceptionMessage('HTTP Error');
 
-        $oai = $this->getHarvester('test', sys_get_temp_dir(), [], $this->getMockClient());
+        $client = $this->getMockClient();
+        $response = $client->send();
+        $response->expects($this->any())
+            ->method('isSuccess')
+            ->will($this->returnValue(false));
+        $uri = 'http://localhost';
+        $comm = $this->getCommunicator($uri, $client);
+        $comm->request('Identify');
     }
 
     // Internal API
