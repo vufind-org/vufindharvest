@@ -22,6 +22,7 @@
  *
  * @category VuFind
  * @package  Tests
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ryan Jacobs <rjacobs@crl.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
