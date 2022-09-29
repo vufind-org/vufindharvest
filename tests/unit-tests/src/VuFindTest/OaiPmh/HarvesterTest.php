@@ -262,30 +262,9 @@ XML;
     }
 
     /**
-     * Test that granularity is autoloaded by default.
-     *
-     * @return void
-     */
-    public function testGranularityAutoload()
-    {
-        $comm = $this->getMockCommunicator();
-        $comm->expects($this->once(0))->method('request')
-            ->with($this->equalTo('Identify'))
-            ->will(
-                $this->returnValue(
-                    simplexml_load_string($this->getFakeIdentifyResponse())
-                )
-            );
-        $harvester = $this->getHarvester([], $comm);
-        $this->assertEquals(
-            'YYYY-MM-DDThh:mm:ssZ',
-            $this->getProperty($harvester, 'granularity')
-        );
-    }
-
-    /**
      * Test that a single ListRecords call with no resumption token triggers
-     * a write to the writer.
+     * a write to the writer and persists a harvest end date that's based on
+     * the OAI host response date.
      *
      * @return void
      */
@@ -293,18 +272,24 @@ XML;
     {
         $comm = $this->getMockCommunicator();
         $expectedSettings = ['metadataPrefix' => 'oai_dc'];
-        $comm->expects($this->once())->method('request')
-            ->with($this->equalTo('ListRecords'), $this->equalTo($expectedSettings))
-            ->will($this->returnValue(simplexml_load_string($this->getFakeResponse())));
+        $comm->expects($this->exactly(2))->method('request')
+            ->withConsecutive(
+                ['Identify', []],
+                ['ListRecords', $expectedSettings],
+            )
+            ->willReturnOnConsecutiveCalls(
+                simplexml_load_string($this->getFakeIdentifyResponse()),
+                simplexml_load_string($this->getFakeResponse())
+            );
         $writer = $this->getMockRecordWriter();
         $writer->expects($this->once())->method('write')
             ->with($this->isInstanceOf('SimpleXMLElement'))
             ->will($this->returnValue(1468434382));
         $sm = $this->getMockStateManager();
         $sm->expects($this->once())->method('saveDate')
-            ->with($this->equalTo('2016-07-13T14:26:22Z'));
+            ->with($this->equalTo('2016-07-12T16:19:54Z'));
         $harvester = $this->getHarvester(
-            ['dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'],
+            [],
             $comm,
             $writer,
             $sm
@@ -366,16 +351,18 @@ XML;
 
         $comm = $this->getMockCommunicator();
         $expectedSettings = ['resumptionToken' => 'foo'];
-        $comm->expects($this->once())->method('request')
-            ->with($this->equalTo('ListRecords'), $this->equalTo($expectedSettings))
-            ->will(
-                $this->returnValue(
-                    simplexml_load_string($this->getTokenErrorResponse())
-                )
+        $comm->expects($this->exactly(2))->method('request')
+            ->withConsecutive(
+                ['Identify', []],
+                ['ListRecords', $expectedSettings],
+            )
+            ->willReturnOnConsecutiveCalls(
+                simplexml_load_string($this->getFakeIdentifyResponse()),
+                simplexml_load_string($this->getTokenErrorResponse())
             );
         $sm = $this->getMockStateManager();
         $sm->expects($this->any())->method('loadState')
-            ->will($this->returnValue([null, 'foo', 'bar']));
+            ->will($this->returnValue([null, 'foo', 'bar', 'baz']));
         $sm->expects($this->once())->method('clearState');
         $harvester = $this->getHarvester(
             ['dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'],
@@ -399,16 +386,53 @@ XML;
 
         $comm = $this->getMockCommunicator();
         $expectedSettings = ['metadataPrefix' => 'oai_dc'];
-        $comm->expects($this->once())->method('request')
-            ->with($this->equalTo('ListRecords'), $this->equalTo($expectedSettings))
-            ->will(
-                $this->returnValue(
-                    simplexml_load_string($this->getArbitraryErrorResponse())
-                )
+        $comm->expects($this->exactly(2))->method('request')
+            ->withConsecutive(
+                ['Identify', []],
+                ['ListRecords', $expectedSettings],
+            )
+            ->willReturnOnConsecutiveCalls(
+                simplexml_load_string($this->getFakeIdentifyResponse()),
+                simplexml_load_string($this->getArbitraryErrorResponse())
             );
         $harvester = $this->getHarvester(
             ['dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'],
             $comm
+        );
+        $harvester->launch();
+    }
+
+    /**
+     * With a single ListRecords call test that the persisted harvest end date
+     * is formatted appropriately when day granularity is detected.
+     *
+     * @return void
+     */
+    public function testSimpleListRecordsGranularityHandling()
+    {
+        $comm = $this->getMockCommunicator();
+        $expectedSettings = ['metadataPrefix' => 'oai_dc'];
+        $comm->expects($this->exactly(2))->method('request')
+            ->withConsecutive(
+                ['Identify', []],
+                ['ListRecords', $expectedSettings],
+            )
+            ->willReturnOnConsecutiveCalls(
+                simplexml_load_string($this->getFakeIdentifyResponse()),
+                simplexml_load_string($this->getFakeResponse())
+            );
+        $writer = $this->getMockRecordWriter();
+        $writer->expects($this->once())->method('write')
+            ->with($this->isInstanceOf('SimpleXMLElement'))
+            ->will($this->returnValue(1468434382));
+        $sm = $this->getMockStateManager();
+        $sm->expects($this->once())->method('saveDate')
+            ->with($this->equalTo('2016-07-12'));
+        $harvester = $this->getHarvester(
+            ['dateGranularity' => 'YYYY-MM-DD'],
+            $comm,
+            $writer,
+            $sm
         );
         $harvester->launch();
     }

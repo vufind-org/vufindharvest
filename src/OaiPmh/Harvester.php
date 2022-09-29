@@ -100,6 +100,13 @@ class Harvester
     protected $granularity = 'auto';
 
     /**
+     * Identify information from OAI host
+     *
+     * @var stdClass
+     */
+    protected $identifyResponse = null;
+
+    /**
      * Constructor.
      *
      * @param Communicator $communicator Low-level API client
@@ -124,11 +131,6 @@ class Harvester
         // Store other settings
         $this->storeDateSettings($settings);
         $this->storeMiscSettings($settings);
-
-        // Autoload granularity if necessary:
-        if ($this->granularity == 'auto') {
-            $this->loadGranularity();
-        }
     }
 
     /**
@@ -159,6 +161,8 @@ class Harvester
      * Harvest all available documents.
      *
      * @return void
+     *
+     * @throws \Exception
      */
     public function launch()
     {
@@ -168,10 +172,45 @@ class Harvester
             $sets = [null];
         }
 
+        // The harvestEndDate may be null. Some OAI-PMH hosts may depend on a
+        // null value for backwards compatibility and reliability for various
+        // edge cases, so we allow a null value to be used during the initial
+        // records request. However, we still need to track an explicit end
+        // date, based on the current OAI server time, as the basis for future
+        // harvest start ranges. Note that this value can also be declared via
+        // state data as it should always track the time the harvest was
+        // first started.
+        // @see https://github.com/vufind-org/vufindharvest/issues/7
+        if (empty($this->harvestEndDate)) {
+            $explicitHarvestEndDate = $this->getIdentifyResponse()->responseDate;
+            // Add support for OAI-PMH hosts that require day granularity by
+            // converting the date format if necessary.
+            $granularity = $this->granularity == 'auto' ?
+                $this->getIdentifyResponse()->granularity : $this->granularity;
+            if ($granularity == 'YYYY-MM-DD') {
+                $explicitHarvestEndDate = substr($explicitHarvestEndDate, 0, 10);
+            }
+        } else {
+            $explicitHarvestEndDate = $this->harvestEndDate;
+        }
+
         // Load last state, if applicable (used to recover from server failure).
         if ($state = $this->stateManager->loadState()) {
             $this->write("Found saved state; attempting to resume.\n");
-            [$resumeSet, $resumeToken, $this->startDate] = $state;
+            // State data must contain 4 values for reliable resumption.
+            if (count($state) !== 4) {
+                $this->stateManager->clearState();
+                throw new \Exception(
+                    "Corrupt or incomplete state data detected; "
+                    . "removing last_state.txt. Please restart harvest."
+                );
+            }
+            [
+                $resumeSet,
+                $resumeToken,
+                $this->startDate,
+                $explicitHarvestEndDate
+            ] = $state;
         }
 
         // Loop through all of the selected sets:
@@ -197,13 +236,19 @@ class Harvester
             // Keep harvesting as long as a resumption token is provided:
             while ($token !== false) {
                 // Save current state in case we need to resume later:
-                $this->stateManager->saveState($set, $token, $this->startDate);
+                $this->stateManager->saveState(
+                    $set,
+                    $token,
+                    $this->startDate,
+                    $explicitHarvestEndDate
+                );
                 $token = $this->getRecordsByToken($token);
             }
         }
 
-        // If we made it this far, all was successful, so we should clean up
-        // the stored state.
+        // If we made it this far, all was successful. Save last harvest info
+        // and clean up the stored state.
+        $this->stateManager->saveDate($explicitHarvestEndDate);
         $this->stateManager->clearState();
     }
 
@@ -221,19 +266,6 @@ class Harvester
         $response = $this->communicator->request($verb, $params);
         $this->checkResponseForErrors($response);
         return $response;
-    }
-
-    /**
-     * Load date granularity from the server.
-     *
-     * @return void
-     */
-    protected function loadGranularity()
-    {
-        $this->write("Autodetecting date granularity... ");
-        $response = $this->sendRequest('Identify');
-        $this->granularity = (string)$response->Identify->granularity;
-        $this->writeLine("found {$this->granularity}.");
     }
 
     /**
@@ -292,10 +324,6 @@ class Harvester
             && !empty($response->ListRecords->resumptionToken)
         ) {
             return $response->ListRecords->resumptionToken;
-        } elseif (isset($endDate) && $endDate > 0) {
-            $dateFormat = ($this->granularity == 'YYYY-MM-DD') ?
-                'Y-m-d' : 'Y-m-d\TH:i:s\Z';
-            $this->stateManager->saveDate(date($dateFormat, $endDate));
         }
         return false;
     }
@@ -334,6 +362,34 @@ class Harvester
     protected function getRecordsByToken($token)
     {
         return $this->getRecords(['resumptionToken' => (string)$token]);
+    }
+
+    /**
+     * Get identify information from OAI-PMH host. Unless $reset = TRUE, this
+     * method will only invoke an OAI-PMH call upon its first usage and will
+     * return cached data after that.
+     *
+     * @param boolean $reset Whether-or-not to reset identity information
+     *                       already fetched during this request.
+     *
+     * @return stdClass       An object of response properties as defined by
+     *                        http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify
+     *                        plus a 'responseDate' property representing the
+     *                        datestamp of the identify response in the form
+     *                        YYYY-MM-DDThh:mm:ssZ
+     *
+     * @see http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify
+     */
+    protected function getIdentifyResponse($reset = false)
+    {
+        if (empty($this->identifyResponse) || $reset) {
+            $response = $this->sendRequest('Identify');
+            // Save callers the burden of casting XML elements by preparing a
+            // flat list of string properties.
+            $this->identifyResponse = (object)(array)$response->Identify;
+            $this->identifyResponse->responseDate = (string)$response->responseDate;
+        }
+        return $this->identifyResponse;
     }
 
     /**
