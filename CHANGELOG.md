@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## Next Release - TBD
+## 5.0.0 - 2022-09-29
 
 ### Added
 
@@ -11,6 +11,9 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Changed
 
 - The minimum PHP version requirement has been raised to 7.4.1.
+- The determination of the date stored in last_harvest.txt is now more reliable and consistent (see https://github.com/vufind-org/vufindharvest/issues/7 for related discussion).
+- The last_state.txt file (created to resume interrupted harvests) now stores an additional value and old states cannot be loaded by this version; make sure all harvests are fully complete before upgrading.
+- Internal handling of Identify responses has been refactored to prevent unnecessary calls and increase reliability.
 
 ### Deprecated
 
