@@ -169,7 +169,6 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * /**
      * Test that a missing URL throws an exception.
      *
      * @return void
