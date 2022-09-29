@@ -315,11 +315,10 @@ class Harvester
             $this->writeLine(
                 'Processing ' . count($response->ListRecords->record) . " records..."
             );
-            $endDate = $this->writer->write($response->ListRecords->record);
+            $this->writer->write($response->ListRecords->record);
         }
 
-        // If we have a resumption token, keep going; otherwise, we're done -- save
-        // the end date.
+        // If we have a resumption token, keep going; otherwise, we're done.
         if (isset($response->ListRecords->resumptionToken)
             && !empty($response->ListRecords->resumptionToken)
         ) {
