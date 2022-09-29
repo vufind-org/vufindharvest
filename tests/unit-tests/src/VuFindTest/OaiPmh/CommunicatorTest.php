@@ -29,9 +29,9 @@
 namespace VuFindTest\Harvest\OaiPmh;
 
 use Laminas\Http\Client;
-use VuFindHarvest\OaiPmh\Communicator;
 use Symfony\Component\Console\Output\OutputInterface;
 use VuFindHarvest\ConsoleOutput\ConsoleWriter;
+use VuFindHarvest\OaiPmh\Communicator;
 
 /**
  * OAI-PMH communicator test.
@@ -44,7 +44,6 @@ use VuFindHarvest\ConsoleOutput\ConsoleWriter;
  */
 class CommunicatorTest extends \PHPUnit\Framework\TestCase
 {
-
     /**
      * Get Communicator
      *
