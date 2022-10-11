@@ -94,20 +94,23 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
     /**
      * Sanitize XML.
      *
-     * @param string $xml XML to sanitize
+     * @param string $rawXml XML to sanitize
      *
      * @return string
      */
-    protected function sanitizeXml($xml)
+    protected function sanitizeXml($rawXml)
     {
-        // Sanitize the XML if requested:
-        $newXML = trim(preg_replace($this->sanitizeRegex, ' ', $xml, -1, $count));
+        // Make sure the encoding is correct before applying regular expressions:
+        $utf8xml = mb_convert_encoding($rawXml, 'UTF-8', 'UTF-8');
 
-        if ($count > 0 && $this->badXmlLog) {
-            $this->logBadXML($xml);
+        // Sanitize the XML if requested:
+        $newXml = trim(preg_replace($this->sanitizeRegex, ' ', $utf8xml));
+
+        if ($rawXml !== $newXml && $this->badXmlLog) {
+            $this->logBadXML($rawXml);
         }
 
-        return $newXML;
+        return $newXml;
     }
 
     /**

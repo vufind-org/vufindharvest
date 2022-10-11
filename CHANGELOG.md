@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## Next Release - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- XML sanitization can now handle incorrectly UTF-8-encoded records.
+
 ## 5.0.0 - 2022-09-29
 
 ### Added
