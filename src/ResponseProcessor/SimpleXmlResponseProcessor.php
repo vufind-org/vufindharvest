@@ -104,9 +104,9 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
         $xml = mb_convert_encoding($rawXml, 'UTF-8', 'UTF-8');
 
         // Sanitize the XML if requested:
-        $newXML = trim(preg_replace($this->sanitizeRegex, ' ', $xml, -1, $count));
+        $newXML = trim(preg_replace($this->sanitizeRegex, ' ', $xml));
 
-        if (($xml !== $rawXml || $count > 0) && $this->badXmlLog) {
+        if ($rawXml !== $newXML && $this->badXmlLog) {
             $this->logBadXML($rawXml);
         }
 
