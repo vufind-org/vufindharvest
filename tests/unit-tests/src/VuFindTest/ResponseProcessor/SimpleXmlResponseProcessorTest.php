@@ -58,7 +58,8 @@ class SimpleXmlResponseProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test behavior related to bad XML (with sanitization).
+     * Test behavior related to bad XML (encoded correctly, but with an illegal
+     * character) (with sanitization).
      *
      * @return void
      */
@@ -72,6 +73,30 @@ class SimpleXmlResponseProcessorTest extends \PHPUnit\Framework\TestCase
         $result = $sanitize->process($badXml);
         $this->assertEquals(
             '<?xml version="1.0"?>' . "\n" . '<illegal value=" "/>' . "\n",
+            $result->asXml()
+        );
+        $this->assertEquals($badXml . "\n\n", file_get_contents($basePath . $log));
+        unlink($basePath . $log);
+    }
+
+    /**
+     * Test behavior related to badly encoded (invalid UTF-8) XML (with
+     * sanitization).
+     *
+     * @return void
+     */
+    public function testBadlyEncodedXmlWithSanitization()
+    {
+        $badXml = '<illegal value="' . chr(0xC2) . '" contents="'
+            . chr(0xA9) . '2004/2010"/>';
+        $basePath = sys_get_temp_dir() . '/';
+        $log = 'badxmltest.log';
+        $options = ['sanitize' => true, 'badXMLLog' => $log];
+        $sanitize = new SimpleXmlResponseProcessor($basePath, $options);
+        $result = $sanitize->process($badXml);
+        $this->assertEquals(
+            '<?xml version="1.0"?>' . "\n"
+                . '<illegal value="?" contents="?2004/2010"/>' . "\n",
             $result->asXml()
         );
         $this->assertEquals($badXml . "\n\n", file_get_contents($basePath . $log));
