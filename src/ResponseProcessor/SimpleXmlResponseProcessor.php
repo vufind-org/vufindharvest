@@ -101,16 +101,16 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
     protected function sanitizeXml($rawXml)
     {
         // Make sure the encoding is correct before applying regular expressions:
-        $xml = mb_convert_encoding($rawXml, 'UTF-8', 'UTF-8');
+        $utf8xml = mb_convert_encoding($rawXml, 'UTF-8', 'UTF-8');
 
         // Sanitize the XML if requested:
-        $newXML = trim(preg_replace($this->sanitizeRegex, ' ', $xml));
+        $newXml = trim(preg_replace($this->sanitizeRegex, ' ', $utf8xml));
 
         if ($rawXml !== $newXML && $this->badXmlLog) {
             $this->logBadXML($rawXml);
         }
 
-        return $newXML;
+        return $newXml;
     }
 
     /**
