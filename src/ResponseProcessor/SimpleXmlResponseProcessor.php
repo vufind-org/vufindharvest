@@ -106,7 +106,7 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
         // Sanitize the XML if requested:
         $newXml = trim(preg_replace($this->sanitizeRegex, ' ', $utf8xml));
 
-        if ($rawXml !== $newXML && $this->badXmlLog) {
+        if ($rawXml !== $newXml && $this->badXmlLog) {
             $this->logBadXML($rawXml);
         }
 
