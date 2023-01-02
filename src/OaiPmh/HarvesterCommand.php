@@ -274,6 +274,12 @@ class HarvesterCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Filename (relative to harvest directory) to log'
                 . ' XML fixed by sanitize setting'
+            )->addOption(
+                'harvestTestData',
+                null,
+                InputOption::VALUE_NONE,
+                'an option to only harvest the first page of each set.'
+                . ' dont iterate over the resumption tokens'
             );
     }
 
@@ -308,6 +314,7 @@ class HarvesterCommand extends Command
             'autosslca' => ['autosslca', true],
             'nosslverifypeer' => ['sslverifypeer', false],
             'sanitize' => ['sanitize', true],
+            'harvestTestData' => ['harvestTestData', true],
         ];
         foreach ($flagSettings as $in => $details) {
             if ($input->hasOption($in) && $input->getOption($in)) {

@@ -106,6 +106,14 @@ class Harvester
      */
     protected $identifyResponse = null;
 
+
+    /**
+     * a flag to only harvest a small test set 
+     * and then stop after first resumption
+     * only for testing
+     */
+    protected $harvestTestData = false;
+
     /**
      * Constructor.
      *
@@ -243,6 +251,10 @@ class Harvester
                     $explicitHarvestEndDate
                 );
                 $token = $this->getRecordsByToken($token);
+                if ( isset($this->harvestTestData) && $this->harvestTestData == true ) {
+                    $this->write("DEBUG: stop harvesting after first resumption token.\n");
+                    break;
+                } // endif
             }
         }
 
@@ -425,6 +437,9 @@ class Harvester
         }
         if (isset($settings['dateGranularity'])) {
             $this->granularity = $settings['dateGranularity'];
+        }
+        if (isset($settings['harvestTestData'])) {
+            $this->harvestTestData = true;
         }
     }
 }
