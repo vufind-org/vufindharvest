@@ -106,11 +106,12 @@ class Harvester
      */
     protected $identifyResponse = null;
 
-
     /**
-     * a flag to only harvest a small test set 
-     * and then stop after first resumption
+     * Flag to only harvest a small test set and then stop after
+     * first resumption token.
      * only for testing
+     *
+     * @var bool
      */
     protected $harvestTestData = false;
 
@@ -251,8 +252,11 @@ class Harvester
                     $explicitHarvestEndDate
                 );
                 $token = $this->getRecordsByToken($token);
-                if ( isset($this->harvestTestData) && $this->harvestTestData == true ) {
-                    $this->write("DEBUG: stop harvesting after first resumption token.\n");
+                // stop harvesting after first resumption token if flag is set:
+                if ($this->harvestTestData == true) {
+                    $this->writeLine(
+                        "stop harvesting after first resumption token."
+                    );
                     break;
                 } // endif
             }
