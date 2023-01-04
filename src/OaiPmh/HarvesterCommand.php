@@ -275,7 +275,7 @@ class HarvesterCommand extends Command
                 'Filename (relative to harvest directory) to log'
                 . ' XML fixed by sanitize setting'
             )->addOption(
-                'harvestTestData',
+                'ignoreResumptionTokens',
                 null,
                 InputOption::VALUE_NONE,
                 'an option to only harvest the first page of each set.'
@@ -314,7 +314,7 @@ class HarvesterCommand extends Command
             'autosslca' => ['autosslca', true],
             'nosslverifypeer' => ['sslverifypeer', false],
             'sanitize' => ['sanitize', true],
-            'harvestTestData' => ['harvestTestData', true],
+            'ignoreResumptionTokens' => ['ignoreResumptionTokens', true],
         ];
         foreach ($flagSettings as $in => $details) {
             if ($input->hasOption($in) && $input->getOption($in)) {
@@ -372,6 +372,14 @@ class HarvesterCommand extends Command
         }
 
         // All done.
+        if (isset($settings['ignoreResumptionTokens'])
+            && $settings['ignoreResumptionTokens']
+        ) {
+            $this->writeLine(
+                'ignoreResumptionTokens option set; '
+                . 'probably not all sources processed completely.'
+            );
+        }
         if ($processed == 0 && $skipped > 0) {
             $this->writeLine(
                 'No valid settings found; '

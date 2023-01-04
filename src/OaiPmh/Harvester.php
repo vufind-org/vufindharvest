@@ -113,7 +113,7 @@ class Harvester
      *
      * @var bool
      */
-    protected $harvestTestData = false;
+    protected $ignoreResumptionTokens = null;
 
     /**
      * Constructor.
@@ -244,6 +244,15 @@ class Harvester
 
             // Keep harvesting as long as a resumption token is provided:
             while ($token !== false) {
+                // Stop harvesting if ignoreResumptionToken flag is set:
+                if ($this->ignoreResumptionTokens == true) {
+                    $this->writeLine(
+                        "stop harvesting before first resumption token."
+                    );
+                    // unset token
+                    $token = false;
+                    break;
+                } // endif
                 // Save current state in case we need to resume later:
                 $this->stateManager->saveState(
                     $set,
@@ -252,19 +261,14 @@ class Harvester
                     $explicitHarvestEndDate
                 );
                 $token = $this->getRecordsByToken($token);
-                // stop harvesting after first resumption token if flag is set:
-                if ($this->harvestTestData == true) {
-                    $this->writeLine(
-                        "stop harvesting after first resumption token."
-                    );
-                    break;
-                } // endif
             }
         }
 
         // If we made it this far, all was successful. Save last harvest info
         // and clean up the stored state.
-        $this->stateManager->saveDate($explicitHarvestEndDate);
+        if (!$this->ignoreResumptionTokens == true) {
+            $this->stateManager->saveDate($explicitHarvestEndDate);
+        }
         $this->stateManager->clearState();
     }
 
@@ -442,8 +446,8 @@ class Harvester
         if (isset($settings['dateGranularity'])) {
             $this->granularity = $settings['dateGranularity'];
         }
-        if (isset($settings['harvestTestData'])) {
-            $this->harvestTestData = true;
+        if (isset($settings['ignoreResumptionTokens'])) {
+            $this->ignoreResumptionTokens = true;
         }
     }
 }
