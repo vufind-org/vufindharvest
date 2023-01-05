@@ -351,7 +351,6 @@ XML;
             'metadataPrefix' => 'oai_dc', 'set' => 'xyzzy',
             'from' => '2016-07-01', 'until' => '2016-07-31',
         ];
-        $expectedSettings1 = ['resumptionToken' => 'more'];
         $comm->expects($this->exactly(1))->method('request')
             ->withConsecutive(
                 ['ListRecords', $expectedSettings0],
@@ -364,6 +363,7 @@ XML;
             ->with($this->isInstanceOf('SimpleXMLElement'));
         $sm = $this->getMockStateManager();
         $sm->expects($this->once())->method('clearState');
+        $sm->expects($this->never())->method('saveState');
         $harvester = $this->getHarvester(
             [
                 'set' => 'xyzzy', 'dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ',
