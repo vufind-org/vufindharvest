@@ -107,13 +107,16 @@ class Harvester
     protected $identifyResponse = null;
 
     /**
-     * Flag to only harvest a small test set and then stop after
-     * first resumption token.
+     * Flag to limit number of harvested records 
      * only for testing
-     *
-     * @var bool
+     * @var number
      */
-    protected $ignoreResumptionTokens = null;
+    protected $stopAfter = null;
+
+    /** 
+     * count harvested records.
+     */
+    private $recordsCount = 0;
 
     /**
      * Constructor.
@@ -244,6 +247,16 @@ class Harvester
 
             // Keep harvesting as long as a resumption token is provided:
             while ($token !== false) {
+                // if stopAfter is set, stop harvesting after given limit has been reached
+                if (isset($this->stopAfter)) {
+                    $this->writeLine('stopAfter: ' . $this->stopAfter);
+                }
+                if (isset($this->stopAfter) && $this->recordsCount >= $this->stopAfter) {
+                    $this->writeLine("reached limit of records to harvest: " . $this->stopAfter);
+                    $this->writeLine("stop harvesting.");
+                    $token = false;
+                    break;
+                }
                 // Stop harvesting if ignoreResumptionToken flag is set:
                 if ($this->ignoreResumptionTokens == true) {
                     $this->writeLine(
@@ -332,9 +345,12 @@ class Harvester
 
         // Save the records from the response:
         if ($response->ListRecords->record) {
+            $newRecords = count($response->ListRecords->record); 
             $this->writeLine(
-                'Processing ' . count($response->ListRecords->record) . " records..."
+                '[sum: ' . $this->recordsCount .'] Processing ' . $newRecords . " records..."
             );
+            // count numRecords
+            $this->recordsCount += $newRecords;
             $this->writer->write($response->ListRecords->record);
         }
 
@@ -448,6 +464,9 @@ class Harvester
         }
         if (isset($settings['ignoreResumptionTokens'])) {
             $this->ignoreResumptionTokens = true;
+        }
+        if (isset($settings['stopAfter'])) {
+            $this->stopAfter = $settings['stopAfter'];
         }
     }
 }
