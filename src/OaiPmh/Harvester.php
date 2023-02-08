@@ -109,14 +109,15 @@ class Harvester
     /**
      * Flag to limit number of harvested records 
      * only for testing
+     *
      * @var number
      */
     protected $stopAfter = null;
 
     /** 
-     * count harvested records.
+     * Count harvested records.
      */
-    private $recordsCount = 0;
+    protected $recordsCount = 0;
 
     /**
      * Constructor.
@@ -247,25 +248,17 @@ class Harvester
 
             // Keep harvesting as long as a resumption token is provided:
             while ($token !== false) {
-                // if stopAfter is set, stop harvesting after given limit has been reached
-                if (isset($this->stopAfter)) {
-                    $this->writeLine('stopAfter: ' . $this->stopAfter);
-                }
-                if (isset($this->stopAfter) && $this->recordsCount >= $this->stopAfter) {
-                    $this->writeLine("reached limit of records to harvest: " . $this->stopAfter);
+                // If stopAfter is set, stop harvesting after given limit
+                if (isset($this->stopAfter) 
+                    && $this->recordsCount >= $this->stopAfter
+                ) {
+                    $this->writeLine(
+                        "reached limit of records to harvest: " . $this->stopAfter
+                    );
                     $this->writeLine("stop harvesting.");
                     $token = false;
                     break;
                 }
-                // Stop harvesting if ignoreResumptionToken flag is set:
-                if ($this->ignoreResumptionTokens == true) {
-                    $this->writeLine(
-                        "stop harvesting before first resumption token."
-                    );
-                    // unset token
-                    $token = false;
-                    break;
-                } // endif
                 // Save current state in case we need to resume later:
                 $this->stateManager->saveState(
                     $set,
@@ -279,7 +272,7 @@ class Harvester
 
         // If we made it this far, all was successful. Save last harvest info
         // and clean up the stored state.
-        if (!$this->ignoreResumptionTokens == true) {
+        if (!isset($this->stopAfter) || !$this->stopAfter >= 0) {
             $this->stateManager->saveDate($explicitHarvestEndDate);
         }
         $this->stateManager->clearState();
@@ -347,7 +340,8 @@ class Harvester
         if ($response->ListRecords->record) {
             $newRecords = count($response->ListRecords->record); 
             $this->writeLine(
-                '[sum: ' . $this->recordsCount .'] Processing ' . $newRecords . " records..."
+                '[sum: ' . $this->recordsCount .'] Processing '
+                . $newRecords . " records..."
             );
             // count numRecords
             $this->recordsCount += $newRecords;
@@ -461,9 +455,6 @@ class Harvester
         }
         if (isset($settings['dateGranularity'])) {
             $this->granularity = $settings['dateGranularity'];
-        }
-        if (isset($settings['ignoreResumptionTokens'])) {
-            $this->ignoreResumptionTokens = true;
         }
         if (isset($settings['stopAfter'])) {
             $this->stopAfter = $settings['stopAfter'];

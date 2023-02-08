@@ -344,7 +344,7 @@ XML;
      *
      * @return void
      */
-    public function testListRecordsWithIgnoreResumptionTokenOption()
+    public function testListRecordsWithStopAfterOption()
     {
         $comm = $this->getMockCommunicator();
         $expectedSettings0 = [
@@ -368,7 +368,7 @@ XML;
             [
                 'set' => 'xyzzy', 'dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ',
                 'from' => '2016-07-01', 'until' => '2016-07-31',
-                'ignoreResumptionTokens' => true
+                'stopAfter' => 100
             ],
             $comm,
             $writer,
