@@ -114,7 +114,7 @@ class Harvester
      */
     protected $stopAfter = null;
 
-    /** 
+    /**
      * Count harvested records.
      */
     protected $recordsCount = 0;
