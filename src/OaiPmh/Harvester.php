@@ -249,7 +249,7 @@ class Harvester
             // Keep harvesting as long as a resumption token is provided:
             while ($token !== false) {
                 // If stopAfter is set, stop harvesting after given limit
-                if (isset($this->stopAfter) 
+                if (($this->stopAfter ?? -1) != -1
                     && $this->recordsCount >= $this->stopAfter
                 ) {
                     $this->writeLine(
@@ -272,7 +272,7 @@ class Harvester
 
         // If we made it this far, all was successful. Save last harvest info and
         // clean up the stored state (unless we have a limit imposed by stopAfter)
-        if (($this->stopAfter ?? -1) >= 0) {
+        if (($this->stopAfter ?? -1) == -1) {
             $this->stateManager->saveDate($explicitHarvestEndDate);
         }
         $this->stateManager->clearState();
