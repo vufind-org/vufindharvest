@@ -107,10 +107,10 @@ class Harvester
     protected $identifyResponse = null;
 
     /**
-     * Flag to limit number of harvested records 
-     * only for testing
+     * Flag to limit number of harvested records (-1 = no limit).
+     * Used only for testing.
      *
-     * @var ?int
+     * @var int
      */
     protected $stopAfter = -1;
 
