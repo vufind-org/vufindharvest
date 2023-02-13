@@ -373,7 +373,7 @@ class HarvesterCommand extends Command
         if (isset($settings['stopAfter'])) {
             $this->writeLine(
                 'stopAfter option set; '
-                . 'probably not all sources processed completely.'
+                . 'all sources may not have been fully harvested.'
             );
         }
         if ($processed == 0 && $skipped > 0) {
