@@ -107,12 +107,12 @@ class Harvester
     protected $identifyResponse = null;
 
     /**
-     * Flag to limit number of harvested records (-1 = no limit).
+     * Flag to limit number of harvested records (null = no limit).
      * Used only for testing.
      *
-     * @var int
+     * @var ?int
      */
-    protected $stopAfter = -1;
+    protected $stopAfter = null;
 
     /** 
      * Count harvested records.
@@ -249,7 +249,7 @@ class Harvester
             // Keep harvesting as long as a resumption token is provided:
             while ($token !== false) {
                 // If stopAfter is set, stop harvesting after given limit
-                if (($this->stopAfter ?? -1) != -1
+                if (!empty($this->stopAfter)
                     && $this->recordsCount >= $this->stopAfter
                 ) {
                     $this->writeLine(
@@ -272,7 +272,7 @@ class Harvester
 
         // If we made it this far, all was successful. Save last harvest info and
         // clean up the stored state (unless we have a limit imposed by stopAfter)
-        if (($this->stopAfter ?? -1) == -1) {
+        if (empty($this->stopAfter)) {
             $this->stateManager->saveDate($explicitHarvestEndDate);
         }
         $this->stateManager->clearState();
@@ -338,9 +338,9 @@ class Harvester
 
         // Save the records from the response:
         if ($response->ListRecords->record) {
-            $newRecords = count($response->ListRecords->record); 
+            $newRecords = count($response->ListRecords->record);
             $this->writeLine(
-                '[' . $this->recordsCount .' records harvested] Processing '
+                '[' . $this->recordsCount . ' records harvested] Processing '
                 . $newRecords . " records..."
             );
             // count numRecords
