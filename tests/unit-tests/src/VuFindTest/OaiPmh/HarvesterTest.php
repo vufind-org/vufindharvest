@@ -339,8 +339,8 @@ XML;
     }
 
     /**
-     * Test that we only retrieve one page of results
-     * if ignoreResumtionToken is set.
+     * Test that harvesting is stopped after x records
+     * if stopAfter is set to x.
      *
      * @return void
      */

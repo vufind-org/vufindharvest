@@ -110,7 +110,7 @@ class Harvester
      * Flag to limit number of harvested records 
      * only for testing
      *
-     * @var number
+     * @var ? int
      */
     protected $stopAfter = null;
 
@@ -270,9 +270,9 @@ class Harvester
             }
         }
 
-        // If we made it this far, all was successful. Save last harvest info
-        // and clean up the stored state.
-        if (!isset($this->stopAfter) || !$this->stopAfter >= 0) {
+        // If we made it this far, all was successful. Save last harvest info and
+        // clean up the stored state (unless we have a limit imposed by stopAfter)
+        if (($this->stopAfter ?? null) >= 0) {
             $this->stateManager->saveDate($explicitHarvestEndDate);
         }
         $this->stateManager->clearState();
@@ -340,7 +340,7 @@ class Harvester
         if ($response->ListRecords->record) {
             $newRecords = count($response->ListRecords->record); 
             $this->writeLine(
-                '[sum: ' . $this->recordsCount .'] Processing '
+                '[' . $this->recordsCount .' records harvested] Processing '
                 . $newRecords . " records..."
             );
             // count numRecords
