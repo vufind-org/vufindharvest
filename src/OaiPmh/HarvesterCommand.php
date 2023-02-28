@@ -274,6 +274,11 @@ class HarvesterCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Filename (relative to harvest directory) to log'
                 . ' XML fixed by sanitize setting'
+            )->addOption(
+                'stopAfter',
+                null,
+                InputOption::VALUE_NONE,
+                'an option to stop harvesting after the first n records of each set.'
             );
     }
 
@@ -365,6 +370,12 @@ class HarvesterCommand extends Command
         }
 
         // All done.
+        if (isset($settings['stopAfter'])) {
+            $this->writeLine(
+                'stopAfter option set; '
+                . 'all sources may not have been fully harvested.'
+            );
+        }
         if ($processed == 0 && $skipped > 0) {
             $this->writeLine(
                 'No valid settings found; '

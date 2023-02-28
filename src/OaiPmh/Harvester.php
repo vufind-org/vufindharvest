@@ -107,6 +107,19 @@ class Harvester
     protected $identifyResponse = null;
 
     /**
+     * Flag to limit number of harvested records (null = no limit).
+     * Used only for testing.
+     *
+     * @var ?int
+     */
+    protected $stopAfter = null;
+
+    /**
+     * Count harvested records.
+     */
+    protected $recordsCount = 0;
+
+    /**
      * Constructor.
      *
      * @param Communicator $communicator Low-level API client
@@ -235,6 +248,17 @@ class Harvester
 
             // Keep harvesting as long as a resumption token is provided:
             while ($token !== false) {
+                // If stopAfter is set, stop harvesting after given limit
+                if (!empty($this->stopAfter)
+                    && $this->recordsCount >= $this->stopAfter
+                ) {
+                    $this->writeLine(
+                        "reached limit of records to harvest: " . $this->stopAfter
+                    );
+                    $this->writeLine("stop harvesting.");
+                    $token = false;
+                    break;
+                }
                 // Save current state in case we need to resume later:
                 $this->stateManager->saveState(
                     $set,
@@ -246,9 +270,11 @@ class Harvester
             }
         }
 
-        // If we made it this far, all was successful. Save last harvest info
-        // and clean up the stored state.
-        $this->stateManager->saveDate($explicitHarvestEndDate);
+        // If we made it this far, all was successful. Save last harvest info and
+        // clean up the stored state (unless we have a limit imposed by stopAfter)
+        if (empty($this->stopAfter)) {
+            $this->stateManager->saveDate($explicitHarvestEndDate);
+        }
         $this->stateManager->clearState();
     }
 
@@ -312,9 +338,13 @@ class Harvester
 
         // Save the records from the response:
         if ($response->ListRecords->record) {
+            $newRecords = count($response->ListRecords->record);
             $this->writeLine(
-                'Processing ' . count($response->ListRecords->record) . " records..."
+                '[' . $this->recordsCount . ' records harvested] Processing '
+                . $newRecords . " records..."
             );
+            // count numRecords
+            $this->recordsCount += $newRecords;
             $this->writer->write($response->ListRecords->record);
         }
 
@@ -425,6 +455,9 @@ class Harvester
         }
         if (isset($settings['dateGranularity'])) {
             $this->granularity = $settings['dateGranularity'];
+        }
+        if (isset($settings['stopAfter'])) {
+            $this->stopAfter = $settings['stopAfter'];
         }
     }
 }
