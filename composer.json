@@ -24,15 +24,15 @@
         "symfony/console": "^4.0||^5.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "3.8.0",
-        "pear/http_request2": "2.4.2",
+        "friendsofphp/php-cs-fixer": "3.14.4",
+        "pear/http_request2": "2.5.1",
         "phploc/phploc": "7.0.2",
-        "phpmd/phpmd": "2.12.0",
-        "phpstan/phpstan": "1.6.8",
-        "phpunit/phpunit": "9.5.20",
-        "phing/phing": "2.17.3",
+        "phpmd/phpmd": "2.13.0",
+        "phpstan/phpstan": "1.10.3",
+        "phpunit/phpunit": "9.6.4",
+        "phing/phing": "2.17.4",
         "sebastian/phpcpd": "6.0.3",
-        "squizlabs/php_codesniffer": "3.6.2"
+        "squizlabs/php_codesniffer": "3.7.2"
     },
     "autoload": {
         "psr-4": {
