@@ -2,11 +2,11 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## Next Release - TBD
+## 5.1.0 - 2023-02-28
 
 ### Added
 
-- Nothing.
+- The stopAfter setting can now be used to harvest a limited number of records (useful for testing).
 
 ### Changed
 
