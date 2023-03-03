@@ -7,5 +7,7 @@
   <arg name="extensions" value="php"/>
   <rule ref="PEAR">
     <exclude name="PEAR.Commenting.FunctionComment.ParamCommentAlignment" />
+    <exclude name="PEAR.WhiteSpace.ScopeIndent.IncorrectExact" />
+    <exclude name="PEAR.WhiteSpace.ScopeIndent.Incorrect" />
   </rule>
 </ruleset>
