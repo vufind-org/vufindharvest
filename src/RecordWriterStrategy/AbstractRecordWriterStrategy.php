@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Abstract record writer strategy (shared base for standard vs. combined modes
  * of saving records).
@@ -26,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
+
 namespace VuFindHarvest\RecordWriterStrategy;
 
 /**

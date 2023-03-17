@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Factory for OAI-PMH Harvest Tool
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
+
 namespace VuFindHarvest\OaiPmh;
 
 use Laminas\Http\Client;
@@ -55,7 +57,7 @@ class HarvesterFactory
      *
      * @return void
      */
-    protected function addAutoSslOptions(& $options)
+    protected function addAutoSslOptions(&$options)
     {
         // RedHat/CentOS:
         if (file_exists('/etc/pki/tls/cert.pem')) {
@@ -167,7 +169,8 @@ class HarvesterFactory
         $comm = new Communicator($settings['url'], $client, $processor);
         // We only want the communicator to output messages if we are in verbose
         // mode; communicator messages are considered verbose output.
-        if (($settings['verbose'] ?? false)
+        if (
+            ($settings['verbose'] ?? false)
             && $writer = $this->getConsoleWriter($output, $settings)
         ) {
             $comm->setOutputWriter($writer);

@@ -27,6 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
+
 namespace VuFindTest\Harvest\OaiPmh;
 
 use Laminas\Http\Client;
@@ -48,8 +49,8 @@ class CommunicatorTest extends \PHPUnit\Framework\TestCase
     /**
      * Get Communicator
      *
-     * @param string                     $uri       Base URI for OAI-PMH server
-     * @param Client                     $client    HTTP client
+     * @param string $uri    Base URI for OAI-PMH server
+     * @param Client $client HTTP client
      *
      * @return type
      */
@@ -130,7 +131,6 @@ class CommunicatorTest extends \PHPUnit\Framework\TestCase
      * Test communicator HTTP error detection.
      *
      * @return void
-     *
      */
     public function testHTTPErrorDetection()
     {

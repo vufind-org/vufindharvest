@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Trait for shared output functionality.
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
+
 namespace VuFindHarvest\ConsoleOutput;
 
 /**

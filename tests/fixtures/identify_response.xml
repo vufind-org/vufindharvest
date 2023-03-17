@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2016-07-12T16:19:54Z</responseDate><request verb="Identify">http://fake/OAI/Server</request>
+<Identify>
+    <repositoryName>fake</repositoryName>
+    <baseURL>http://fake/OAI/Server</baseURL>
+    <protocolVersion>2.0</protocolVersion>
+    <adminEmail>fake@fake.edu</adminEmail>
+    <earliestDatestamp>2000-01-01T00:00:00Z</earliestDatestamp>
+    <deletedRecord>transient</deletedRecord>
+    <granularity>YYYY-MM-DDThh:mm:ssZ</granularity>
+    <description>
+        <oai-identifier xmlns="http://www.openarchives.org/OAI/2.0/oai-identifier" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai-identifier http://www.openarchives.org/OAI/2.0/oai-identifier.xsd">
+            <scheme>oai</scheme>
+            <repositoryIdentifier>fake</repositoryIdentifier>
+            <delimiter>:</delimiter>
+            <sampleIdentifier>fake:123456</sampleIdentifier>
+        </oai-identifier>
+    </description>
+</Identify>
+</OAI-PMH>

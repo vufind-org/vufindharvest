@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAI-PMH XML Record Formatter
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
+
 namespace VuFindHarvest\OaiPmh;
 
 /**
@@ -132,7 +134,8 @@ class RecordXmlFormatter
     protected function fixNamespaces($xml, $ns, $attr = '')
     {
         foreach ($ns as $key => $val) {
-            if (!empty($key)
+            if (
+                !empty($key)
                 && strstr($xml, $key . ':') && !strstr($xml, 'xmlns:' . $key)
                 && !strstr($attr, 'xmlns:' . $key)
             ) {
@@ -207,7 +210,8 @@ class RecordXmlFormatter
             $insert .= $this
                 ->createTag($this->injectDate, (string)$header->datestamp);
         }
-        if (isset($header->setSpec)
+        if (
+            isset($header->setSpec)
             && ($this->injectSetSpec || $this->injectSetName)
         ) {
             $insert .= $this->getHeaderSetAdditions($header->setSpec);
