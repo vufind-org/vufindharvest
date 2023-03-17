@@ -26,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
+
 namespace VuFindTest\Harvest;
 
 use VuFindHarvest\OaiPmh\RecordXmlFormatter;
@@ -180,7 +181,6 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
      * Test exception when metadata is missing.
      *
      * @return void
-     *
      */
     public function testMissingMetadataException()
     {

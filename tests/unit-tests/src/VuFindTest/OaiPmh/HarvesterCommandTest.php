@@ -26,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
+
 namespace VuFindTest\Harvest\OaiPmh;
 
 use Symfony\Component\Console\Input\InputOption;
@@ -268,38 +269,29 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
                 '--timeout' => 45,
                 'target' => 'foo'
             ],
-            new VerboseHarvesterCommand($client, $basePath, $factory)
+            /**
+             * Since the Symfony framework adds the 'verbose' option at a higher level than
+             * the command, we need to add the option in this fake subclass in order to test
+             * verbosity here.
+             */
+            new class ($client, $basePath, $factory) extends HarvesterCommand {
+                /**
+                 * Configure the command.
+                 *
+                 * @return void
+                 */
+                protected function configure()
+                {
+                    parent::configure();
+                    $this->addOption(
+                        'verbose',
+                        'v',
+                        InputOption::VALUE_NONE,
+                        'Verbose mode'
+                    );
+                }
+            }
         );
         $this->assertEquals(0, $commandTester->getStatusCode());
-    }
-}
-
-/**
- * Since the Symfony framework adds the 'verbose' option at a higher level than
- * the command, we need to add the option in this fake subclass in order to test
- * verbosity here.
- *
- * @category VuFind
- * @package  Harvest_Tools
- * @author   Demian Katz <demian.katz@villanova.edu>
- * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
- */
-class VerboseHarvesterCommand extends HarvesterCommand
-{
-    /**
-     * Configure the command.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        parent::configure();
-        $this->addOption(
-            'verbose',
-            'v',
-            InputOption::VALUE_NONE,
-            'Verbose mode'
-        );
     }
 }

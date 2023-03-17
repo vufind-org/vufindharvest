@@ -26,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
+
 namespace VuFindTest\Harvest\OaiPmh;
 
 use VuFindHarvest\OaiPmh\Harvester;
@@ -155,28 +156,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getFakeIdentifyResponse()
     {
-        return <<<XML
-<?xml version="1.0"?>
-<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2016-07-12T16:19:54Z</responseDate><request verb="Identify">http://fake/OAI/Server</request>
-<Identify>
-    <repositoryName>fake</repositoryName>
-    <baseURL>http://fake/OAI/Server</baseURL>
-    <protocolVersion>2.0</protocolVersion>
-    <adminEmail>fake@fake.edu</adminEmail>
-    <earliestDatestamp>2000-01-01T00:00:00Z</earliestDatestamp>
-    <deletedRecord>transient</deletedRecord>
-    <granularity>YYYY-MM-DDThh:mm:ssZ</granularity>
-    <description>
-        <oai-identifier xmlns="http://www.openarchives.org/OAI/2.0/oai-identifier" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai-identifier http://www.openarchives.org/OAI/2.0/oai-identifier.xsd">
-            <scheme>oai</scheme>
-            <repositoryIdentifier>fake</repositoryIdentifier>
-            <delimiter>:</delimiter>
-            <sampleIdentifier>fake:123456</sampleIdentifier>
-        </oai-identifier>
-    </description>
-</Identify>
-</OAI-PMH>
-XML;
+        return file_get_contents(__DIR__ . '/../../../../fixtures/identify_response.xml');
     }
 
     /**
@@ -186,12 +166,7 @@ XML;
      */
     protected function getArbitraryErrorResponse()
     {
-        return <<<XML
-<?xml version="1.0"?>
-<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2016-07-13T14:11:24Z</responseDate><request verb="ListRecords" resumptionToken="foo">http://fake/OAI/Server</request>
-<error code="foo">bar</error>
-</OAI-PMH>
-XML;
+        return file_get_contents(__DIR__ . '/../../../../fixtures/arbitrary_error_response.xml');
     }
 
     /**
@@ -201,12 +176,7 @@ XML;
      */
     protected function getTokenErrorResponse()
     {
-        return <<<XML
-<?xml version="1.0"?>
-<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2016-07-13T14:11:24Z</responseDate><request verb="ListRecords" resumptionToken="foo">http://fake/OAI/Server</request>
-<error code="badResumptionToken">Invalid or expired resumption token</error>
-</OAI-PMH>
-XML;
+        return file_get_contents(__DIR__ . '/../../../../fixtures/token_error_response.xml');
     }
 
     /**
@@ -216,25 +186,7 @@ XML;
      */
     protected function getFakeResponse()
     {
-        return <<<XML
-<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2016-07-12T16:22:05Z</responseDate><request verb="ListRecords" metadataPrefix="oai_dc">http://fake/OAI/Server</request>
-    <ListRecords>
-        <record>
-            <header status="deleted">
-                <identifier>fake:foo1</identifier>
-            </header>
-        </record>
-        <record>
-            <header>
-                <identifier>fake:foo2</identifier>
-            </header>
-            <metadata>
-                <foo />
-           </metadata>
-        </record>
-    </ListRecords>
-</OAI-PMH>
-XML;
+        return file_get_contents(__DIR__ . '/../../../../fixtures/list_records_response.xml');
     }
 
     /**
@@ -244,21 +196,7 @@ XML;
      */
     protected function getFakeResponseWithToken()
     {
-        return <<<XML
-<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2016-07-12T16:22:05Z</responseDate><request verb="ListRecords" metadataPrefix="oai_dc">http://fake/OAI/Server</request>
-    <ListRecords>
-        <record>
-            <header>
-                <identifier>fake:foo0</identifier>
-            </header>
-            <metadata>
-                <foo />
-           </metadata>
-        </record>
-        <resumptionToken>more</resumptionToken>
-    </ListRecords>
-</OAI-PMH>
-XML;
+        return file_get_contents(__DIR__ . '/../../../../fixtures/list_records_token_response.xml');
     }
 
     /**
@@ -381,7 +319,6 @@ XML;
      * Test a bad resumption token error.
      *
      * @return void
-     *
      */
     public function testBadResumptionToken()
     {
@@ -416,7 +353,6 @@ XML;
      * Test a generic error.
      *
      * @return void
-     *
      */
     public function testArbitraryOaiError()
     {

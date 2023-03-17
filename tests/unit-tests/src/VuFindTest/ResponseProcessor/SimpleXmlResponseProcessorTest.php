@@ -26,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
+
 namespace VuFindTest\Harvest\OaiPmh;
 
 use VuFindHarvest\ResponseProcessor\SimpleXmlResponseProcessor;
@@ -45,7 +46,6 @@ class SimpleXmlResponseProcessorTest extends \PHPUnit\Framework\TestCase
      * Test behavior related to bad XML (without sanitization).
      *
      * @return void
-     *
      */
     public function testBadXmlWithoutSanitization()
     {
@@ -107,7 +107,6 @@ class SimpleXmlResponseProcessorTest extends \PHPUnit\Framework\TestCase
      * Test behavior related to bad XML (with sanitization).
      *
      * @return void
-     *
      */
     public function testBadXmlWithSanitizationAndBadLogDir()
     {

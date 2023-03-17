@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAI-PMH Harvest Tool (Symfony Console Command)
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
+
 namespace VuFindHarvest\OaiPmh;
 
 use Laminas\Http\Client;
@@ -357,7 +359,8 @@ class HarvesterCommand extends Command
             try {
                 $this->harvestSingleRepository($input, $output, $target, $settings);
             } catch (\Exception $e) {
-                if ($e instanceof OaiException
+                if (
+                    $e instanceof OaiException
                     && strtolower($e->getOaiCode()) == 'norecordsmatch'
                 ) {
                     $this->writeLine("No new records found.");

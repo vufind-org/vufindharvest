@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAI-PMH Harvest Tool
  *
@@ -25,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
+
 namespace VuFindHarvest\OaiPmh;
 
 use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
@@ -249,7 +251,8 @@ class Harvester
             // Keep harvesting as long as a resumption token is provided:
             while ($token !== false) {
                 // If stopAfter is set, stop harvesting after given limit
-                if (!empty($this->stopAfter)
+                if (
+                    !empty($this->stopAfter)
                     && $this->recordsCount >= $this->stopAfter
                 ) {
                     $this->writeLine(
@@ -312,7 +315,8 @@ class Harvester
 
             // If this is a bad resumption token error and we're trying to
             // restore a prior state, we should clean up.
-            if ($attribs['code'] == 'badResumptionToken'
+            if (
+                $attribs['code'] == 'badResumptionToken'
                 && $this->stateManager->loadState()
             ) {
                 $this->stateManager->clearState();
@@ -349,7 +353,8 @@ class Harvester
         }
 
         // If we have a resumption token, keep going; otherwise, we're done.
-        if (isset($response->ListRecords->resumptionToken)
+        if (
+            isset($response->ListRecords->resumptionToken)
             && !empty($response->ListRecords->resumptionToken)
         ) {
             return $response->ListRecords->resumptionToken;

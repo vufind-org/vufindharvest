@@ -26,6 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development
  */
+
 namespace VuFindTest\Harvest\OaiPmh;
 
 use Laminas\Http\Client;
@@ -63,6 +64,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Get harvester
      *
      * @param string $target      Name of source being harvested (used as directory
      * name for storing harvested data inside $harvestRoot)
@@ -126,7 +128,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue(true));
         $response->expects($this->any())
             ->method('getBody')
-            ->will($this->returnValue('<?xml version="1.0"?><OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2013-10-11T10:06:06Z</responseDate><request verb="ListSets" metadataPrefix="oai_dc" resumptionToken="" submit="Go">http://vu61162/vufind3/OAI/Server</request><ListSets><set><setSpec>Audio (Music)</setSpec><setName>Audio (Music)</setName></set><set><setSpec>Audio (Non-Music)</setSpec><setName>Audio (Non-Music)</setName></set></ListSets></OAI-PMH>'));
+            ->will($this->returnValue($this->getListSetsResponse()));
         $config = [
             'url' => 'http://localhost',
             'injectSetName' => 'setnametag',
@@ -172,7 +174,6 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
      * Test that a missing URL throws an exception.
      *
      * @return void
-     *
      */
     public function testMissingURLThrowsException()
     {
@@ -185,13 +186,23 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
     // Internal API
 
     /**
+     * Get a sample ListSets response
+     *
+     * @return string
+     */
+    protected function getListSetsResponse()
+    {
+        return file_get_contents(__DIR__ . '/../../../../fixtures/list_sets_response.xml');
+    }
+
+    /**
      * Get a sample Identify response
      *
      * @return string
      */
     protected function getIdentifyResponse()
     {
-        return '<?xml version="1.0"?><OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2013-10-11T11:12:04Z</responseDate><request verb="Identify" submit="Go">http://fake/my/OAI/Server</request><Identify><repositoryName>myuniversity University VuFind</repositoryName><baseURL>http://fake/my/OAI/Server</baseURL><protocolVersion>2.0</protocolVersion><earliestDatestamp>2000-01-01T00:00:00Z</earliestDatestamp><deletedRecord>transient</deletedRecord><granularity>YYYY-MM-DDThh:mm:ssZ</granularity><adminEmail>libtech@myuniversity.edu</adminEmail><description><oai-identifier xmlns="http://www.openarchives.org/OAI/2.0/oai-identifier" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai-identifier http://www.openarchives.org/OAI/2.0/oai-identifier.xsd"><scheme>oai</scheme><repositoryIdentifier>fake.myuniversity.edu</repositoryIdentifier><delimiter>:</delimiter><sampleIdentifier>oai:fake.myuniversity.edu:123456</sampleIdentifier></oai-identifier></description></Identify></OAI-PMH>';
+        return file_get_contents(__DIR__ . '/../../../../fixtures/identify_response.xml');
     }
 
     /**

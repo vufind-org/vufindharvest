@@ -1,0 +1,13 @@
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2016-07-12T16:22:05Z</responseDate><request verb="ListRecords" metadataPrefix="oai_dc">http://fake/OAI/Server</request>
+    <ListRecords>
+        <record>
+            <header>
+                <identifier>fake:foo0</identifier>
+            </header>
+            <metadata>
+                <foo />
+           </metadata>
+        </record>
+        <resumptionToken>more</resumptionToken>
+    </ListRecords>
+</OAI-PMH>
