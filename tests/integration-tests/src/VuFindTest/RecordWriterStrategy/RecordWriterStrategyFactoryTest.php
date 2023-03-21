@@ -54,7 +54,7 @@ class RecordWriterStrategyFactoryTest extends \PHPUnit\Framework\TestCase
         $basePath = sys_get_temp_dir() . '/';
         $settings = ['combineRecords' => true];
         $strategy = $factory->getStrategy($basePath, $settings);
-        $this->assertTrue($strategy instanceof CombinedRecordWriterStrategy);
+        $this->assertInstanceOf(CombinedRecordWriterStrategy::class, $strategy);
         $this->assertEquals($basePath, $strategy->getBasePath());
         $strategy->beginWrite();
         $strategy->addDeletedRecord('d1');

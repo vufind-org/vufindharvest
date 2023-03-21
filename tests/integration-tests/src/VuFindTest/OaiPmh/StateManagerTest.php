@@ -70,8 +70,8 @@ class StateManagerTest extends \PHPUnit\Framework\TestCase
         $manager = new StateManager($tmp);
         $manager->saveState('foo', 'bar', $startDate, $endDate);
         $this->assertEquals(['foo', 'bar', $startDate, $endDate], $manager->loadState());
-        $this->assertTrue(file_exists($tmp . 'last_state.txt'));
+        $this->assertFileExists($tmp . 'last_state.txt');
         $manager->clearState();
-        $this->assertFalse(file_exists($tmp . 'last_state.txt'));
+        $this->assertFileDoesNotExist($tmp . 'last_state.txt');
     }
 }
