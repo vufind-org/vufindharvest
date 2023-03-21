@@ -152,22 +152,22 @@ class RecordWriterTest extends \PHPUnit\Framework\TestCase
     protected function getFakeResponse()
     {
         return <<<XML
-    <ListRecords>
-        <record>
-            <header status="deleted">
-                <identifier>foo1</identifier>
-            </header>
-        </record>
-        <record>
-            <header>
-                <identifier>foo2</identifier>
-            </header>
-            <metadata>
-                <foo />
-           </metadata>
-        </record>
-    </ListRecords>
-XML;
+                <ListRecords>
+                    <record>
+                        <header status="deleted">
+                            <identifier>foo1</identifier>
+                        </header>
+                    </record>
+                    <record>
+                        <header>
+                            <identifier>foo2</identifier>
+                        </header>
+                        <metadata>
+                            <foo />
+                       </metadata>
+                    </record>
+                </ListRecords>
+            XML;
     }
 
     /**
@@ -180,7 +180,7 @@ XML;
         $config = [
             'idPrefix' => 'foo',
             'idSearch' => '/1/',
-            'idReplace' => 'one'
+            'idReplace' => 'one',
         ];
         $records = simplexml_load_string($this->getFakeResponse());
         $strategy = $this->getMockStrategy();

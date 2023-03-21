@@ -145,7 +145,7 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
         $formatter = new RecordXmlFormatter(['injectSetSpec' => 'setSpec']);
         $result = $formatter->format('foo', $this->getRecordFromFixture());
         $xml = simplexml_load_string($result);
-        $this->assertEquals(2, count($xml->setSpec));
+        $this->assertCount(2, $xml->setSpec);
         $this->assertEquals('TESTING_DIGI_TEST', (string)$xml->setSpec[0]);
         $this->assertEquals('TESTING_DIGI', (string)$xml->setSpec[1]);
     }
@@ -162,7 +162,7 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
         // Default behavior -- use set spec if no set name provided:
         $result = $formatter->format('foo', $this->getRecordFromFixture());
         $xml = simplexml_load_string($result);
-        $this->assertEquals(2, count($xml->setName));
+        $this->assertCount(2, $xml->setName);
         $this->assertEquals('TESTING_DIGI_TEST', (string)$xml->setName[0]);
         $this->assertEquals('TESTING_DIGI', (string)$xml->setName[1]);
 
@@ -172,7 +172,7 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
         );
         $result2 = $formatter->format('foo', $this->getRecordFromFixture());
         $xml2 = simplexml_load_string($result2);
-        $this->assertEquals(2, count($xml2->setName));
+        $this->assertCount(2, $xml2->setName);
         $this->assertEquals('foo', (string)$xml2->setName[0]);
         $this->assertEquals('bar', (string)$xml2->setName[1]);
     }
@@ -209,8 +209,8 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
 
         // If search-and-replace worked, the <leader> should have been changed
         // to <bloop>, affecting the final parsed XML.
-        $this->assertEquals(0, count($xml->leader));
-        $this->assertEquals(1, count($xml->bloop));
+        $this->assertCount(0, $xml->leader);
+        $this->assertCount(1, $xml->bloop);
     }
 
     /**
@@ -227,7 +227,7 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
             $this->getRecordFromFixture('oai_doaj.xml')
         );
         $xml = simplexml_load_string($result);
-        $this->assertTrue(is_object($xml));
+        $this->assertIsObject($xml);
     }
 
     /**

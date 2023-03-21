@@ -6,9 +6,10 @@ $finder->in(__DIR__)
     ->in(__DIR__ . '/../src');
 
 $rules = [
+    '@PHP74Migration' => true,
+    '@PHPUnit84Migration:risky' => true,
     '@PSR12' => true,
     'align_multiline_comment' => true,
-    'array_syntax' => ['syntax' => 'short'],
     'binary_operator_spaces' => [
         'default' => 'single_space',
         'operators' => ['=' => null, '=>' => null],
@@ -20,7 +21,6 @@ $rules = [
     'function_typehint_space' => true,
     'is_null' => true,
     'linebreak_after_opening_tag' => true,
-    'list_syntax' => ['syntax' => 'short'],
     'lowercase_cast' => true,
     'magic_constant_casing' => true,
     'native_function_casing' => true,
@@ -38,22 +38,15 @@ $rules = [
     'no_unneeded_curly_braces' => true,
     'no_unused_imports' => true,
     'no_useless_return' => true,
-    'no_whitespace_before_comma_in_array' => true,
     'no_whitespace_in_blank_line' => true,
     'non_printable_character' => true,
     'ordered_imports' => true,
     'phpdoc_no_access' => true,
-    'php_unit_dedicate_assert_internal_type' => true,
-    'php_unit_expectation' => true,
     'php_unit_method_casing' => true,
-    'php_unit_mock' => true,
-    'php_unit_no_expectation_annotation' => true,
     'pow_to_exponentiation' => true,
     'single_line_after_imports' => true,
-    'short_scalar_cast' => true,
     'standardize_not_equals' => true,
     'ternary_operator_spaces' => true,
-    'ternary_to_null_coalescing' => true,
 ];
 
 $cacheDir = __DIR__ . '/../.php_cs_cache';

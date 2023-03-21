@@ -153,7 +153,7 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
             'metadataPrefix' => 'oai_dc',
             'from' => null,
             'until' => null,
-            'silent' => false
+            'silent' => false,
         ];
         $factory = $this
             ->getMockBuilder(\VuFindHarvest\OaiPmh\HarvesterFactory::class)
@@ -267,7 +267,7 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
                 '--ini' => $ini,
                 '--verbose' => true,
                 '--timeout' => 45,
-                'target' => 'foo'
+                'target' => 'foo',
             ],
             /**
              * Since the Symfony framework adds the 'verbose' option at a higher level than

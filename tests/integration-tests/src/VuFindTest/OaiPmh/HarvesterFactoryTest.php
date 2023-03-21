@@ -145,7 +145,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             [
                 'Audio (Music)' => 'Audio (Music)',
-                'Audio (Non-Music)' => 'Audio (Non-Music)'
+                'Audio (Non-Music)' => 'Audio (Non-Music)',
             ],
             $this->getProperty($formatter, 'setNames')
         );

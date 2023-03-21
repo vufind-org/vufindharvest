@@ -306,7 +306,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
             [
                 'set' => 'xyzzy', 'dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ',
                 'from' => '2016-07-01', 'until' => '2016-07-31',
-                'stopAfter' => 100
+                'stopAfter' => 100,
             ],
             $comm,
             $writer,
