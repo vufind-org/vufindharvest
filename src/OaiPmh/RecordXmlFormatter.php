@@ -227,35 +227,35 @@ class RecordXmlFormatter
     }
 
     /**
-     * Extract attributes from the <metadata> tag that need to be inserted
+     * Extract attributes from a higher-level tag that need to be inserted
      * into the metadata record contained within the tag.
      *
-     * @param string $raw    The full <metadata> XML
-     * @param string $record The metadata record with the outer <metadata> tag
+     * @param string $raw     The full outer XML
+     * @param string $tagName The name of the outermost tag in $raw
+     * @param string $record  The metadata record with the outer <metadata> tag
      * stripped off.
      *
-     * @return string
+     * @return array
      */
-    protected function extractMetadataAttributes($raw, $record)
+    protected function extractHigherLevelAttributes($raw, $tagName, $record)
     {
         // remove all attributes from extractedNs that appear deeper in xml; this
         // helps prevent fatal errors caused by the same namespace declaration
         // appearing twice in a single tag.
         $extractedNs = [];
-        preg_match('/^<metadata([^\>]*)>/', $raw, $extractedNs);
+        preg_match('/^<' . $tagName . '([^\>]*)>/', $raw, $extractedNs);
         $attributes = [];
         preg_match_all(
             '/(^| )([^"]*"?[^"]*"|[^\']*\'?[^\']*\')/',
             $extractedNs[1],
             $attributes
         );
-        $extractedAttributes = '';
+        $extractedAttributes = [];
         foreach ($attributes[0] as $attribute) {
             $attribute = trim($attribute);
             // if $attribute appears in xml, remove it:
             if (!strstr($record, $attribute)) {
-                $extractedAttributes = ($extractedAttributes == '') ?
-                    $attribute : $extractedAttributes . ' ' . $attribute;
+                $extractedAttributes[] = $attribute;
             }
         }
         return $extractedAttributes;
@@ -302,7 +302,22 @@ class RecordXmlFormatter
         );
 
         // Collect attributes (for proper namespace resolution):
-        $metadataAttributes = $this->extractMetadataAttributes($raw, $record);
+        $metadataAttributes = $this->extractHigherLevelAttributes(
+            $raw,
+            'metadata',
+            $record
+        );
+        $recordAttributes = $this->extractHigherLevelAttributes(
+            trim($recordObj->asXML()),
+            'record',
+            $record
+        );
+        $extraAttributes = implode(
+            ' ',
+            array_unique(
+                array_merge($metadataAttributes, $recordAttributes)
+            )
+        );
 
         // If we are supposed to inject any values, do so now inside the first
         // tag of the file:
@@ -316,7 +331,7 @@ class RecordXmlFormatter
             $this->fixNamespaces(
                 $xml,
                 $recordObj->getDocNamespaces(),
-                $metadataAttributes
+                $extraAttributes
             )
         );
     }

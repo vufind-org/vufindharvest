@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## Next Release - TBD
+
+### Added
+
+- Nothing
+
+### Changed
+
+- The protected VuFindHarvest\OaiPmh\RecordXmlFormatter::extractMetadataAttributes() method has been replaced with a more general-purpose extractHigherLevelAttributes() method.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Records with namespace declarations in the <record> tag instead of the <metadata> tag will now have appropriate namespaces applied to the extracted XML.
+
 ## 5.1.0 - 2023-02-28
 
 ### Added
