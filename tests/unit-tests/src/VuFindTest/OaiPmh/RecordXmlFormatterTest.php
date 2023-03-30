@@ -231,6 +231,26 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test that a record with namespace declarations in the <record> tab (as seen in
+     * SubjectsPlus, for example) is processed correctly.
+     *
+     * @return void
+     */
+    public function testNamespaceInsertionFromRecordTag()
+    {
+        $formatter = new RecordXmlFormatter();
+        $result = $formatter->format(
+            'foo',
+            $this->getRecordFromFixture('subjectsplus.xml')
+        );
+        $xml = simplexml_load_string($result);
+        $this->assertEquals(
+            'http://www.openarchives.org/OAI/2.0/oai_dc/',
+            $xml->getNamespaces()['oai_dc']
+        );
+    }
+
+    /**
      * Get a record from the test fixture.
      *
      * @param string $fixture Filename of fixture (inside fixture directory).
