@@ -237,8 +237,11 @@ class RecordXmlFormatter
      *
      * @return array
      */
-    protected function extractHigherLevelAttributes($raw, $tagName, $record)
-    {
+    protected function extractHigherLevelAttributes(
+        string $raw,
+        string $tagName,
+        string $record
+    ): array {
         // remove all attributes from extractedNs that appear deeper in xml; this
         // helps prevent fatal errors caused by the same namespace declaration
         // appearing twice in a single tag.
