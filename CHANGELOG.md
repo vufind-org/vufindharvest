@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Records with namespace declarations in the <record> tag instead of the <metadata> tag will now have appropriate namespaces applied to the extracted XML.
+- Records with namespace declarations in the `<record>` tag instead of the `<metadata>` tag will now have appropriate namespaces applied to the extracted XML.
 
 ## 5.1.0 - 2023-02-28
 
