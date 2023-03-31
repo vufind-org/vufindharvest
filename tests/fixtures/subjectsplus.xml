@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2023-03-30T16:02:12+05:45</responseDate>
+  <request verb="ListRecords">http:http://182.93.84.135/sp1/oai/oai.php</request>
+  <ListRecords><record xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <header>
+    <identifier>1</identifier>
+    <datestamp>2023-03-30</datestamp>
+  </header>
+  <metadata>
+    <oai_dc:dc xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+      <dc:title>General</dc:title>
+      <dc:creator>Super Admin</dc:creator>
+      <dc:date>2011-03-26 19:16:19</dc:date>
+      <dc:format>text/html</dc:format>
+      <dc:language>English</dc:language>
+      <dc:publisher>HealthNet Nepal</dc:publisher>
+      <dc:type>InteractiveResource</dc:type>
+      <dc:description/>
+      <dc:identifier>http:http://182.93.84.135/sp1/subjects/guide.php?id=1</dc:identifier>
+    </oai_dc:dc>
+  </metadata>
+</record>
+</ListRecords>
+</OAI-PMH>
