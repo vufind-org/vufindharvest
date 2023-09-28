@@ -31,6 +31,8 @@ namespace VuFindHarvest\OaiPmh;
 
 use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
 
+use function count;
+
 /**
  * OAI-PMH Harvest Tool
  *
@@ -91,7 +93,7 @@ class SetLoader
      */
     public function getNames()
     {
-        $this->write("Loading set list... ");
+        $this->write('Loading set list... ');
 
         // On the first pass through the following loop, we want to get the
         // first page of sets without using a resumption token:
@@ -120,7 +122,7 @@ class SetLoader
                 = !empty($response->ListSets->resumptionToken)
                 ? (string)$response->ListSets->resumptionToken : '';
         } while (!empty($params['resumptionToken']));
-        $this->writeLine("found " . count($setNames));
+        $this->writeLine('found ' . count($setNames));
         return $setNames;
     }
 }

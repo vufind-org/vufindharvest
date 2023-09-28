@@ -31,6 +31,8 @@ namespace VuFindHarvest\OaiPmh;
 
 use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface;
 
+use function strlen;
+
 /**
  * OAI-PMH Record Writer
  *
@@ -166,7 +168,7 @@ class RecordWriter
             if (!$file) {
                 throw new \Exception("Problem opening {$this->harvestedIdLog}.");
             }
-            fputs($file, implode(PHP_EOL, $harvestedIds) . PHP_EOL);
+            fwrite($file, implode(PHP_EOL, $harvestedIds) . PHP_EOL);
             fclose($file);
         }
     }

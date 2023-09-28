@@ -32,6 +32,8 @@ namespace VuFindHarvest\OaiPmh;
 use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
 use VuFindHarvest\Exception\OaiException;
 
+use function count;
+
 /**
  * OAI-PMH Harvest Tool
  *
@@ -216,8 +218,8 @@ class Harvester
             if (count($state) !== 4) {
                 $this->stateManager->clearState();
                 throw new \Exception(
-                    "Corrupt or incomplete state data detected; "
-                    . "removing last_state.txt. Please restart harvest."
+                    'Corrupt or incomplete state data detected; '
+                    . 'removing last_state.txt. Please restart harvest.'
                 );
             }
             [
@@ -256,9 +258,9 @@ class Harvester
                     && $this->recordsCount >= $this->stopAfter
                 ) {
                     $this->writeLine(
-                        "reached limit of records to harvest: " . $this->stopAfter
+                        'reached limit of records to harvest: ' . $this->stopAfter
                     );
-                    $this->writeLine("stop harvesting.");
+                    $this->writeLine('stop harvesting.');
                     $token = false;
                     break;
                 }
@@ -321,7 +323,7 @@ class Harvester
             ) {
                 $this->stateManager->clearState();
                 throw new \Exception(
-                    "Token expired; removing last_state.txt. Please restart harvest."
+                    'Token expired; removing last_state.txt. Please restart harvest.'
                 );
             }
             throw new OaiException($attribs['code'], $result->error);
@@ -345,7 +347,7 @@ class Harvester
             $newRecords = count($response->ListRecords->record);
             $this->writeLine(
                 '[' . $this->recordsCount . ' records harvested] Processing '
-                . $newRecords . " records..."
+                . $newRecords . ' records...'
             );
             // count numRecords
             $this->recordsCount += $newRecords;

@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## Next Release - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- The minimum PHP version requirement has been raised to 8.0.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+## Fixed
+
+- Nothing.
+
 ## 5.2.0 - 2023-03-31
 
 ### Added

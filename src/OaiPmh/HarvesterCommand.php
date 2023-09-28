@@ -363,7 +363,7 @@ class HarvesterCommand extends Command
                     $e instanceof OaiException
                     && strtolower($e->getOaiCode()) == 'norecordsmatch'
                 ) {
-                    $this->writeLine("No new records found.");
+                    $this->writeLine('No new records found.');
                 } else {
                     $this->writeLine($e->getMessage());
                     $errors++;
