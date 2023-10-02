@@ -67,7 +67,7 @@ class RecordWriterStrategyFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals("d1\nd2", file_get_contents($deleteFile));
         unlink($deleteFile);
         $this->assertEquals(
-            "<collection><foo1 /><foo2 /></collection>",
+            '<collection><foo1 /><foo2 /></collection>',
             file_get_contents($recordFile)
         );
         unlink($recordFile);

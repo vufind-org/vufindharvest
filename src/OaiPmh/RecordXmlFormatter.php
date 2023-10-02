@@ -289,7 +289,7 @@ class RecordXmlFormatter
     public function format($id, $recordObj)
     {
         if (!isset($recordObj->metadata)) {
-            throw new \Exception("Unexpected missing record metadata.");
+            throw new \Exception('Unexpected missing record metadata.');
         }
 
         $raw = trim($recordObj->metadata->asXML());

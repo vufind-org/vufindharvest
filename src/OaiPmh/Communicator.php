@@ -34,6 +34,8 @@ use Laminas\Uri\Http;
 use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
 use VuFindHarvest\ResponseProcessor\ResponseProcessorInterface;
 
+use function is_object;
+
 /**
  * OAI-PMH Communicator (handles low-level request/response processing).
  *

@@ -120,7 +120,7 @@ class CommunicatorTest extends \PHPUnit\Framework\TestCase
         $comm->setOutputWriter(new ConsoleWriter($mockOutput));
         $mockOutput->expects($this->once())
             ->method('writeLn')
-            ->with($this->equalTo("Received 503 response; waiting 1 seconds..."));
+            ->with($this->equalTo('Received 503 response; waiting 1 seconds...'));
         $this->assertEquals(
             $expectedResponse,
             $comm->request('Identify')

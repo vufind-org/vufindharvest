@@ -33,10 +33,8 @@
     <phingcall target="phpcs"/>
     <phingcall target="phpunit"/>
     <phingcall target="phpdoc"/>
-    <phingcall target="phpcpd"/>
     <phingcall target="phpmd"/>
     <phingcall target="pdepend"/>
-    <phingcall target="phploc"/>
     <phingcall target="phpstan-checkstyle"/>
   </target>
 
@@ -45,19 +43,9 @@
     <exec command="${srcdir}/vendor/bin/phpmd ${srcdir}/src xml ${srcdir}/tests/phpmd.xml --exclude ${srcdir}/tests --reportfile ${builddir}/reports/phpmd.xml" />
   </target>
 
-  <!-- Measure project with phploc -->
-  <target name="phploc">
-    <exec command="${srcdir}/vendor/bin/phploc --log-csv ${builddir}/reports/phploc.csv ${srcdir}/src" />
-  </target>
-
   <!-- PHP_Depend code analysis -->
   <target name="pdepend">
     <exec command="${srcdir}/vendor/bin/pdepend --jdepend-xml=${builddir}/reports/jdepend.xml --jdepend-chart=${builddir}/reports/dependencies.svg --overview-pyramid=${builddir}/reports/pdepend-pyramid.svg ${srcdir}/src" />
-  </target>
-
-  <!-- PHP copy-and-paste detection -->
-  <target name="phpcpd">
-    <exec command="${srcdir}/vendor/bin/phpcpd --log-pmd ${builddir}/reports/pmd-cpd.xml --exclude tests ${srcdir}/src" />
   </target>
 
   <!-- PHP CodeSniffer -->

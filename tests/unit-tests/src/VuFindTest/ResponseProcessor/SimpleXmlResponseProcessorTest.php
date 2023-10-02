@@ -31,6 +31,8 @@ namespace VuFindTest\Harvest\OaiPmh;
 
 use VuFindHarvest\ResponseProcessor\SimpleXmlResponseProcessor;
 
+use function chr;
+
 /**
  * SimpleXML response processor unit test.
  *

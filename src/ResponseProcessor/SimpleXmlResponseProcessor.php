@@ -89,7 +89,7 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
         if (!$file) {
             throw new \Exception("Problem opening {$this->badXmlLog}.");
         }
-        fputs($file, $xml . "\n\n");
+        fwrite($file, $xml . "\n\n");
         fclose($file);
     }
 
