@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- Nothing.
+- Compatibility with Symfony/Console versions less than 5.3.
 
 ## Fixed
 
