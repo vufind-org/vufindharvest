@@ -15,11 +15,11 @@
     },
     "config": {
         "platform": {
-            "php": "8.0"
+            "php": "8.1"
         }
     },
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "laminas/laminas-http": ">=2.2",
         "symfony/console": "^5.3||^6||^7"
     },
