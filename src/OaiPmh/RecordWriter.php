@@ -212,7 +212,7 @@ class RecordWriter
 
             // Save the current record, either as a deleted or as a regular file:
             $attribs = $record->header->attributes();
-            if (strtolower($attribs['status']) == 'deleted') {
+            if (strtolower($attribs['status'] ?? '') == 'deleted') {
                 $this->strategy->addDeletedRecord($id);
             } else {
                 $recordXML = $this->recordFormatter->format($id, $record);
