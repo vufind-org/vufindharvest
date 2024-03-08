@@ -11,13 +11,13 @@ jobs:
       VUFIND_LOCAL_DIR: $GITHUB_WORKSPACE/local
     strategy:
       matrix:
-        php-version: ['8.0', '8.1', '8.2']
+        php-version: ['8.1', '8.2', '8.3']
         include:
-          - php-version: 8.0
-            phing_tasks: "phpunitfast"
           - php-version: 8.1
             phing_tasks: "phpunitfast"
           - php-version: 8.2
+            phing_tasks: "phpunitfast"
+          - php-version: 8.3
             phing_tasks: "phpunitfast phpcs-console php-cs-fixer-dryrun phpstan-console"
 
     steps:

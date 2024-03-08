@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- The minimum PHP version requirement has been raised to 8.0.
+- The minimum PHP version requirement has been raised to 8.1.
 
 ### Deprecated
 
