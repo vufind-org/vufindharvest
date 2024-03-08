@@ -30,6 +30,7 @@
 namespace VuFindHarvest\OaiPmh;
 
 use Laminas\Http\Client;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -48,6 +49,10 @@ use VuFindHarvest\Exception\OaiException;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/indexing:oai-pmh Wiki
  */
+#[AsCommand(
+    name: 'harvest/harvest_oai',
+    description: 'OAI-PMH harvester'
+)]
 class HarvesterCommand extends Command
 {
     use WriterAwareTrait;
@@ -122,7 +127,6 @@ class HarvesterCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('OAI-PMH harvester')
             ->setHelp('Harvests metadata using the OAI-PMH protocol.')
             ->addArgument(
                 'target',
