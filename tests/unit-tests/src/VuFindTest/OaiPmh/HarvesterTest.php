@@ -42,6 +42,8 @@ use VuFindHarvest\OaiPmh\Harvester;
  */
 class HarvesterTest extends \PHPUnit\Framework\TestCase
 {
+    use \VuFindTest\Feature\WithConsecutiveTrait;
+
     /**
      * Time zone setting used with setup/tearDown
      *
@@ -210,15 +212,18 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
     {
         $comm = $this->getMockCommunicator();
         $expectedSettings = ['metadataPrefix' => 'oai_dc'];
-        $comm->expects($this->exactly(2))->method('request')
-            ->withConsecutive(
+        $this->expectConsecutiveCalls(
+            $comm,
+            'request',
+            [
                 ['Identify', []],
                 ['ListRecords', $expectedSettings],
-            )
-            ->willReturnOnConsecutiveCalls(
+            ],
+            [
                 simplexml_load_string($this->getFakeIdentifyResponse()),
-                simplexml_load_string($this->getFakeResponse())
-            );
+                simplexml_load_string($this->getFakeResponse()),
+            ]
+        );
         $writer = $this->getMockRecordWriter();
         $writer->expects($this->once())->method('write')
             ->with($this->isInstanceOf('SimpleXMLElement'))
@@ -248,15 +253,18 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
             'from' => '2016-07-01', 'until' => '2016-07-31',
         ];
         $expectedSettings1 = ['resumptionToken' => 'more'];
-        $comm->expects($this->exactly(2))->method('request')
-            ->withConsecutive(
+        $this->expectConsecutiveCalls(
+            $comm,
+            'request',
+            [
                 ['ListRecords', $expectedSettings0],
                 ['ListRecords', $expectedSettings1],
-            )
-            ->willReturnOnConsecutiveCalls(
+            ],
+            [
                 simplexml_load_string($this->getFakeResponseWithToken()),
-                simplexml_load_string($this->getFakeResponse())
-            );
+                simplexml_load_string($this->getFakeResponse()),
+            ]
+        );
         $writer = $this->getMockRecordWriter();
         $writer->expects($this->exactly(2))->method('write')
             ->with($this->isInstanceOf('SimpleXMLElement'));
@@ -290,12 +298,8 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
             'from' => '2016-07-01', 'until' => '2016-07-31',
         ];
         $comm->expects($this->exactly(1))->method('request')
-            ->withConsecutive(
-                ['ListRecords', $expectedSettings0],
-            )
-            ->willReturnOnConsecutiveCalls(
-                simplexml_load_string($this->getFakeResponse())
-            );
+            ->with('ListRecords', $expectedSettings0)
+            ->willReturn(simplexml_load_string($this->getFakeResponse()));
         $writer = $this->getMockRecordWriter();
         $writer->expects($this->exactly(1))->method('write')
             ->with($this->isInstanceOf('SimpleXMLElement'));
@@ -327,15 +331,18 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
 
         $comm = $this->getMockCommunicator();
         $expectedSettings = ['resumptionToken' => 'foo'];
-        $comm->expects($this->exactly(2))->method('request')
-            ->withConsecutive(
+        $this->expectConsecutiveCalls(
+            $comm,
+            'request',
+            [
                 ['Identify', []],
                 ['ListRecords', $expectedSettings],
-            )
-            ->willReturnOnConsecutiveCalls(
+            ],
+            [
                 simplexml_load_string($this->getFakeIdentifyResponse()),
-                simplexml_load_string($this->getTokenErrorResponse())
-            );
+                simplexml_load_string($this->getTokenErrorResponse()),
+            ]
+        );
         $sm = $this->getMockStateManager();
         $sm->expects($this->any())->method('loadState')
             ->will($this->returnValue([null, 'foo', 'bar', 'baz']));
@@ -361,15 +368,18 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
 
         $comm = $this->getMockCommunicator();
         $expectedSettings = ['metadataPrefix' => 'oai_dc'];
-        $comm->expects($this->exactly(2))->method('request')
-            ->withConsecutive(
+        $this->expectConsecutiveCalls(
+            $comm,
+            'request',
+            [
                 ['Identify', []],
                 ['ListRecords', $expectedSettings],
-            )
-            ->willReturnOnConsecutiveCalls(
+            ],
+            [
                 simplexml_load_string($this->getFakeIdentifyResponse()),
-                simplexml_load_string($this->getArbitraryErrorResponse())
-            );
+                simplexml_load_string($this->getArbitraryErrorResponse()),
+            ]
+        );
         $harvester = $this->getHarvester(
             ['dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'],
             $comm
@@ -387,15 +397,18 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
     {
         $comm = $this->getMockCommunicator();
         $expectedSettings = ['metadataPrefix' => 'oai_dc'];
-        $comm->expects($this->exactly(2))->method('request')
-            ->withConsecutive(
+        $this->expectConsecutiveCalls(
+            $comm,
+            'request',
+            [
                 ['Identify', []],
                 ['ListRecords', $expectedSettings],
-            )
-            ->willReturnOnConsecutiveCalls(
+            ],
+            [
                 simplexml_load_string($this->getFakeIdentifyResponse()),
-                simplexml_load_string($this->getFakeResponse())
-            );
+                simplexml_load_string($this->getFakeResponse()),
+            ]
+        );
         $writer = $this->getMockRecordWriter();
         $writer->expects($this->once())->method('write')
             ->with($this->isInstanceOf('SimpleXMLElement'))

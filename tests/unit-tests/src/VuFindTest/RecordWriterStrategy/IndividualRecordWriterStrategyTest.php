@@ -40,6 +40,8 @@ namespace VuFindTest\Harvest\RecordWriterStrategy;
  */
 class IndividualRecordWriterStrategyTest extends \PHPUnit\Framework\TestCase
 {
+    use \VuFindTest\Feature\WithConsecutiveTrait;
+
     /**
      * Test strategy
      *
@@ -51,10 +53,8 @@ class IndividualRecordWriterStrategyTest extends \PHPUnit\Framework\TestCase
             \VuFindHarvest\RecordWriterStrategy\IndividualRecordWriterStrategy::class
         )->onlyMethods(['saveDeletedRecords', 'saveFile'])
             ->setConstructorArgs(['foo'])->getMock();
-        $mock->expects($this->exactly(2))->method('saveDeletedRecords')
-            ->withConsecutive(['d1'], ['d2']);
-        $mock->expects($this->exactly(2))->method('saveFile')
-            ->withConsecutive(['r1'], ['r2']);
+        $this->expectConsecutiveCalls($mock, 'saveDeletedRecords', [['d1'], ['d2']]);
+        $this->expectConsecutiveCalls($mock, 'saveFile', [['r1'], ['r2']]);
         $mock->beginWrite();
         $mock->addDeletedRecord('d1');
         $mock->addRecord('r1', '<foo1 />');
