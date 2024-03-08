@@ -20,7 +20,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Compatibility with Symfony/Console versions less than 5.3.
 
-## Fixed
+### Fixed
 
 - Nothing.
 
