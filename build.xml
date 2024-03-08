@@ -6,6 +6,7 @@
   <property name="srcdir"   value="${project.basedir}" override="true" />
   <property name="skip_phpdoc" value="false" />
   <property name="phpdoc_version" value="3.3.1" />
+  <property name="phpunit_command" value="${srcdir}/vendor/bin/phpunit" />
 
   <!-- Main Target -->
   <target name="main" description="main target">
@@ -112,12 +113,12 @@
 
   <!-- PHPUnit -->
   <target name="phpunit" description="Run tests">
-    <exec dir="${srcdir}" command="${srcdir}/vendor/bin/phpunit -dzend.enable_gc=0 --log-junit ${builddir}/reports/phpunit.xml --coverage-clover ${builddir}/reports/coverage/clover.xml --coverage-html ${builddir}/reports/coverage/" passthru="true" checkreturn="true" />
+    <exec dir="${srcdir}" command="${phpunit_command} -dzend.enable_gc=0 --log-junit ${builddir}/reports/phpunit.xml --coverage-clover ${builddir}/reports/coverage/clover.xml --coverage-html ${builddir}/reports/coverage/" passthru="true" checkreturn="true" />
   </target>
 
   <!-- PHPUnit without logging output -->
   <target name="phpunitfast" description="Run tests">
-    <exec dir="${srcdir}" command="${srcdir}/vendor/bin/phpunit -dzend.enable_gc=0" passthru="true" checkreturn="true" />
+    <exec dir="${srcdir}" command="${phpunit_command} -dzend.enable_gc=0" passthru="true" checkreturn="true" />
   </target>
 
   <!-- Set up dependencies -->
