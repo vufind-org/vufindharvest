@@ -40,40 +40,58 @@
   </target>
 
   <!-- Report rule violations with PHPMD (mess detector) -->
-  <target name="phpmd">
-    <exec command="${srcdir}/vendor/bin/phpmd ${srcdir}/src xml ${srcdir}/tests/phpmd.xml --exclude ${srcdir}/tests --reportfile ${builddir}/reports/phpmd.xml" />
+   <target name="phpmd">
+    <exec executable="${srcdir}/vendor/bin/phpmd">
+      <arg line="${srcdir}/src xml ${srcdir}/tests/phpmd.xml --exclude ${srcdir}/tests --reportfile ${builddir}/reports/phpmd.xml" />
+    </exec> 
   </target>
 
   <!-- PHP_Depend code analysis -->
-  <target name="pdepend">
-    <exec command="${srcdir}/vendor/bin/pdepend --jdepend-xml=${builddir}/reports/jdepend.xml --jdepend-chart=${builddir}/reports/dependencies.svg --overview-pyramid=${builddir}/reports/pdepend-pyramid.svg ${srcdir}/src" />
+   <target name="pdepend">
+    <exec executable="${srcdir}/vendor/bin/pdepend">
+      <arg line="--jdepend-xml=${builddir}/reports/jdepend.xml --jdepend-chart=${builddir}/reports/dependencies.svg --overview-pyramid=${builddir}/reports/pdepend-pyramid.svg ${srcdir}/src" />
+    </exec>  
   </target>
 
   <!-- PHP CodeSniffer -->
   <target name="phpcbf">
-    <exec command="${srcdir}/vendor/bin/phpcbf --standard=${srcdir}/tests/phpcs.xml" escape="false" passthru="true" checkreturn="true" />
+    <exec executable="${srcdir}/vendor/bin/phpcbf" escape="false" passthru="true" checkreturn="true">
+      <arg line="--standard=${srcdir}/tests/phpcs.xml" />
+    </exec>
   </target>
   <target name="phpcs">
-    <exec command="${srcdir}/vendor/bin/phpcs --standard=${srcdir}/tests/phpcs.xml --report=checkstyle &gt; ${builddir}/reports/checkstyle.xml" escape="false" />
+    <exec executable="${srcdir}/vendor/bin/phpcs" escape="false">
+      <arg line="--standard=${srcdir}/tests/phpcs.xml --report=checkstyle &gt; ${builddir}/reports/checkstyle.xml" />
+    </exec>  
   </target>
   <target name="phpcs-console">
-    <exec command="${srcdir}/vendor/bin/phpcs --standard=${srcdir}/tests/phpcs.xml" escape="false" passthru="true" checkreturn="true" />
+    <exec executable="${srcdir}/vendor/bin/phpcs" escape="false" passthru="true" checkreturn="true" >
+      <arg line=" --standard=${srcdir}/tests/phpcs.xml" /> 
+    </exec>  
   </target>
 
   <!-- Phpstan -->
   <target name="phpstan-checkstyle">
-    <exec command="${srcdir}/vendor/bin/phpstan --configuration=${srcdir}/tests/phpstan.neon --memory-limit=2G --error-format=checkstyle analyse &gt; ${builddir}/reports/phpstan-checkstyle.xml" escape="false" passthru="true" checkreturn="true" />
+    <exec executable="${srcdir}/vendor/bin/phpstan" escape="false" passthru="true" checkreturn="true">
+      <arg line="--configuration=${srcdir}/tests/phpstan.neon --memory-limit=2G --error-format=checkstyle analyse &gt; ${builddir}/reports/phpstan-checkstyle.xml" />
+    </exec>
   </target>
   <target name="phpstan-console">
-    <exec command="${srcdir}/vendor/bin/phpstan --configuration=${srcdir}/tests/phpstan.neon --memory-limit=2G analyse" escape="false" passthru="true" checkreturn="true" />
+    <exec executable="${srcdir}/vendor/bin/phpstan" escape="false" passthru="true" checkreturn="true">
+      <arg line="--configuration=${srcdir}/tests/phpstan.neon --memory-limit=2G analyse">
+    </exec>
   </target>
 
   <!-- php-cs-fixer (first task applies fixes, second task simply checks if they are needed) -->
   <target name="php-cs-fixer">
-    <exec command="${srcdir}/vendor/bin/php-cs-fixer fix --config=${srcdir}/tests/vufind.php-cs-fixer.php --verbose" passthru="true" escape="false" />
+    <exec executable="${srcdir}/vendor/bin/php-cs-fixer" passthru="true" escape="false">
+      <arg line="fix --config=${srcdir}/tests/vufind.php-cs-fixer.php --verbose" />
+    </exec>
   </target>
   <target name="php-cs-fixer-dryrun">
-    <exec command="${srcdir}/vendor/bin/php-cs-fixer fix --config=${srcdir}/tests/vufind.php-cs-fixer.php --dry-run --verbose --diff" passthru="true" escape="false" checkreturn="true" />
+    <exec executable="${srcdir}/vendor/bin/php-cs-fixer" passthru="true" escape="false" checkreturn="true">
+      <arg line="fix --config=${srcdir}/tests/vufind.php-cs-fixer.php --dry-run --verbose --diff" />
+     </exec> 
   </target>
 
   <!-- PHP API Documentation -->
@@ -106,30 +124,39 @@
           </fileset>
         </phpdoc2>
         -->
-        <exec command="php ${srcdir}/vendor/bin/phpDocumentor-${phpdoc_version}.phar --cache-folder=${builddir}/docs_cache --title=&quot;VuFindHarvest API Documentation&quot; -t ${builddir}/apidocs -d ${srcdir}/src" passthru="true" />
+        <exec executable="php" passthru="true">
+          <arg line="${srcdir}/vendor/bin/phpDocumentor-${phpdoc_version}.phar --cache-folder=${builddir}/docs_cache --title=&quot;VuFindHarvest API Documentation&quot; -t ${builddir}/apidocs -d ${srcdir}/src" />
+        </exec>
       </then>
     </if>
   </target>
 
   <!-- PHPUnit -->
   <target name="phpunit" description="Run tests">
-    <exec dir="${srcdir}" command="${phpunit_command} -dzend.enable_gc=0 --log-junit ${builddir}/reports/phpunit.xml --coverage-clover ${builddir}/reports/coverage/clover.xml --coverage-html ${builddir}/reports/coverage/" passthru="true" checkreturn="true" />
+    <exec dir="${srcdir}" executable="${phpunit_command}" passthru="true" checkreturn="true">
+      <arg line="-dzend.enable_gc=0 --log-junit ${builddir}/reports/phpunit.xml --coverage-clover ${builddir}/reports/coverage/clover.xml --coverage-html ${builddir}/reports/coverage/" />
+    </exec>  
   </target>
 
   <!-- PHPUnit without logging output -->
   <target name="phpunitfast" description="Run tests">
-    <exec dir="${srcdir}" command="${phpunit_command} -dzend.enable_gc=0" passthru="true" checkreturn="true" />
+    <exec dir="${srcdir}" executable="${phpunit_command}" passthru="true" checkreturn="true">
+      <arg line="-dzend.enable_gc=0" /> 
+    </exec>  
   </target>
 
   <!-- Set up dependencies -->
   <target name="startup" description="set up dependencies">
-    <exec command="composer install" />
+    <exec executable="composer install">
+    </exec>  
   </target>
 
   <!-- Clean up -->
   <target name="shutdown" description="clean up file system">
     <delete dir="${srcdir}/vendor" includeemptydirs="true" failonerror="true" />
     <delete file="${srcdir}/composer.lock" failonerror="true" />
-    <exec command="git reset --hard" />
+    <exec executable="git">
+      <arg line="reset --hard" />
+    </exec>  
   </target>
 </project>
