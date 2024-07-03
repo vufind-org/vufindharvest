@@ -5,6 +5,7 @@
   <property name="builddir" value="${tmp}/build/${phing.project.name}" override="true" />
   <property name="srcdir"   value="${project.basedir}" override="true" />
   <property name="skip_phpdoc" value="false" />
+  <property name="sh" value="/bin/sh" />
   <property name="phpdoc_version" value="3.3.1" />
   <property name="phpunit_command" value="${srcdir}/vendor/bin/phpunit" />
 
@@ -44,13 +45,6 @@
     <exec executable="${srcdir}/vendor/bin/phpmd">
       <arg line="${srcdir}/src xml ${srcdir}/tests/phpmd.xml --exclude ${srcdir}/tests --reportfile ${builddir}/reports/phpmd.xml" />
     </exec> 
-  </target>
-
-  <!-- PHP_Depend code analysis -->
-   <target name="pdepend">
-    <exec executable="${srcdir}/vendor/bin/pdepend">
-      <arg line="--jdepend-xml=${builddir}/reports/jdepend.xml --jdepend-chart=${builddir}/reports/dependencies.svg --overview-pyramid=${builddir}/reports/pdepend-pyramid.svg ${srcdir}/src" />
-    </exec>  
   </target>
 
   <!-- PHP CodeSniffer -->
@@ -133,21 +127,22 @@
 
   <!-- PHPUnit -->
   <target name="phpunit" description="Run tests">
-    <exec dir="${srcdir}" executable="${phpunit_command}" passthru="true" checkreturn="true">
-      <arg line="-dzend.enable_gc=0 --log-junit ${builddir}/reports/phpunit.xml --coverage-clover ${builddir}/reports/coverage/clover.xml --coverage-html ${builddir}/reports/coverage/" />
+    <exec dir="${srcdir}" executable="${sh}" passthru="true" checkreturn="true">
+      <arg line="-c &apos;${phpunit_command} -dzend.enable_gc=0 --log-junit ${builddir}/reports/phpunit.xml --coverage-clover ${builddir}/reports/coverage/clover.xml --coverage-html ${builddir}/reports/coverage/&apos;" />
     </exec>  
   </target>
 
   <!-- PHPUnit without logging output -->
   <target name="phpunitfast" description="Run tests">
-    <exec dir="${srcdir}" executable="${phpunit_command}" passthru="true" checkreturn="true">
-      <arg line="-dzend.enable_gc=0" /> 
+    <exec dir="${srcdir}" executable="${sh}" passthru="true" checkreturn="true">
+      <arg line="-c &apos;${phpunit_command} -dzend.enable_gc=0&apos;" /> 
     </exec>  
   </target>
 
   <!-- Set up dependencies -->
   <target name="startup" description="set up dependencies">
-    <exec executable="composer install">
+    <exec executable="composer">
+      <arg line="install" />
     </exec>  
   </target>
 
