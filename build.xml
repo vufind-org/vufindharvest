@@ -72,7 +72,7 @@
   </target>
   <target name="phpstan-console">
     <exec executable="${srcdir}/vendor/bin/phpstan" escape="false" passthru="true" checkreturn="true">
-      <arg line="--configuration=${srcdir}/tests/phpstan.neon --memory-limit=2G analyse">
+      <arg line="--configuration=${srcdir}/tests/phpstan.neon --memory-limit=2G analyse" />
     </exec>
   </target>
 
