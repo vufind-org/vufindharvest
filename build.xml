@@ -47,6 +47,13 @@
     </exec> 
   </target>
 
+   <!-- PHP_Depend code analysis -->
+   <target name="pdepend">
+    <exec executable="${srcdir}/vendor/bin/pdepend">
+      <arg line="--jdepend-xml=${builddir}/reports/jdepend.xml --jdepend-chart=${builddir}/reports/dependencies.svg --overview-pyramid=${builddir}/reports/pdepend-pyramid.svg ${srcdir}/src" />
+    </exec>  
+  </target>
+
   <!-- PHP CodeSniffer -->
   <target name="phpcbf">
     <exec executable="${srcdir}/vendor/bin/phpcbf" escape="false" passthru="true" checkreturn="true">
