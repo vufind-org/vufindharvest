@@ -161,11 +161,53 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
         $client = $this->getMockClient();
         $client->expects($this->once())
             ->method('setOptions')
-            ->with($this->equalTo(['sslverifypeer' => false, 'timeout' => 60]));
+            ->with(
+                $this->equalTo(
+                    [
+                        'sslverifypeer' => false,
+                        'timeout' => 60,
+                    ]
+                )
+            );
         $config = [
             'url' => 'http://localhost',
             'sslverifypeer' => false,
             'dateGranularity' => 'mygranularity',
+        ];
+        $this->getHarvester('test', sys_get_temp_dir(), $config, $client);
+    }
+
+    /**
+     * Test the proxy configuration.
+     *
+     * @return void
+     */
+    public function testProxy()
+    {
+        $client = $this->getMockClient();
+        $client->expects($this->once())
+            ->method('setOptions')
+            ->with(
+                $this->equalTo(
+                    [
+                        'timeout' => 60,
+                        'adapter' => \Laminas\Http\Client\Adapter\Proxy::class,
+                        'proxy_host' => 'http://proxy.host',
+                        'proxy_port' => 8080,
+                        'proxy_user' => 'alice',
+                        'proxy_pass' => 'foobar',
+                        'proxy_auth' => \Laminas\Http\Client::AUTH_BASIC,
+                    ]
+                )
+            );
+        $config = [
+            'url' => 'http://localhost',
+            'dateGranularity' => 'mygranularity',
+            'proxy_host' => 'http://proxy.host',
+            'proxy_port' => 8080,
+            'proxy_user' => 'alice',
+            'proxy_pass' => 'foobar',
+            'proxy_auth' => \Laminas\Http\Client::AUTH_BASIC,
         ];
         $this->getHarvester('test', sys_get_temp_dir(), $config, $client);
     }

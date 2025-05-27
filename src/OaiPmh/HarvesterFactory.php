@@ -30,6 +30,7 @@
 namespace VuFindHarvest\OaiPmh;
 
 use Laminas\Http\Client;
+use Laminas\Http\Client\Adapter\Proxy;
 use Symfony\Component\Console\Output\OutputInterface;
 use VuFindHarvest\ConsoleOutput\ConsoleWriter;
 use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyFactory;
@@ -50,6 +51,14 @@ use VuFindHarvest\ResponseProcessor\SimpleXmlResponseProcessor;
  */
 class HarvesterFactory
 {
+    protected const PROXY_SETTINGS = [
+        'proxy_host',
+        'proxy_port',
+        'proxy_user',
+        'proxy_pass',
+        'proxy_auth',
+    ];
+
     /**
      * Add SSL options to $options if standard files can be autodetected.
      *
@@ -91,6 +100,14 @@ class HarvesterFactory
         }
         if (isset($settings['sslverifypeer']) && !$settings['sslverifypeer']) {
             $options['sslverifypeer'] = false;
+        }
+        foreach (self::PROXY_SETTINGS as $proxySetting) {
+            if (isset($settings[$proxySetting])) {
+                $options[$proxySetting] = $settings[$proxySetting];
+            }
+        }
+        if (!empty($settings['proxy_host'])) {
+            $options['adapter'] = Proxy::class;
         }
         return $options;
     }
