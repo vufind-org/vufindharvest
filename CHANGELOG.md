@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## Next Release - TBD
+
+### Added
+
+- HTTP proxy support (see proxy_* settings in oai.ini).
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 5.3.0 - 2024-03-08
 
 ### Added
