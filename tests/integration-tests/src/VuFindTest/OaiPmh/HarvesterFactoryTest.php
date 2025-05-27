@@ -164,7 +164,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
             ->with($this->equalTo([
                 'sslverifypeer' => false, 
                 'timeout' => 60, 
-                'adapter' => 'Laminas\Http\Client\Adapter\Proxy'
+                'adapter' => \Laminas\Http\Client\Adapter\Proxy::class
             ]));
         $config = [
             'url' => 'http://localhost',
