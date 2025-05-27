@@ -3,7 +3,7 @@
 /**
  * OAI-PMH harvester unit test.
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2016.
  *
@@ -29,7 +29,11 @@
 
 namespace VuFindTest\Harvest\OaiPmh;
 
+use PHPUnit\Framework\MockObject\MockObject;
+use VuFindHarvest\OaiPmh\Communicator;
 use VuFindHarvest\OaiPmh\Harvester;
+use VuFindHarvest\OaiPmh\RecordWriter;
+use VuFindHarvest\OaiPmh\StateManager;
 
 /**
  * OAI-PMH harvester unit test.
@@ -75,37 +79,31 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
     /**
      * Get mock communicator object
      *
-     * @return \VuFindHarvest\OaiPmh\Communicator
+     * @return Communicator&MockObject
      */
-    protected function getMockCommunicator()
+    protected function getMockCommunicator(): Communicator&MockObject
     {
-        return $this->getMockBuilder(\VuFindHarvest\OaiPmh\Communicator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock(Communicator::class);
     }
 
     /**
      * Get mock RecordWriter object
      *
-     * @return \VuFindHarvest\OaiPmh\RecordWriter
+     * @return RecordWriter&MockObject
      */
-    protected function getMockRecordWriter()
+    protected function getMockRecordWriter(): RecordWriter&MockObject
     {
-        return $this->getMockBuilder(\VuFindHarvest\OaiPmh\RecordWriter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock(RecordWriter::class);
     }
 
     /**
      * Get mock StateManager object
      *
-     * @return \VuFindHarvest\OaiPmh\StateManager
+     * @return StateManager&MockObject
      */
-    protected function getMockStateManager()
+    protected function getMockStateManager(): StateManager&MockObject
     {
-        return $this->getMockBuilder(\VuFindHarvest\OaiPmh\StateManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock(StateManager::class);
     }
 
     /**
@@ -345,7 +343,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
         );
         $sm = $this->getMockStateManager();
         $sm->expects($this->any())->method('loadState')
-            ->will($this->returnValue([null, 'foo', 'bar', 'baz']));
+            ->willReturn([null, 'foo', 'bar', 'baz']);
         $sm->expects($this->once())->method('clearState');
         $harvester = $this->getHarvester(
             ['dateGranularity' => 'YYYY-MM-DDThh:mm:ssZ'],
@@ -412,7 +410,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
         $writer = $this->getMockRecordWriter();
         $writer->expects($this->once())->method('write')
             ->with($this->isInstanceOf('SimpleXMLElement'))
-            ->will($this->returnValue(1468434382));
+            ->willReturn(1468434382);
         $sm = $this->getMockStateManager();
         $sm->expects($this->once())->method('saveDate')
             ->with($this->equalTo('2016-07-12'));

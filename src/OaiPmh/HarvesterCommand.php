@@ -3,7 +3,7 @@
 /**
  * OAI-PMH Harvest Tool (Symfony Console Command)
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (c) Demian Katz 2016.
  *
@@ -86,29 +86,22 @@ class HarvesterCommand extends Command
     protected $factory;
 
     /**
-     * Silent mode
-     *
-     * @var bool
-     */
-    protected $silent;
-
-    /**
      * Constructor
      *
-     * @param Client           $client      HTTP client (omit for default)
-     * @param string           $harvestRoot Root directory for harvesting (omit for
+     * @param ?Client           $client      HTTP client (omit for default)
+     * @param ?string           $harvestRoot Root directory for harvesting (omit for
      * default)
-     * @param HarvesterFactory $factory     Harvester factory (omit for default)
-     * @param bool             $silent      Should we suppress output?
-     * @param string|null      $name        The name of the command; passing null
+     * @param ?HarvesterFactory $factory     Harvester factory (omit for default)
+     * @param bool              $silent      Should we suppress output?
+     * @param ?string           $name        The name of the command; passing null
      * means it must be set in configure()
      */
     public function __construct(
-        $client = null,
-        $harvestRoot = null,
-        HarvesterFactory $factory = null,
-        $silent = false,
-        $name = null
+        ?Client $client = null,
+        ?string $harvestRoot = null,
+        ?HarvesterFactory $factory = null,
+        protected bool $silent = false,
+        ?string $name = null
     ) {
         $this->client = $client ?: new Client();
         $this->harvestRoot = $harvestRoot ?: getcwd();
@@ -265,6 +258,31 @@ class HarvesterCommand extends Command
                 InputOption::VALUE_NONE,
                 'Disable SSL verification'
             )->addOption(
+                'proxy_host',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'HTTP proxy host name'
+            )->addOption(
+                'proxy_port',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'HTTP proxy port (default 8080)'
+            )->addOption(
+                'proxy_user',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'HTTP proxy user name (only if the proxy requires authorization)'
+            )->addOption(
+                'proxy_pass',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'HTTP proxy password (only if the proxy requires authorization)'
+            )->addOption(
+                'proxy_auth',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Proxy authentication type (default "Laminas\Http\Client::AUTH_BASIC", only if the proxy requires authorization)'
+            )->addOption(
                 'sanitize',
                 null,
                 InputOption::VALUE_NONE,
@@ -306,6 +324,7 @@ class HarvesterCommand extends Command
             'injectDate', 'injectId', 'injectSetName', 'injectSetSpec',
             'idSearch', 'idReplace', 'dateGranularity', 'harvestedIdLog',
             'badXMLLog', 'httpUser', 'httpPass', 'sslcapath', 'sslcafile',
+            'proxy_host', 'proxy_port', 'proxy_user', 'proxy_pass', 'proxy_auth',
             'sanitizeRegex',
         ];
         foreach ($directMapSettings as $setting) {

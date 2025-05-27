@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## Next Release - TBD
+
+### Added
+
+- HTTP proxy support (see proxy_* settings in oai.ini).
+
+### Changed
+
+- Added types to all HarvesterCommand constructor arguments.
+- Stopped relying on implicitly nullable parameter types for PHP 8.4 compatibility.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 5.3.0 - 2024-03-08
 
 ### Added

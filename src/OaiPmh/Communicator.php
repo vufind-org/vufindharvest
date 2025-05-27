@@ -3,7 +3,7 @@
 /**
  * OAI-PMH Communicator (handles low-level request/response processing).
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (c) Demian Katz 2016.
  *
@@ -73,14 +73,14 @@ class Communicator
     /**
      * Constructor
      *
-     * @param string                     $uri       Base URI for OAI-PMH server
-     * @param Client                     $client    HTTP client
-     * @param ResponseProcessorInterface $processor Response processor (optional)
+     * @param string                      $uri       Base URI for OAI-PMH server
+     * @param Client                      $client    HTTP client
+     * @param ?ResponseProcessorInterface $processor Response processor (optional)
      */
     public function __construct(
         $uri,
         Client $client,
-        ResponseProcessorInterface $processor = null
+        ?ResponseProcessorInterface $processor = null
     ) {
         $this->baseUrl = $uri;
         $this->client = $client;
