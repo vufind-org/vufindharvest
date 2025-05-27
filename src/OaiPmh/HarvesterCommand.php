@@ -258,6 +258,31 @@ class HarvesterCommand extends Command
                 InputOption::VALUE_NONE,
                 'Disable SSL verification'
             )->addOption(
+                'proxy_host',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'HTTP proxy host name'
+            )->addOption(
+                'proxy_port',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'HTTP proxy port (default 8080)'
+            )->addOption(
+                'proxy_user',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'HTTP proxy user name (only if the proxy requires authorization)'
+            )->addOption(
+                'proxy_pass',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'HTTP proxy password (only if the proxy requires authorization)'
+            )->addOption(
+                'proxy_auth',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Proxy authentication type (default "Laminas\Http\Client::AUTH_BASIC", only if the proxy requires authorization)'
+            )->addOption(
                 'sanitize',
                 null,
                 InputOption::VALUE_NONE,
@@ -299,6 +324,7 @@ class HarvesterCommand extends Command
             'injectDate', 'injectId', 'injectSetName', 'injectSetSpec',
             'idSearch', 'idReplace', 'dateGranularity', 'harvestedIdLog',
             'badXMLLog', 'httpUser', 'httpPass', 'sslcapath', 'sslcafile',
+            'proxy_host', 'proxy_port', 'proxy_user', 'proxy_pass', 'proxy_auth',
             'sanitizeRegex',
         ];
         foreach ($directMapSettings as $setting) {
