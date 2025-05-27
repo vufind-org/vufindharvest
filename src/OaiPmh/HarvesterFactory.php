@@ -51,7 +51,7 @@ use VuFindHarvest\ResponseProcessor\SimpleXmlResponseProcessor;
  */
 class HarvesterFactory
 {
-    const PROXY_SETTINGS = [
+    protected const PROXY_SETTINGS = [
         'proxy_host',
         'proxy_port',
         'proxy_user',
@@ -140,7 +140,7 @@ class HarvesterFactory
      *
      * @param string $harvestRoot Root directory containing harvested data.
      * @param string $target      The OAI-PMH target directory to create inside
-     * $harvestRoot.
+     *                            $harvestRoot.
      *
      * @return string
      */
@@ -166,7 +166,7 @@ class HarvesterFactory
      * @param array                      $settings  Additional settings
      * @param ResponseProcessorInterface $processor Response processor
      * @param string                     $target    Target being configured (used for
-     * error messages)
+     *                                              error messages)
      * @param OutputInterface            $output    Output interface
      *
      * @return Communicator
@@ -184,8 +184,7 @@ class HarvesterFactory
         $comm = new Communicator($settings['url'], $client, $processor);
         // We only want the communicator to output messages if we are in verbose
         // mode; communicator messages are considered verbose output.
-        if (
-            ($settings['verbose'] ?? false)
+        if (($settings['verbose'] ?? false)
             && $writer = $this->getConsoleWriter($output, $settings)
         ) {
             $comm->setOutputWriter($writer);
@@ -307,7 +306,7 @@ class HarvesterFactory
      * Get the harvester
      *
      * @param string          $target      Name of source being harvested (used as
-     * directory name for storing harvested data inside $harvestRoot)
+     *                                     directory name for storing harvested data inside $harvestRoot)
      * @param string          $harvestRoot Root directory containing harvested data.
      * @param Client          $client      HTTP client
      * @param array           $settings    Additional settings
