@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- Added types to HarvesterCommand constructor arguments (for PHP 8.4 compatibility).
 
 ### Deprecated
 

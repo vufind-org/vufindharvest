@@ -86,29 +86,22 @@ class HarvesterCommand extends Command
     protected $factory;
 
     /**
-     * Silent mode
-     *
-     * @var bool
-     */
-    protected $silent;
-
-    /**
      * Constructor
      *
-     * @param Client           $client      HTTP client (omit for default)
-     * @param string           $harvestRoot Root directory for harvesting (omit for
+     * @param ?Client           $client      HTTP client (omit for default)
+     * @param ?string           $harvestRoot Root directory for harvesting (omit for
      * default)
-     * @param HarvesterFactory $factory     Harvester factory (omit for default)
-     * @param bool             $silent      Should we suppress output?
-     * @param string|null      $name        The name of the command; passing null
+     * @param ?HarvesterFactory $factory     Harvester factory (omit for default)
+     * @param bool              $silent      Should we suppress output?
+     * @param ?string           $name        The name of the command; passing null
      * means it must be set in configure()
      */
     public function __construct(
-        $client = null,
-        $harvestRoot = null,
-        HarvesterFactory $factory = null,
-        $silent = false,
-        $name = null
+        ?Client $client = null,
+        ?string $harvestRoot = null,
+        ?HarvesterFactory $factory = null,
+        protected bool $silent = false,
+        ?string $name = null
     ) {
         $this->client = $client ?: new Client();
         $this->harvestRoot = $harvestRoot ?: getcwd();
