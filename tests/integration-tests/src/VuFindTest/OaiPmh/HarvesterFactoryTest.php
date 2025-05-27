@@ -164,8 +164,8 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
             ->with(
                 $this->equalTo(
                     [
-                    'sslverifypeer' => false, 
-                    'timeout' => 60, 
+                    'sslverifypeer' => false,
+                    'timeout' => 60,
                     'adapter' => \Laminas\Http\Client\Adapter\Proxy::class
                     ]
                 )
@@ -191,7 +191,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
             ->with(
                 $this->equalTo(
                     [
-                    'timeout' => 60, 
+                    'timeout' => 60,
                     'adapter' => \Laminas\Http\Client\Adapter\Proxy::class,
                     'proxy_host' => 'http://proxy.host',
                     'proxy_port' => 8080,
