@@ -167,9 +167,8 @@ class HarvesterFactory
      * @param Client                     $client    HTTP client
      * @param array                      $settings  Additional settings
      * @param ResponseProcessorInterface $processor Response processor
-     * @param string                     $target    Target being configured (used for
-     * error messages)
-     * @param OutputInterface            $output    Output interface
+     * @param string                     $target    Target being configured (used for error messages)
+     * @param ?OutputInterface           $output    Output interface
      *
      * @return Communicator
      */
@@ -198,9 +197,9 @@ class HarvesterFactory
     /**
      * Get the record XML formatter.
      *
-     * @param Communicator    $communicator Communicator
-     * @param array           $settings     Additional settings
-     * @param OutputInterface $output       Output interface
+     * @param Communicator     $communicator Communicator
+     * @param array            $settings     Additional settings
+     * @param ?OutputInterface $output       Output interface
      *
      * @return RecordXmlFormatter
      */
@@ -308,12 +307,12 @@ class HarvesterFactory
     /**
      * Get the harvester
      *
-     * @param string          $target      Name of source being harvested (used as
+     * @param string           $target      Name of source being harvested (used as
      * directory name for storing harvested data inside $harvestRoot)
-     * @param string          $harvestRoot Root directory containing harvested data.
-     * @param Client          $client      HTTP client
-     * @param array           $settings    Additional settings
-     * @param OutputInterface $output      Output interface (optional)
+     * @param string           $harvestRoot Root directory containing harvested data.
+     * @param ?Client          $client      HTTP client
+     * @param array            $settings    Additional settings
+     * @param ?OutputInterface $output      Output interface (optional)
      *
      * @return Harvester
      *
