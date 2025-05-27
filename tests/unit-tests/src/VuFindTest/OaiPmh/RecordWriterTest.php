@@ -89,9 +89,9 @@ class RecordWriterTest extends \PHPUnit\Framework\TestCase
     /**
      * Get writer to test
      *
-     * @param array                         $config    Configuration
-     * @param RecordWriterStrategyInterface $strategy  Writer strategy
-     * @param RecordXmlFormatter            $formatter XML formatter
+     * @param array                          $config    Configuration
+     * @param ?RecordWriterStrategyInterface $strategy  Writer strategy
+     * @param ?RecordXmlFormatter            $formatter XML formatter
      *
      * @return RecordWriter
      */
