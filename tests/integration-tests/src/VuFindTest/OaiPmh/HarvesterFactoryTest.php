@@ -67,7 +67,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
      * Get harvester
      *
      * @param string $target      Name of source being harvested (used as directory
-     * name for storing harvested data inside $harvestRoot)
+     *                            name for storing harvested data inside $harvestRoot)
      * @param string $harvestRoot Root directory containing harvested data.
      * @param array  $config      Additional settings
      * @param Client $client      HTTP client
@@ -161,11 +161,15 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
         $client = $this->getMockClient();
         $client->expects($this->once())
             ->method('setOptions')
-            ->with($this->equalTo([
-                'sslverifypeer' => false, 
-                'timeout' => 60, 
-                'adapter' => \Laminas\Http\Client\Adapter\Proxy::class
-            ]));
+            ->with(
+                $this->equalTo(
+                    [
+                    'sslverifypeer' => false, 
+                    'timeout' => 60, 
+                    'adapter' => \Laminas\Http\Client\Adapter\Proxy::class
+                    ]
+                )
+            );
         $config = [
             'url' => 'http://localhost',
             'sslverifypeer' => false,
@@ -184,15 +188,19 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
         $client = $this->getMockClient();
         $client->expects($this->once())
             ->method('setOptions')
-            ->with($this->equalTo([
-                'timeout' => 60, 
-                'adapter' => \Laminas\Http\Client\Adapter\Proxy::class,
-                'proxy_host' => 'http://proxy.host',
-                'proxy_port' => 8080,
-                'proxy_user' => 'alice',
-                'proxy_pass' => 'foobar',
-                'proxy_auth' => \Laminas\Http\Client::AUTH_BASIC
-            ]));
+            ->with(
+                $this->equalTo(
+                    [
+                    'timeout' => 60, 
+                    'adapter' => \Laminas\Http\Client\Adapter\Proxy::class,
+                    'proxy_host' => 'http://proxy.host',
+                    'proxy_port' => 8080,
+                    'proxy_user' => 'alice',
+                    'proxy_pass' => 'foobar',
+                    'proxy_auth' => \Laminas\Http\Client::AUTH_BASIC
+                    ]
+                )
+            );
         $config = [
             'url' => 'http://localhost',
             'dateGranularity' => 'mygranularity',
