@@ -73,9 +73,9 @@ class Communicator
     /**
      * Constructor
      *
-     * @param string                     $uri       Base URI for OAI-PMH server
-     * @param Client                     $client    HTTP client
-     * @param ResponseProcessorInterface $processor Response processor (optional)
+     * @param strin g                     $uri       Base URI for OAI-PMH server
+     * @param Clie nt                     $client    HTTP client
+     * @param ?ResponseProcessorInterface $processor Response processor (optional)
      */
     public function __construct(
         $uri,
