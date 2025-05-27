@@ -89,7 +89,6 @@ class HarvesterFactory
     {
         $options = [
             'timeout' => $settings['timeout'] ?? 60,
-            'adapter' => Proxy::class,
         ];
         if (isset($settings['autosslca']) && $settings['autosslca']) {
             $this->addAutoSslOptions($options);
@@ -106,6 +105,9 @@ class HarvesterFactory
             if (isset($settings[$proxySetting])) {
                 $options[$proxySetting] = $settings[$proxySetting];
             }
+        }
+        if (!empty($settings['proxy_host'])) {
+            $options['adapter'] = Proxy::class;
         }
         return $options;
     }

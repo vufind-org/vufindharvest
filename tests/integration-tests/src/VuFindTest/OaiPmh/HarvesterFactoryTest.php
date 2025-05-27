@@ -166,7 +166,6 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
                     [
                         'sslverifypeer' => false,
                         'timeout' => 60,
-                        'adapter' => \Laminas\Http\Client\Adapter\Proxy::class,
                     ]
                 )
             );
