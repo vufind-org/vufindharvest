@@ -3,7 +3,7 @@
 /**
  * Factory for OAI-PMH Harvest Tool
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (c) Demian Katz 2010.
  *
