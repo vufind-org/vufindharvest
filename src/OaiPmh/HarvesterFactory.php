@@ -167,9 +167,8 @@ class HarvesterFactory
      * @param Client                     $client    HTTP client
      * @param array                      $settings  Additional settings
      * @param ResponseProcessorInterface $processor Response processor
-     * @param string                     $target    Target being configured (used for
-     * error messages)
-     * @param OutputInterface            $output    Output interface
+     * @param string                     $target    Target being configured (used for error messages)
+     * @param ?OutputInterface           $output    Output interface
      *
      * @return Communicator
      */
@@ -178,7 +177,7 @@ class HarvesterFactory
         array $settings,
         ResponseProcessorInterface $processor,
         $target,
-        OutputInterface $output = null
+        ?OutputInterface $output = null
     ) {
         if (empty($settings['url'])) {
             throw new \Exception("Missing base URL for {$target}.");
@@ -198,16 +197,16 @@ class HarvesterFactory
     /**
      * Get the record XML formatter.
      *
-     * @param Communicator    $communicator Communicator
-     * @param array           $settings     Additional settings
-     * @param OutputInterface $output       Output interface
+     * @param Communicator     $communicator Communicator
+     * @param array            $settings     Additional settings
+     * @param ?OutputInterface $output       Output interface
      *
      * @return RecordXmlFormatter
      */
     protected function getFormatter(
         Communicator $communicator,
         array $settings,
-        OutputInterface $output = null
+        ?OutputInterface $output = null
     ) {
         // Build the formatter:
         $formatter = new RecordXmlFormatter($settings);
@@ -308,12 +307,12 @@ class HarvesterFactory
     /**
      * Get the harvester
      *
-     * @param string          $target      Name of source being harvested (used as
+     * @param string           $target      Name of source being harvested (used as
      * directory name for storing harvested data inside $harvestRoot)
-     * @param string          $harvestRoot Root directory containing harvested data.
-     * @param Client          $client      HTTP client
-     * @param array           $settings    Additional settings
-     * @param OutputInterface $output      Output interface (optional)
+     * @param string           $harvestRoot Root directory containing harvested data.
+     * @param ?Client          $client      HTTP client
+     * @param array            $settings    Additional settings
+     * @param ?OutputInterface $output      Output interface (optional)
      *
      * @return Harvester
      *
@@ -322,9 +321,9 @@ class HarvesterFactory
     public function getHarvester(
         $target,
         $harvestRoot,
-        Client $client = null,
+        ?Client $client = null,
         array $settings = [],
-        OutputInterface $output = null
+        ?OutputInterface $output = null
     ) {
         $basePath = $this->getBasePath($harvestRoot, $target);
         $responseProcessor = $this->getResponseProcessor($basePath, $settings);
