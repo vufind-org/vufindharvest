@@ -281,7 +281,8 @@ class HarvesterCommand extends Command
                 'proxy_auth',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Proxy authentication type (default "Laminas\Http\Client::AUTH_BASIC", only if the proxy requires authorization)'
+                'Proxy authentication type (default "Laminas\Http\Client::AUTH_BASIC",'
+                . ' only if the proxy requires authorization)'
             )->addOption(
                 'sanitize',
                 null,
