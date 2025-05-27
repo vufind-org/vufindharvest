@@ -3,7 +3,7 @@
 /**
  * OAI-PMH Communicator (handles low-level request/response processing).
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (c) Demian Katz 2016.
  *

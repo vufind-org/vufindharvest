@@ -3,7 +3,7 @@
 /**
  * Thin wrapper around console output
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (c) Demian Katz 2016.
  *
