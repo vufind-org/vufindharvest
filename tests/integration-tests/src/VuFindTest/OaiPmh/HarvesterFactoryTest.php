@@ -67,7 +67,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
      * Get harvester
      *
      * @param string $target      Name of source being harvested (used as directory
-     *                            name for storing harvested data inside $harvestRoot)
+     * name for storing harvested data inside $harvestRoot)
      * @param string $harvestRoot Root directory containing harvested data.
      * @param array  $config      Additional settings
      * @param Client $client      HTTP client
