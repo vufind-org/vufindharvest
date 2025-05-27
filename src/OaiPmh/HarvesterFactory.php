@@ -140,7 +140,7 @@ class HarvesterFactory
      *
      * @param string $harvestRoot Root directory containing harvested data.
      * @param string $target      The OAI-PMH target directory to create inside
-     *                            $harvestRoot.
+     * $harvestRoot.
      *
      * @return string
      */
@@ -166,7 +166,7 @@ class HarvesterFactory
      * @param array                      $settings  Additional settings
      * @param ResponseProcessorInterface $processor Response processor
      * @param string                     $target    Target being configured (used for
-     *                                              error messages)
+     * error messages)
      * @param OutputInterface            $output    Output interface
      *
      * @return Communicator
@@ -307,7 +307,7 @@ class HarvesterFactory
      * Get the harvester
      *
      * @param string          $target      Name of source being harvested (used as
-     *                                     directory name for storing harvested data inside $harvestRoot)
+     * directory name for storing harvested data inside $harvestRoot)
      * @param string          $harvestRoot Root directory containing harvested data.
      * @param Client          $client      HTTP client
      * @param array           $settings    Additional settings
