@@ -164,9 +164,9 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
             ->with(
                 $this->equalTo(
                     [
-                    'sslverifypeer' => false,
-                    'timeout' => 60,
-                    'adapter' => \Laminas\Http\Client\Adapter\Proxy::class,
+                        'sslverifypeer' => false,
+                        'timeout' => 60,
+                        'adapter' => \Laminas\Http\Client\Adapter\Proxy::class,
                     ]
                 )
             );
@@ -191,13 +191,13 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
             ->with(
                 $this->equalTo(
                     [
-                    'timeout' => 60,
-                    'adapter' => \Laminas\Http\Client\Adapter\Proxy::class,
-                    'proxy_host' => 'http://proxy.host',
-                    'proxy_port' => 8080,
-                    'proxy_user' => 'alice',
-                    'proxy_pass' => 'foobar',
-                    'proxy_auth' => \Laminas\Http\Client::AUTH_BASIC,
+                        'timeout' => 60,
+                        'adapter' => \Laminas\Http\Client\Adapter\Proxy::class,
+                        'proxy_host' => 'http://proxy.host',
+                        'proxy_port' => 8080,
+                        'proxy_user' => 'alice',
+                        'proxy_pass' => 'foobar',
+                        'proxy_auth' => \Laminas\Http\Client::AUTH_BASIC,
                     ]
                 )
             );
