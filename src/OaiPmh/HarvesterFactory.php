@@ -178,7 +178,7 @@ class HarvesterFactory
         array $settings,
         ResponseProcessorInterface $processor,
         $target,
-        OutputInterface $output = null
+        ?OutputInterface $output = null
     ) {
         if (empty($settings['url'])) {
             throw new \Exception("Missing base URL for {$target}.");
@@ -207,7 +207,7 @@ class HarvesterFactory
     protected function getFormatter(
         Communicator $communicator,
         array $settings,
-        OutputInterface $output = null
+        ?OutputInterface $output = null
     ) {
         // Build the formatter:
         $formatter = new RecordXmlFormatter($settings);
@@ -322,9 +322,9 @@ class HarvesterFactory
     public function getHarvester(
         $target,
         $harvestRoot,
-        Client $client = null,
+        ?Client $client = null,
         array $settings = [],
-        OutputInterface $output = null
+        ?OutputInterface $output = null
     ) {
         $basePath = $this->getBasePath($harvestRoot, $target);
         $responseProcessor = $this->getResponseProcessor($basePath, $settings);

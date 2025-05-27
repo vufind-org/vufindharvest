@@ -10,7 +10,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Added types to HarvesterCommand constructor arguments (for PHP 8.4 compatibility).
+- Added types to all HarvesterCommand constructor arguments.
+- Stopped relying on implicitly nullable parameter types for PHP 8.4 compatibility.
 
 ### Deprecated
 

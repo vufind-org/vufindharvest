@@ -80,7 +80,7 @@ class Communicator
     public function __construct(
         $uri,
         Client $client,
-        ResponseProcessorInterface $processor = null
+        ?ResponseProcessorInterface $processor = null
     ) {
         $this->baseUrl = $uri;
         $this->client = $client;

@@ -97,8 +97,8 @@ class RecordWriterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getWriter(
         array $config = [],
-        RecordWriterStrategyInterface $strategy = null,
-        RecordXmlFormatter $formatter = null
+        ?RecordWriterStrategyInterface $strategy = null,
+        ?RecordXmlFormatter $formatter = null
     ) {
         if (null === $strategy) {
             $strategy = $this->getMockStrategy();
