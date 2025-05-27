@@ -166,7 +166,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
                     [
                     'sslverifypeer' => false,
                     'timeout' => 60,
-                    'adapter' => \Laminas\Http\Client\Adapter\Proxy::class
+                    'adapter' => \Laminas\Http\Client\Adapter\Proxy::class,
                     ]
                 )
             );
@@ -197,7 +197,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
                     'proxy_port' => 8080,
                     'proxy_user' => 'alice',
                     'proxy_pass' => 'foobar',
-                    'proxy_auth' => \Laminas\Http\Client::AUTH_BASIC
+                    'proxy_auth' => \Laminas\Http\Client::AUTH_BASIC,
                     ]
                 )
             );
@@ -208,7 +208,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
             'proxy_port' => 8080,
             'proxy_user' => 'alice',
             'proxy_pass' => 'foobar',
-            'proxy_auth' => \Laminas\Http\Client::AUTH_BASIC
+            'proxy_auth' => \Laminas\Http\Client::AUTH_BASIC,
         ];
         $this->getHarvester('test', sys_get_temp_dir(), $config, $client);
     }

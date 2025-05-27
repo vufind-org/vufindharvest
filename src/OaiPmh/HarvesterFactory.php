@@ -56,7 +56,7 @@ class HarvesterFactory
         'proxy_port',
         'proxy_user',
         'proxy_pass',
-        'proxy_auth'
+        'proxy_auth',
     ];
 
     /**
