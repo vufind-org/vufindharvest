@@ -186,7 +186,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
             ->method('setOptions')
             ->with($this->equalTo([
                 'timeout' => 60, 
-                'adapter' => 'Laminas\Http\Client\Adapter\Proxy',
+                'adapter' => \Laminas\Http\Client\Adapter\Proxy::class,
                 'proxy_host' => 'http://proxy.host',
                 'proxy_port' => 8080,
                 'proxy_user' => 'alice',
