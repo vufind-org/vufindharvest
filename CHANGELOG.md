@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## Next release - TBD
+## 5.5.0 - 2025-10-22
 
 ### Added
 
