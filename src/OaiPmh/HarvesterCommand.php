@@ -357,7 +357,7 @@ class HarvesterCommand extends Command
      *
      * @return int 0 for success
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // Only set up output writer if not in silent mode:
         if (!$this->silent) {
