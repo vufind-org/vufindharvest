@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
+- The minimum PHP version requirement has been raised to 8.2.
 - Return type on VuFindHarvest\OaiPmh\HarvesterCommand::execute() (for Symfony/Console 7 compatibility).
 
 ### Deprecated
