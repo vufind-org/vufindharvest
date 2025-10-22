@@ -30,7 +30,6 @@
 namespace VuFindHarvest\OaiPmh;
 
 use Laminas\Http\Client;
-use Laminas\Uri\Http;
 use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
 use VuFindHarvest\ResponseProcessor\ResponseProcessorInterface;
 
