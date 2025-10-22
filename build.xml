@@ -40,18 +40,32 @@
     <phingcall target="phpstan-checkstyle"/>
   </target>
 
+  <!-- Quality Assurance PHP Tasks -->
+  <target name="qa-console" description="quality assurance php tasks">
+    <phingcall target="phpunitfast"/>
+    <phingcall target="phpcs-console"/>
+    <phingcall target="php-cs-fixer-dryrun"/>
+    <phingcall target="phpstan-console"/>
+  </target>
+
+  <!-- Fix PHP Tasks -->
+  <target name="fix-php" description="quality assurance php tasks">
+    <phingcall target="php-cs-fixer"/>
+    <phingcall target="phpcbf"/>
+  </target>
+
   <!-- Report rule violations with PHPMD (mess detector) -->
    <target name="phpmd">
     <exec executable="${srcdir}/vendor/bin/phpmd">
       <arg line="${srcdir}/src xml ${srcdir}/tests/phpmd.xml --exclude ${srcdir}/tests --reportfile ${builddir}/reports/phpmd.xml" />
-    </exec> 
+    </exec>
   </target>
 
    <!-- PHP_Depend code analysis -->
    <target name="pdepend">
     <exec executable="${srcdir}/vendor/bin/pdepend">
       <arg line="--jdepend-xml=${builddir}/reports/jdepend.xml --jdepend-chart=${builddir}/reports/dependencies.svg --overview-pyramid=${builddir}/reports/pdepend-pyramid.svg ${srcdir}/src" />
-    </exec>  
+    </exec>
   </target>
 
   <!-- PHP CodeSniffer -->
@@ -63,12 +77,12 @@
   <target name="phpcs">
     <exec executable="${srcdir}/vendor/bin/phpcs" escape="false">
       <arg line="--standard=${srcdir}/tests/phpcs.xml --report=checkstyle &gt; ${builddir}/reports/checkstyle.xml" />
-    </exec>  
+    </exec>
   </target>
   <target name="phpcs-console">
     <exec executable="${srcdir}/vendor/bin/phpcs" escape="false" passthru="true" checkreturn="true" >
-      <arg line=" --standard=${srcdir}/tests/phpcs.xml" /> 
-    </exec>  
+      <arg line=" --standard=${srcdir}/tests/phpcs.xml" />
+    </exec>
   </target>
 
   <!-- Phpstan -->
@@ -92,7 +106,7 @@
   <target name="php-cs-fixer-dryrun">
     <exec executable="${srcdir}/vendor/bin/php-cs-fixer" passthru="true" escape="false" checkreturn="true">
       <arg line="fix --config=${srcdir}/tests/vufind.php-cs-fixer.php --dry-run --verbose --diff" />
-     </exec> 
+     </exec>
   </target>
 
   <!-- PHP API Documentation -->
@@ -136,21 +150,21 @@
   <target name="phpunit" description="Run tests">
     <exec dir="${srcdir}" executable="${sh}" passthru="true" checkreturn="true">
       <arg line="-c &apos;${phpunit_command} -dzend.enable_gc=0 --log-junit ${builddir}/reports/phpunit.xml --coverage-clover ${builddir}/reports/coverage/clover.xml --coverage-html ${builddir}/reports/coverage/&apos;" />
-    </exec>  
+    </exec>
   </target>
 
   <!-- PHPUnit without logging output -->
   <target name="phpunitfast" description="Run tests">
     <exec dir="${srcdir}" executable="${sh}" passthru="true" checkreturn="true">
-      <arg line="-c &apos;${phpunit_command} -dzend.enable_gc=0&apos;" /> 
-    </exec>  
+      <arg line="-c &apos;${phpunit_command} -dzend.enable_gc=0&apos;" />
+    </exec>
   </target>
 
   <!-- Set up dependencies -->
   <target name="startup" description="set up dependencies">
     <exec executable="composer">
       <arg line="install" />
-    </exec>  
+    </exec>
   </target>
 
   <!-- Clean up -->
@@ -159,6 +173,6 @@
     <delete file="${srcdir}/composer.lock" failonerror="true" />
     <exec executable="git">
       <arg line="reset --hard" />
-    </exec>  
+    </exec>
   </target>
 </project>
