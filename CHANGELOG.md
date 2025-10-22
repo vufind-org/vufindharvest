@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## Next release - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Return type on VuFindHarvest\OaiPmh\HarvesterCommand::execute() (for Symfony/Console 7 compatibility).
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Symfony/Console 7 compatibility.
+
 ## 5.4.0 - 2025-05-29
 
 ### Added
