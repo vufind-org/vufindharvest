@@ -53,13 +53,11 @@ class ConsoleWriterTest extends \PHPUnit\Framework\TestCase
      */
     public function testWriter()
     {
-        $mockOutput = $this->getMockBuilder(OutputInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockOutput = $this->createMock(OutputInterface::class);
         $mockOutput->expects($this->once())->method('write')
-            ->with($this->equalTo('writeTest'));
+            ->with('writeTest');
         $mockOutput->expects($this->once())->method('writeln')
-            ->with($this->equalTo('writelnTest'));
+            ->with('writelnTest');
         $this->setOutputWriter(new ConsoleWriter($mockOutput));
         $this->write('writeTest');
         $this->writeLine('writelnTest');

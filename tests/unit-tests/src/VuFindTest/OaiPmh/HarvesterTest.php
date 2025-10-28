@@ -225,10 +225,10 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
         $writer = $this->getMockRecordWriter();
         $writer->expects($this->once())->method('write')
             ->with($this->isInstanceOf('SimpleXMLElement'))
-            ->will($this->returnValue(1468434382));
+            ->willReturn(1468434382);
         $sm = $this->getMockStateManager();
         $sm->expects($this->once())->method('saveDate')
-            ->with($this->equalTo('2016-07-12T16:19:54Z'));
+            ->with('2016-07-12T16:19:54Z');
         $harvester = $this->getHarvester(
             [],
             $comm,
@@ -268,7 +268,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
             ->with($this->isInstanceOf('SimpleXMLElement'));
         $sm = $this->getMockStateManager();
         $sm->expects($this->once())->method('saveState')
-            ->with($this->equalTo('xyzzy'), $this->equalTo('more'), $this->equalTo('2016-07-01'));
+            ->with('xyzzy', 'more', '2016-07-01');
         $sm->expects($this->once())->method('clearState');
         $harvester = $this->getHarvester(
             [
@@ -342,7 +342,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
             ]
         );
         $sm = $this->getMockStateManager();
-        $sm->expects($this->any())->method('loadState')
+        $sm->method('loadState')
             ->willReturn([null, 'foo', 'bar', 'baz']);
         $sm->expects($this->once())->method('clearState');
         $harvester = $this->getHarvester(
@@ -413,7 +413,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
             ->willReturn(1468434382);
         $sm = $this->getMockStateManager();
         $sm->expects($this->once())->method('saveDate')
-            ->with($this->equalTo('2016-07-12'));
+            ->with('2016-07-12');
         $harvester = $this->getHarvester(
             ['dateGranularity' => 'YYYY-MM-DD'],
             $comm,

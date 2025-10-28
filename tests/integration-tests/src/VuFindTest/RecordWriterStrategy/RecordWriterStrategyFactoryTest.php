@@ -64,9 +64,9 @@ class RecordWriterStrategyFactoryTest extends \PHPUnit\Framework\TestCase
         $strategy->endWrite();
         $deleteFile = glob($basePath . '*_d1.delete')[0];
         $recordFile = glob($basePath . '*_r1.xml')[0];
-        $this->assertEquals("d1\nd2", file_get_contents($deleteFile));
+        $this->assertSame("d1\nd2", file_get_contents($deleteFile));
         unlink($deleteFile);
-        $this->assertEquals(
+        $this->assertSame(
             '<collection><foo1 /><foo2 /></collection>',
             file_get_contents($recordFile)
         );

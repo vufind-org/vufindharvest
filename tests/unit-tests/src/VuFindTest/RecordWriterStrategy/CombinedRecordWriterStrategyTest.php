@@ -56,9 +56,9 @@ class CombinedRecordWriterStrategyTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $expectedXml = '<wrapper test="true"><foo1 /><foo2 /></wrapper>';
         $mock->expects($this->once())->method('saveDeletedRecords')
-            ->with($this->equalTo(['d1', 'd2']));
+            ->with(['d1', 'd2']);
         $mock->expects($this->once())->method('saveFile')
-            ->with($this->equalTo('r1'), $this->equalTo($expectedXml));
+            ->with('r1', $expectedXml);
         $mock->beginWrite();
         $mock->addDeletedRecord('d1');
         $mock->addRecord('r1', '<foo1 />');

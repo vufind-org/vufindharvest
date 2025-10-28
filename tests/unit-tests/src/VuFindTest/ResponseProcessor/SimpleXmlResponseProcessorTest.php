@@ -77,7 +77,7 @@ class SimpleXmlResponseProcessorTest extends \PHPUnit\Framework\TestCase
             '<?xml version="1.0"?>' . "\n" . '<illegal value=" "/>' . "\n",
             $result->asXml()
         );
-        $this->assertEquals($badXml . "\n\n", file_get_contents($basePath . $log));
+        $this->assertSame($badXml . "\n\n", file_get_contents($basePath . $log));
         unlink($basePath . $log);
     }
 
@@ -101,7 +101,7 @@ class SimpleXmlResponseProcessorTest extends \PHPUnit\Framework\TestCase
                 . '<illegal value="?" contents="?2004/2010"/>' . "\n",
             $result->asXml()
         );
-        $this->assertEquals($badXml . "\n\n", file_get_contents($basePath . $log));
+        $this->assertSame($badXml . "\n\n", file_get_contents($basePath . $log));
         unlink($basePath . $log);
     }
 
