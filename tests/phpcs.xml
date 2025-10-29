@@ -5,6 +5,7 @@
   <file>.</file>
   <exclude-pattern>*/config/*</exclude-pattern>
   <exclude-pattern>*.php-cs-fixer.*</exclude-pattern>
+  <exclude-pattern>*/tests/rector.php</exclude-pattern>
   <arg name="extensions" value="php"/>
   <!-- We only use PEAR to ensure complete comments at this time -->
   <rule ref="PEAR.Commenting">

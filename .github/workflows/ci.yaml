@@ -18,7 +18,7 @@ jobs:
           - php-version: 8.3
             phing_tasks: "phpunitfast"
           - php-version: 8.4
-            phing_tasks: "phpunitfast phpcs-console php-cs-fixer-dryrun phpstan-console"
+            phing_tasks: "phpunitfast phpcs-console php-cs-fixer-dryrun phpstan-console rector-console"
 
     steps:
       - name: Setup PHP
@@ -54,6 +54,13 @@ jobs:
           path: .phpstan_cache
           key: "php-${{ matrix.php-version }}-phpstan-${{ github.sha }}"
           restore-keys: "php-${{ matrix.php-version }}-phpstan-"
+
+      - name: Cache rector data
+        uses: actions/cache@v4
+        with:
+          path: .rector
+          key: "php-${{ matrix.php-version }}-rector-${{ github.sha }}"
+          restore-keys: "php-${{ matrix.php-version }}-rector-"
 
       - name: Install composer dependencies
         run: composer install
