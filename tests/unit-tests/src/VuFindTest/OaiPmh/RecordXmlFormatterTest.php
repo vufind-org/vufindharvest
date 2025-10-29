@@ -115,7 +115,7 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
         $result = $formatter
             ->format('foo', $this->getRecordFromFixture('marc.xml', 1));
         $xml = simplexml_load_string($result);
-        $this->assertEquals('2016-05-02T08:06:51Z', (string)$xml->datetest);
+        $this->assertSame('2016-05-02T08:06:51Z', (string)$xml->datetest);
     }
 
     /**
@@ -129,7 +129,7 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
         $formatter = new RecordXmlFormatter($cfg);
         $result = $formatter->format('foo', $this->getRecordFromFixture());
         $xml = simplexml_load_string($result);
-        $this->assertEquals(
+        $this->assertSame(
             'oai:urm_publish:9925821506101791',
             (string)$xml->identifier
         );
@@ -146,8 +146,8 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
         $result = $formatter->format('foo', $this->getRecordFromFixture());
         $xml = simplexml_load_string($result);
         $this->assertCount(2, $xml->setSpec);
-        $this->assertEquals('TESTING_DIGI_TEST', (string)$xml->setSpec[0]);
-        $this->assertEquals('TESTING_DIGI', (string)$xml->setSpec[1]);
+        $this->assertSame('TESTING_DIGI_TEST', (string)$xml->setSpec[0]);
+        $this->assertSame('TESTING_DIGI', (string)$xml->setSpec[1]);
     }
 
     /**
@@ -163,8 +163,8 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
         $result = $formatter->format('foo', $this->getRecordFromFixture());
         $xml = simplexml_load_string($result);
         $this->assertCount(2, $xml->setName);
-        $this->assertEquals('TESTING_DIGI_TEST', (string)$xml->setName[0]);
-        $this->assertEquals('TESTING_DIGI', (string)$xml->setName[1]);
+        $this->assertSame('TESTING_DIGI_TEST', (string)$xml->setName[0]);
+        $this->assertSame('TESTING_DIGI', (string)$xml->setName[1]);
 
         // Check correct behavior when set names provided:
         $formatter->setSetNames(
@@ -173,8 +173,8 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
         $result2 = $formatter->format('foo', $this->getRecordFromFixture());
         $xml2 = simplexml_load_string($result2);
         $this->assertCount(2, $xml2->setName);
-        $this->assertEquals('foo', (string)$xml2->setName[0]);
-        $this->assertEquals('bar', (string)$xml2->setName[1]);
+        $this->assertSame('foo', (string)$xml2->setName[0]);
+        $this->assertSame('bar', (string)$xml2->setName[1]);
     }
 
     /**

@@ -71,10 +71,10 @@ class CommunicatorTest extends \PHPUnit\Framework\TestCase
         $response = $client->send();
         $response->expects($this->once())
             ->method('isSuccess')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $response->expects($this->once())
             ->method('getBody')
-            ->will($this->returnValue($expectedResponse));
+            ->willReturn($expectedResponse);
         $uri = 'http://localhost';
         $comm = $this->getCommunicator($uri, $client);
         $this->assertEquals(
@@ -95,32 +95,29 @@ class CommunicatorTest extends \PHPUnit\Framework\TestCase
         $response = $client->send();
         $response->expects($this->once())
             ->method('isSuccess')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $response->expects($this->exactly(4))
             ->method('getStatusCode')
             ->willReturnOnConsecutiveCalls(503, 503, 200, 200);
         $response->expects($this->once())
             ->method('getBody')
-            ->will($this->returnValue($expectedResponse));
-        $header = $this->getMockBuilder(\Laminas\Http\Header\RetryAfter::class)
-            ->getMock();
+            ->willReturn($expectedResponse);
+        $header = $this->createMock(\Laminas\Http\Header\RetryAfter::class);
         $header->expects($this->once())
             ->method('getDeltaSeconds')
-            ->will($this->returnValue(1));
+            ->willReturn(1);
         $headers = $response->getHeaders();
-        $headers->expects($this->any())
+        $headers
             ->method('get')
-            ->with($this->equalTo('Retry-After'))
-            ->will($this->returnValue($header));
+            ->with('Retry-After')
+            ->willReturn($header);
         $uri = 'http://localhost';
         $comm = $this->getCommunicator($uri, $client);
-        $mockOutput = $this->getMockBuilder(OutputInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockOutput = $this->createMock(OutputInterface::class);
         $comm->setOutputWriter(new ConsoleWriter($mockOutput));
         $mockOutput->expects($this->once())
             ->method('writeLn')
-            ->with($this->equalTo('Received 503 response; waiting 1 seconds...'));
+            ->with('Received 503 response; waiting 1 seconds...');
         $this->assertEquals(
             $expectedResponse,
             $comm->request('Identify')
@@ -141,7 +138,7 @@ class CommunicatorTest extends \PHPUnit\Framework\TestCase
         $response = $client->send();
         $response->expects($this->once())
             ->method('isSuccess')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $uri = 'http://localhost';
         $comm = $this->getCommunicator($uri, $client);
         $comm->request('Identify');
@@ -166,26 +163,26 @@ class CommunicatorTest extends \PHPUnit\Framework\TestCase
      */
     protected function getMockClient()
     {
-        $query = $this->getMockBuilder(\Laminas\Stdlib\Parameters::class)->getMock();
-        $request = $this->getMockBuilder(\Laminas\Http\Request::class)->getMock();
-        $request->expects($this->any())
+        $query = $this->createMock(\Laminas\Stdlib\Parameters::class);
+        $request = $this->createMock(\Laminas\Http\Request::class);
+        $request
             ->method('getQuery')
-            ->will($this->returnValue($query));
-        $headers = $this->getMockBuilder(\Laminas\Http\Headers::class)->getMock();
-        $response = $this->getMockBuilder(\Laminas\Http\Response::class)->getMock();
-        $response->expects($this->any())
+            ->willReturn($query);
+        $headers = $this->createMock(\Laminas\Http\Headers::class);
+        $response = $this->createMock(\Laminas\Http\Response::class);
+        $response
             ->method('getHeaders')
-            ->will($this->returnValue($headers));
-        $client = $this->getMockBuilder(\Laminas\Http\Client::class)->getMock();
-        $client->expects($this->any())
+            ->willReturn($headers);
+        $client = $this->createMock(\Laminas\Http\Client::class);
+        $client
             ->method('getRequest')
-            ->will($this->returnValue($request));
-        $client->expects($this->any())
+            ->willReturn($request);
+        $client
             ->method('setMethod')
-            ->will($this->returnValue($client));
-        $client->expects($this->any())
+            ->willReturn($client);
+        $client
             ->method('send')
-            ->will($this->returnValue($response));
+            ->willReturn($response);
         return $client;
     }
 }

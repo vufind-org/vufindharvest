@@ -70,8 +70,7 @@ class RecordWriterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getMockFormatter()
     {
-        return $this->getMockBuilder(\VuFindHarvest\OaiPmh\RecordXmlFormatter::class)
-            ->getMock();
+        return $this->createMock(\VuFindHarvest\OaiPmh\RecordXmlFormatter::class);
     }
 
     /**
@@ -81,9 +80,7 @@ class RecordWriterTest extends \PHPUnit\Framework\TestCase
      */
     protected function getMockStrategy()
     {
-        return $this->getMockBuilder(
-            \VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface::class
-        )->getMock();
+        return $this->createMock(\VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface::class);
     }
 
     /**
@@ -139,7 +136,7 @@ class RecordWriterTest extends \PHPUnit\Framework\TestCase
     {
         $strategy = $this->getMockStrategy();
         $strategy->expects($this->once())->method('getBasePath')
-            ->will($this->returnValue('foo'));
+            ->willReturn('foo');
         $writer = $this->getWriter([], $strategy);
         $this->assertEquals('foo', $writer->getBasePath());
     }
@@ -185,13 +182,13 @@ class RecordWriterTest extends \PHPUnit\Framework\TestCase
         $records = simplexml_load_string($this->getFakeResponse());
         $strategy = $this->getMockStrategy();
         $strategy->expects($this->once())->method('addDeletedRecord')
-            ->with($this->equalTo('one'));
+            ->with('one');
         $strategy->expects($this->once())->method('addRecord')
-            ->with($this->equalTo('2'), $this->equalTo('<formatted />'));
+            ->with('2', '<formatted />');
         $formatter = $this->getMockFormatter();
         $formatter->expects($this->once())->method('format')
-            ->with($this->equalTo('2'), $this->equalTo($records->record[1]))
-            ->will($this->returnValue('<formatted />'));
+            ->with('2', $records->record[1])
+            ->willReturn('<formatted />');
         $writer = $this->getWriter($config, $strategy, $formatter);
         $writer->write($records);
     }

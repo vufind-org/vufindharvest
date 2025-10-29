@@ -123,12 +123,12 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $client = $this->getMockClient();
         $response = $client->send();
-        $response->expects($this->any())
+        $response
             ->method('isSuccess')
-            ->will($this->returnValue(true));
-        $response->expects($this->any())
+            ->willReturn(true);
+        $response
             ->method('getBody')
-            ->will($this->returnValue($this->getListSetsResponse()));
+            ->willReturn($this->getListSetsResponse());
         $config = [
             'url' => 'http://localhost',
             'injectSetName' => 'setnametag',
@@ -162,12 +162,10 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
         $client->expects($this->once())
             ->method('setOptions')
             ->with(
-                $this->equalTo(
-                    [
-                        'sslverifypeer' => false,
-                        'timeout' => 60,
-                    ]
-                )
+                [
+                    'sslverifypeer' => false,
+                    'timeout' => 60,
+                ]
             );
         $config = [
             'url' => 'http://localhost',
@@ -188,17 +186,15 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
         $client->expects($this->once())
             ->method('setOptions')
             ->with(
-                $this->equalTo(
-                    [
-                        'timeout' => 60,
-                        'adapter' => \Laminas\Http\Client\Adapter\Proxy::class,
-                        'proxy_host' => 'http://proxy.host',
-                        'proxy_port' => 8080,
-                        'proxy_user' => 'alice',
-                        'proxy_pass' => 'foobar',
-                        'proxy_auth' => \Laminas\Http\Client::AUTH_BASIC,
-                    ]
-                )
+                [
+                    'timeout' => 60,
+                    'adapter' => \Laminas\Http\Client\Adapter\Proxy::class,
+                    'proxy_host' => 'http://proxy.host',
+                    'proxy_port' => 8080,
+                    'proxy_user' => 'alice',
+                    'proxy_pass' => 'foobar',
+                    'proxy_auth' => \Laminas\Http\Client::AUTH_BASIC,
+                ]
             );
         $config = [
             'url' => 'http://localhost',
@@ -254,26 +250,26 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected function getMockClient()
     {
-        $query = $this->getMockBuilder(\Laminas\Stdlib\Parameters::class)->getMock();
-        $request = $this->getMockBuilder(\Laminas\Http\Request::class)->getMock();
-        $request->expects($this->any())
+        $query = $this->createMock(\Laminas\Stdlib\Parameters::class);
+        $request = $this->createMock(\Laminas\Http\Request::class);
+        $request
             ->method('getQuery')
-            ->will($this->returnValue($query));
-        $headers = $this->getMockBuilder(\Laminas\Http\Headers::class)->getMock();
-        $response = $this->getMockBuilder(\Laminas\Http\Response::class)->getMock();
-        $response->expects($this->any())
+            ->willReturn($query);
+        $headers = $this->createMock(\Laminas\Http\Headers::class);
+        $response = $this->createMock(\Laminas\Http\Response::class);
+        $response
             ->method('getHeaders')
-            ->will($this->returnValue($headers));
-        $client = $this->getMockBuilder(\Laminas\Http\Client::class)->getMock();
-        $client->expects($this->any())
+            ->willReturn($headers);
+        $client = $this->createMock(\Laminas\Http\Client::class);
+        $client
             ->method('getRequest')
-            ->will($this->returnValue($request));
-        $client->expects($this->any())
+            ->willReturn($request);
+        $client
             ->method('setMethod')
-            ->will($this->returnValue($client));
-        $client->expects($this->any())
+            ->willReturn($client);
+        $client
             ->method('send')
-            ->will($this->returnValue($response));
+            ->willReturn($response);
         return $client;
     }
 }

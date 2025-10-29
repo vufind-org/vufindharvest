@@ -52,9 +52,7 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
      */
     protected function getMockHarvester()
     {
-        return $this->getMockBuilder(\VuFindHarvest\OaiPmh\Harvester::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock(\VuFindHarvest\OaiPmh\Harvester::class);
     }
 
     /**
@@ -146,7 +144,7 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
     public function testRunFromIniFile()
     {
         $basePath = '/foo/bar';
-        $client = $this->getMockBuilder(\Laminas\Http\Client::class)->getMock();
+        $client = $this->createMock(\Laminas\Http\Client::class);
         $harvester = $this->getMockHarvester();
         $expectedSettings = [
             'url' => 'http://bar',
@@ -155,18 +153,16 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
             'until' => null,
             'silent' => false,
         ];
-        $factory = $this
-            ->getMockBuilder(\VuFindHarvest\OaiPmh\HarvesterFactory::class)
-            ->getMock();
+        $factory = $this->createMock(\VuFindHarvest\OaiPmh\HarvesterFactory::class);
         $factory->expects($this->once())
             ->method('getHarvester')
             ->with(
-                $this->equalTo('foo'),
-                $this->equalTo($basePath),
-                $this->equalTo($client),
-                $this->equalTo($expectedSettings)
+                'foo',
+                $basePath,
+                $client,
+                $expectedSettings
             )
-            ->will($this->returnValue($harvester));
+            ->willReturn($harvester);
         $ini = realpath(__DIR__ . '/../../../../fixtures/test.ini');
         $commandTester = $this->getCommandTester(
             ['--ini' => $ini],
@@ -183,17 +179,15 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
     public function testExceptionHandling()
     {
         $basePath = '/foo/bar';
-        $client = $this->getMockBuilder(\Laminas\Http\Client::class)->getMock();
+        $client = $this->createMock(\Laminas\Http\Client::class);
         $harvester = $this->getMockHarvester();
-        $harvester->expects($this->once())->method('launch')->will(
-            $this->throwException(new \Exception('kablooie'))
+        $harvester->expects($this->once())->method('launch')->willThrowException(
+            new \Exception('kablooie')
         );
-        $factory = $this
-            ->getMockBuilder(\VuFindHarvest\OaiPmh\HarvesterFactory::class)
-            ->getMock();
+        $factory = $this->createMock(\VuFindHarvest\OaiPmh\HarvesterFactory::class);
         $factory->expects($this->once())
             ->method('getHarvester')
-            ->will($this->returnValue($harvester));
+            ->willReturn($harvester);
         $ini = realpath(__DIR__ . '/../../../../fixtures/test.ini');
         $commandTester = $this->getCommandTester(
             ['--ini' => $ini],
@@ -210,17 +204,15 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
     public function testNoMatchExceptionHandling()
     {
         $basePath = '/foo/bar';
-        $client = $this->getMockBuilder(\Laminas\Http\Client::class)->getMock();
+        $client = $this->createMock(\Laminas\Http\Client::class);
         $harvester = $this->getMockHarvester();
-        $harvester->expects($this->once())->method('launch')->will(
-            $this->throwException(new OaiException('noRecordsMatch', 'empty!'))
+        $harvester->expects($this->once())->method('launch')->willThrowException(
+            new OaiException('noRecordsMatch', 'empty!')
         );
-        $factory = $this
-            ->getMockBuilder(\VuFindHarvest\OaiPmh\HarvesterFactory::class)
-            ->getMock();
+        $factory = $this->createMock(\VuFindHarvest\OaiPmh\HarvesterFactory::class);
         $factory->expects($this->once())
             ->method('getHarvester')
-            ->will($this->returnValue($harvester));
+            ->willReturn($harvester);
         $ini = realpath(__DIR__ . '/../../../../fixtures/test.ini');
         $commandTester = $this->getCommandTester(
             ['--ini' => $ini],
@@ -238,7 +230,7 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
     public function testRunFromIniFileWithOptionOverrides()
     {
         $basePath = '/foo/bar';
-        $client = $this->getMockBuilder(\Laminas\Http\Client::class)->getMock();
+        $client = $this->createMock(\Laminas\Http\Client::class);
         $harvester = $this->getMockHarvester();
         $expectedSettings = [
             'url' => 'http://bar',
@@ -249,18 +241,16 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
             'verbose' => true,
             'timeout' => 45,
         ];
-        $factory = $this
-            ->getMockBuilder(\VuFindHarvest\OaiPmh\HarvesterFactory::class)
-            ->getMock();
+        $factory = $this->createMock(\VuFindHarvest\OaiPmh\HarvesterFactory::class);
         $factory->expects($this->once())
             ->method('getHarvester')
             ->with(
-                $this->equalTo('foo'),
-                $this->equalTo($basePath),
-                $this->equalTo($client),
-                $this->equalTo($expectedSettings)
+                'foo',
+                $basePath,
+                $client,
+                $expectedSettings
             )
-            ->will($this->returnValue($harvester));
+            ->willReturn($harvester);
         $ini = realpath(__DIR__ . '/../../../../fixtures/test.ini');
         $commandTester = $this->getCommandTester(
             [
