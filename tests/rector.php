@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\Config\RectorConfig;
+use Rector\PHPUnit\Set\PHPUnitSetList;
 
 return RectorConfig::configure()
     ->withCache(
@@ -12,6 +13,10 @@ return RectorConfig::configure()
     )->withPaths([
         __DIR__ . '/../src',
         __DIR__ . '/../tests',
+    ])
+    ->withSets([
+        PHPUnitSetList::PHPUNIT_110,
+        PHPUnitSetList::ANNOTATIONS_TO_ATTRIBUTES,
     ])
     ->withTypeCoverageLevel(0)
     ->withDeadCodeLevel(0)
