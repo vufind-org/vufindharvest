@@ -14,7 +14,7 @@ jobs:
         php-version: ['8.2', '8.3', '8.4']
         include:
           - php-version: 8.2
-            phing_tasks: "qa"
+            phing_tasks: "qa-console"
           - php-version: 8.3
             phing_tasks: "phpunitfast"
           - php-version: 8.4
