@@ -9,7 +9,7 @@
         }
     ],
     "homepage": "https://vufind.org/",
-    "license": "GPL-2.0",
+    "license": "GPL-2.0-only",
     "support": {
         "issues": "https://vufind.org/jira"
     },
