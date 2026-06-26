@@ -294,16 +294,7 @@ class RecordXmlFormatter
 
         $raw = trim($recordObj->metadata->asXML());
 
-        // Extract the actual metadata from inside the <metadata></metadata> tags;
-        // there is probably a cleaner way to do this, but this simple method avoids
-        // the complexity of dealing with namespaces in SimpleXML.
-        //
-        // We should also apply global search and replace at this time, if
-        // applicable.
-        $record = $this->performGlobalReplace(
-            preg_replace('/(^<metadata[^\>]*>)|(<\/metadata>$)/m', '', $raw)
-        );
-
+	$record = $raw;
         // Collect attributes (for proper namespace resolution):
         $metadataAttributes = $this->extractHigherLevelAttributes(
             $raw,
