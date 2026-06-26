@@ -250,7 +250,7 @@ class RecordXmlFormatter
         $attributes = [];
         preg_match_all(
             '/(^| )([^"]*"?[^"]*"|[^\']*\'?[^\']*\')/',
-            $extractedNs[1],
+            $extractedNs[1] ?? '',
             $attributes
         );
         $extractedAttributes = [];
