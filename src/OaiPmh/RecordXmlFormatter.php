@@ -250,7 +250,7 @@ class RecordXmlFormatter
         $attributes = [];
         preg_match_all(
             '/(^| )([^"]*"?[^"]*"|[^\']*\'?[^\']*\')/',
-            $extractedNs[1],
+            $extractedNs[1] ?? '',
             $attributes
         );
         $extractedAttributes = [];
@@ -301,7 +301,7 @@ class RecordXmlFormatter
         // We should also apply global search and replace at this time, if
         // applicable.
         $record = $this->performGlobalReplace(
-            preg_replace('/(^<metadata[^\>]*>)|(<\/metadata>$)/m', '', $raw)
+            preg_replace('/(^<metadata[^\>]*>)|(<\/metadata>$)/', '', $raw)
         );
 
         // Collect attributes (for proper namespace resolution):

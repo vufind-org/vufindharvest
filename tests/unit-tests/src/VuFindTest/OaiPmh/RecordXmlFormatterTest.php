@@ -29,6 +29,7 @@
 
 namespace VuFindTest\Harvest;
 
+use SimpleXMLElement;
 use VuFindHarvest\OaiPmh\RecordXmlFormatter;
 
 /**
@@ -54,10 +55,9 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
      *
      * @return mixed
      */
-    protected function getProperty($object, $property)
+    protected function getProperty(object|string $object, string $property): mixed
     {
         $reflectionProperty = new \ReflectionProperty($object, $property);
-        $reflectionProperty->setAccessible(true);
         return $reflectionProperty->getValue($object);
     }
 
@@ -66,7 +66,7 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testConfig()
+    public function testConfig(): void
     {
         $config = [
             'injectId' => 'idtag',
@@ -96,7 +96,7 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testIdInjection()
+    public function testIdInjection(): void
     {
         $formatter = new RecordXmlFormatter(['injectId' => 'id']);
         $result = $formatter->format('foo', $this->getRecordFromFixture());
@@ -109,7 +109,7 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testDateInjection()
+    public function testDateInjection(): void
     {
         $formatter = new RecordXmlFormatter(['injectDate' => 'datetest']);
         $result = $formatter
@@ -123,7 +123,7 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testHeaderInjection()
+    public function testHeaderInjection(): void
     {
         $cfg = ['injectHeaderElements' => 'identifier'];
         $formatter = new RecordXmlFormatter($cfg);
@@ -140,7 +140,7 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testSetSpecInjection()
+    public function testSetSpecInjection(): void
     {
         $formatter = new RecordXmlFormatter(['injectSetSpec' => 'setSpec']);
         $result = $formatter->format('foo', $this->getRecordFromFixture());
@@ -155,7 +155,7 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testSetNameInjection()
+    public function testSetNameInjection(): void
     {
         $formatter = new RecordXmlFormatter(['injectSetName' => 'setName']);
 
@@ -182,7 +182,7 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testMissingMetadataException()
+    public function testMissingMetadataException(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Unexpected missing record metadata.');
@@ -192,11 +192,35 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test stripping nested metadata tags correctly.
+     *
+     * @return void
+     */
+    public function testNestedMetadataTags(): void
+    {
+        $xml = <<<XML
+            <oai>
+                <metadata>
+                    <metadata>
+                        <content />
+                    </metadata>
+                </metadata>
+            </oai>
+            XML;
+        $formatter = new RecordXmlFormatter();
+        $this->assertEquals(
+            '<metadata><content/></metadata>',
+            // remove whitespace to simplify assertion:
+            preg_replace('/\s/', '', $formatter->format('foo', simplexml_load_string($xml)))
+        );
+    }
+
+    /**
      * Test global search and replace.
      *
      * @return void
      */
-    public function testGlobalSearchAndReplace()
+    public function testGlobalSearchAndReplace(): void
     {
         $formatter = new RecordXmlFormatter(
             [
@@ -219,7 +243,7 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testNamespaceCorrection()
+    public function testNamespaceCorrection(): void
     {
         $formatter = new RecordXmlFormatter();
         $result = $formatter->format(
@@ -236,7 +260,7 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public function testNamespaceInsertionFromRecordTag()
+    public function testNamespaceInsertionFromRecordTag(): void
     {
         $formatter = new RecordXmlFormatter();
         $result = $formatter->format(
@@ -256,9 +280,9 @@ class RecordXmlFormatterTest extends \PHPUnit\Framework\TestCase
      * @param string $fixture Filename of fixture (inside fixture directory).
      * @param int    $i       Index of record to retrieve from fixture.
      *
-     * @return object
+     * @return SimpleXMLElement
      */
-    protected function getRecordFromFixture($fixture = 'marc.xml', $i = 0)
+    protected function getRecordFromFixture(string $fixture = 'marc.xml', int $i = 0): SimpleXMLElement
     {
         $xml = simplexml_load_file(__DIR__ . '/../../../../fixtures/' . $fixture);
         return $xml->ListRecords->record[$i];
