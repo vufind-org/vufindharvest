@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Factory for OAI-PMH Harvest Tool
+ * Factory for OAI-PMH Harvest Tool.
  *
  * PHP version 8
  *
@@ -39,7 +39,7 @@ use VuFindHarvest\ResponseProcessor\ResponseProcessorInterface;
 use VuFindHarvest\ResponseProcessor\SimpleXmlResponseProcessor;
 
 /**
- * Factory for OAI-PMH Harvest Tool
+ * Factory for OAI-PMH Harvest Tool.
  *
  * @category VuFind
  * @package  Harvest_Tools
@@ -79,7 +79,7 @@ class HarvesterFactory
     }
 
     /**
-     * Get HTTP client options from $settings array
+     * Get HTTP client options from $settings array.
      *
      * @param array $settings Settings
      *
@@ -113,7 +113,7 @@ class HarvesterFactory
     }
 
     /**
-     * Configure the HTTP client
+     * Configure the HTTP client.
      *
      * @param Client $client   HTTP client
      * @param array  $settings Settings
@@ -266,7 +266,7 @@ class HarvesterFactory
     }
 
     /**
-     * Get state manager
+     * Get state manager.
      *
      * @param string $basePath Base path for harvest
      *
@@ -305,7 +305,7 @@ class HarvesterFactory
     }
 
     /**
-     * Get the harvester
+     * Get the harvester.
      *
      * @param string           $target      Name of source being harvested (used as
      * directory name for storing harvested data inside $harvestRoot)

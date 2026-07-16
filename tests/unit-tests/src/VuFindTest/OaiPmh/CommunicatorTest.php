@@ -47,7 +47,7 @@ use VuFindHarvest\OaiPmh\Communicator;
 class CommunicatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Get Communicator
+     * Get Communicator.
      *
      * @param string $uri    Base URI for OAI-PMH server
      * @param Client $client HTTP client
@@ -147,7 +147,7 @@ class CommunicatorTest extends \PHPUnit\Framework\TestCase
     // Internal API
 
     /**
-     * Get a sample Identify response
+     * Get a sample Identify response.
      *
      * @return string
      */
@@ -157,7 +157,7 @@ class CommunicatorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get a fake HTTP client
+     * Get a fake HTTP client.
      *
      * @return \Laminas\Http\Client
      */

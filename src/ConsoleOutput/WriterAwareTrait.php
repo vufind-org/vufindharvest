@@ -41,7 +41,7 @@ namespace VuFindHarvest\ConsoleOutput;
 trait WriterAwareTrait
 {
     /**
-     * Writer helper
+     * Writer helper.
      *
      * @var WriterInterface
      */

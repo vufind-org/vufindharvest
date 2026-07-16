@@ -41,7 +41,7 @@ namespace VuFindHarvest\RecordWriterStrategy;
 class CombinedRecordWriterStrategy extends AbstractRecordWriterStrategy
 {
     /**
-     * The wrapping XML tag to be used if combinedRecords is set to true
+     * The wrapping XML tag to be used if combinedRecords is set to true.
      *
      * @var string
      */
@@ -69,7 +69,7 @@ class CombinedRecordWriterStrategy extends AbstractRecordWriterStrategy
     protected $firstHarvestedId = false;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $basePath Target directory for harvested files
      * @param string $tag      Wrapping tag to contain collection (null for default

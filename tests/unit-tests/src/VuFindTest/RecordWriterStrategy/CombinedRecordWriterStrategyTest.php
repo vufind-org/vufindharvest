@@ -43,7 +43,7 @@ use VuFindHarvest\RecordWriterStrategy\CombinedRecordWriterStrategy;
 class CombinedRecordWriterStrategyTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Test strategy
+     * Test strategy.
      *
      * @return void
      */

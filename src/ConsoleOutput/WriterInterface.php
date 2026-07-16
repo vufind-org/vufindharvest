@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Interface for output
+ * Interface for output.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace VuFindHarvest\ConsoleOutput;
 
 /**
- * Interface for output
+ * Interface for output.
  *
  * @category VuFind
  * @package  Harvest_Tools

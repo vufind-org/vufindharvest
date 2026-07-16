@@ -1,7 +1,7 @@
 <?php
 
 /**
- * OAI-PMH State Manager (for persisting harvest state)
+ * OAI-PMH State Manager (for persisting harvest state).
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace VuFindHarvest\OaiPmh;
 
 /**
- * OAI-PMH State Manager (for persisting harvest state)
+ * OAI-PMH State Manager (for persisting harvest state).
  *
  * This class actually serves two distinct functions:
  *
@@ -49,7 +49,7 @@ namespace VuFindHarvest\OaiPmh;
 class StateManager
 {
     /**
-     * File for tracking last harvest date
+     * File for tracking last harvest date.
      *
      * @var string
      */

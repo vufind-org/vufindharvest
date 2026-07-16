@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Console writer test
+ * Console writer test.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use VuFindHarvest\ConsoleOutput\ConsoleWriter;
 use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
 
 /**
- * Console writer test
+ * Console writer test.
  *
  * @category VuFind
  * @package  Tests
@@ -47,7 +47,7 @@ class ConsoleWriterTest extends \PHPUnit\Framework\TestCase
     use WriterAwareTrait;
 
     /**
-     * Test console writer
+     * Test console writer.
      *
      * @return void
      */

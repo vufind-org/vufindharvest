@@ -49,28 +49,28 @@ class Communicator
     use WriterAwareTrait;
 
     /**
-     * HTTP client
+     * HTTP client.
      *
      * @var Client
      */
     protected $client;
 
     /**
-     * URL to harvest from
+     * URL to harvest from.
      *
      * @var string
      */
     protected $baseUrl;
 
     /**
-     * Response processor
+     * Response processor.
      *
      * @var ResponseProcessorInterface
      */
     protected $responseProcessor;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string                      $uri       Base URI for OAI-PMH server
      * @param Client                      $client    HTTP client

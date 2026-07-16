@@ -1,7 +1,7 @@
 <?php
 
 /**
- * OAI exception test
+ * OAI exception test.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace VuFindTest\Harvest\ConsoleOutput;
 use VuFindHarvest\Exception\OaiException;
 
 /**
- * OAI exception test
+ * OAI exception test.
  *
  * @category VuFind
  * @package  Tests
@@ -43,7 +43,7 @@ use VuFindHarvest\Exception\OaiException;
 class OaiExceptionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Test exception
+     * Test exception.
      *
      * @return void
      */

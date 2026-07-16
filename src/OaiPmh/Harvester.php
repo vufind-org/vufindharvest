@@ -1,7 +1,7 @@
 <?php
 
 /**
- * OAI-PMH Harvest Tool
+ * OAI-PMH Harvest Tool.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use VuFindHarvest\Exception\OaiException;
 use function count;
 
 /**
- * OAI-PMH Harvest Tool
+ * OAI-PMH Harvest Tool.
  *
  * @category VuFind
  * @package  Harvest_Tools
@@ -48,63 +48,63 @@ class Harvester
     use WriterAwareTrait;
 
     /**
-     * Record writer
+     * Record writer.
      *
      * @var RecordWriter
      */
     protected $writer;
 
     /**
-     * Low-level OAI-PMH communicator
+     * Low-level OAI-PMH communicator.
      *
      * @var Communicator
      */
     protected $communicator;
 
     /**
-     * State manager
+     * State manager.
      *
      * @var StateManager
      */
     protected $stateManager;
 
     /**
-     * Target set(s) to harvest (null for all records)
+     * Target set(s) to harvest (null for all records).
      *
      * @var string|array
      */
     protected $set = null;
 
     /**
-     * Metadata type to harvest
+     * Metadata type to harvest.
      *
      * @var string
      */
     protected $metadataPrefix = 'oai_dc';
 
     /**
-     * Harvest end date (null for no specific end)
+     * Harvest end date (null for no specific end).
      *
      * @var string
      */
     protected $harvestEndDate;
 
     /**
-     * Harvest start date (null for no specific start)
+     * Harvest start date (null for no specific start).
      *
      * @var string
      */
     protected $startDate = null;
 
     /**
-     * Date granularity ('auto' to autodetect)
+     * Date granularity ('auto' to autodetect).
      *
      * @var string
      */
     protected $granularity = 'auto';
 
     /**
-     * Identify information from OAI host
+     * Identify information from OAI host.
      *
      * @var stdClass
      */

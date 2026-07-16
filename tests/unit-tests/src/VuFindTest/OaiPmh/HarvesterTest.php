@@ -49,14 +49,14 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\WithConsecutiveTrait;
 
     /**
-     * Time zone setting used with setup/tearDown
+     * Time zone setting used with setup/tearDown.
      *
      * @var string
      */
     protected $oldTz;
 
     /**
-     * Setup function -- standardize timezone for consistent results
+     * Setup function -- standardize timezone for consistent results.
      *
      * @return void
      */
@@ -67,7 +67,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Teardown function -- restore previous timezone setting
+     * Teardown function -- restore previous timezone setting.
      *
      * @return void
      */
@@ -77,7 +77,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get mock communicator object
+     * Get mock communicator object.
      *
      * @return Communicator&MockObject
      */
@@ -87,7 +87,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get mock RecordWriter object
+     * Get mock RecordWriter object.
      *
      * @return RecordWriter&MockObject
      */
@@ -97,7 +97,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get mock StateManager object
+     * Get mock StateManager object.
      *
      * @return StateManager&MockObject
      */
@@ -126,7 +126,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get harvester
+     * Get harvester.
      *
      * @param array  $settings     Settings
      * @param object $communicator Communicator
@@ -160,7 +160,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get an arbitrary OAI-PMH error
+     * Get an arbitrary OAI-PMH error.
      *
      * @return string
      */
@@ -170,7 +170,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get a token error
+     * Get a token error.
      *
      * @return string
      */

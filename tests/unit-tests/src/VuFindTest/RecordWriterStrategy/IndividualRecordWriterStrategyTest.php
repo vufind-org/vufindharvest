@@ -43,7 +43,7 @@ class IndividualRecordWriterStrategyTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\WithConsecutiveTrait;
 
     /**
-     * Test strategy
+     * Test strategy.
      *
      * @return void
      */

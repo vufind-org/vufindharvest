@@ -64,7 +64,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get harvester
+     * Get harvester.
      *
      * @param string $target      Name of source being harvested (used as directory
      * name for storing harvested data inside $harvestRoot)
@@ -224,7 +224,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
     // Internal API
 
     /**
-     * Get a sample ListSets response
+     * Get a sample ListSets response.
      *
      * @return string
      */
@@ -234,7 +234,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get a sample Identify response
+     * Get a sample Identify response.
      *
      * @return string
      */
@@ -244,7 +244,7 @@ class HarvesterFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get a fake HTTP client
+     * Get a fake HTTP client.
      *
      * @return \Laminas\Http\Client
      */

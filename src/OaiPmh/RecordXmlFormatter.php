@@ -1,7 +1,7 @@
 <?php
 
 /**
- * OAI-PMH XML Record Formatter
+ * OAI-PMH XML Record Formatter.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace VuFindHarvest\OaiPmh;
 
 /**
- * OAI-PMH XML Record Formatter
+ * OAI-PMH XML Record Formatter.
  *
  * @category VuFind
  * @package  Harvest_Tools
@@ -55,49 +55,49 @@ class RecordXmlFormatter
     protected $globalReplace = [];
 
     /**
-     * Tag to use for injecting IDs into XML (false for none)
+     * Tag to use for injecting IDs into XML (false for none).
      *
      * @var string|bool
      */
     protected $injectId = false;
 
     /**
-     * Tag to use for injecting setSpecs (false for none)
+     * Tag to use for injecting setSpecs (false for none).
      *
      * @var string|bool
      */
     protected $injectSetSpec = false;
 
     /**
-     * Tag to use for injecting set names (false for none)
+     * Tag to use for injecting set names (false for none).
      *
      * @var string|bool
      */
     protected $injectSetName = false;
 
     /**
-     * Tag to use for injecting datestamp (false for none)
+     * Tag to use for injecting datestamp (false for none).
      *
      * @var string|bool
      */
     protected $injectDate = false;
 
     /**
-     * List of header elements to copy into body
+     * List of header elements to copy into body.
      *
      * @var array
      */
     protected $injectHeaderElements = [];
 
     /**
-     * Associative array of setSpec => setName
+     * Associative array of setSpec => setName.
      *
      * @var array
      */
     protected $setNames = [];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param array $settings Configuration settings
      */

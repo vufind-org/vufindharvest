@@ -43,14 +43,14 @@ namespace VuFindHarvest\RecordWriterStrategy;
 abstract class AbstractRecordWriterStrategy implements RecordWriterStrategyInterface
 {
     /**
-     * Directory for storing harvested files
+     * Directory for storing harvested files.
      *
      * @var string
      */
     protected $basePath;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $basePath Target directory for harvested files
      */
