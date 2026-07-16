@@ -1,7 +1,7 @@
 <?php
 
 /**
- * OAI-PMH Harvest Tool (Symfony Console Command)
+ * OAI-PMH Harvest Tool (Symfony Console Command).
  *
  * PHP version 8
  *
@@ -41,7 +41,7 @@ use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
 use VuFindHarvest\Exception\OaiException;
 
 /**
- * OAI-PMH Harvest Tool (Symfony Console Command)
+ * OAI-PMH Harvest Tool (Symfony Console Command).
  *
  * @category VuFind
  * @package  Harvest_Tools
@@ -58,35 +58,35 @@ class HarvesterCommand extends Command
     use WriterAwareTrait;
 
     /**
-     * The name of the command
+     * The name of the command.
      *
      * @var string
      */
     protected static $defaultName = 'harvest/harvest_oai';
 
     /**
-     * HTTP client
+     * HTTP client.
      *
      * @var Client
      */
     protected $client;
 
     /**
-     * Root directory for harvesting
+     * Root directory for harvesting.
      *
      * @var string
      */
     protected $harvestRoot;
 
     /**
-     * Harvester factory
+     * Harvester factory.
      *
      * @var HarvesterFactory
      */
     protected $factory;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ?Client           $client      HTTP client (omit for default)
      * @param ?string           $harvestRoot Root directory for harvesting (omit for
@@ -444,7 +444,7 @@ class HarvesterCommand extends Command
     }
 
     /**
-     * Load configuration from an .ini file (or return false on error)
+     * Load configuration from an .ini file (or return false on error).
      *
      * @param string      $ini     Configuration file to load
      * @param string|bool $section Section of .ini to load (or false for all)

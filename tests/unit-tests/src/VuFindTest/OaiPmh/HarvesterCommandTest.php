@@ -46,7 +46,7 @@ use VuFindHarvest\OaiPmh\HarvesterCommand;
 class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Get mock harvester object
+     * Get mock harvester object.
      *
      * @return \VuFindHarvest\OaiPmh\Harvester
      */
@@ -56,7 +56,7 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get command tester
+     * Get command tester.
      *
      * @param array            $params  Parameters to pass to tester
      * @param HarvesterCommand $command Command object to test (null to create one)
@@ -137,7 +137,7 @@ class HarvesterCommandTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test basic .ini functionality of console runner
+     * Test basic .ini functionality of console runner.
      *
      * @return void
      */

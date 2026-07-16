@@ -1,7 +1,7 @@
 <?php
 
 /**
- * OAI-PMH exception class
+ * OAI-PMH exception class.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace VuFindHarvest\Exception;
 use Throwable;
 
 /**
- * OAI-PMH exception class
+ * OAI-PMH exception class.
  *
  * @category VuFind
  * @package  Harvest_Tools
@@ -43,21 +43,21 @@ use Throwable;
 class OaiException extends \RuntimeException
 {
     /**
-     * Error code
+     * Error code.
      *
      * @var string
      */
     protected $oaiCode;
 
     /**
-     * Error message
+     * Error message.
      *
      * @var string
      */
     protected $oaiMessage;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string     $oaiCode    OAI-PMH error code
      * @param string     $oaiMessage OAI-PMH error message
@@ -77,7 +77,7 @@ class OaiException extends \RuntimeException
     }
 
     /**
-     * Get OAI-PMH error code
+     * Get OAI-PMH error code.
      *
      * @return string
      */
@@ -87,7 +87,7 @@ class OaiException extends \RuntimeException
     }
 
     /**
-     * Get OAI-PMH error message
+     * Get OAI-PMH error message.
      *
      * @return string
      */

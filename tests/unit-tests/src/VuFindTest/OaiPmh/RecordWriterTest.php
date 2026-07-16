@@ -64,7 +64,7 @@ class RecordWriterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get mock XML formatter
+     * Get mock XML formatter.
      *
      * @return RecordXmlFormatter
      */
@@ -74,7 +74,7 @@ class RecordWriterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get mock writer strategy
+     * Get mock writer strategy.
      *
      * @return RecordWriterStrategyInterface
      */
@@ -84,7 +84,7 @@ class RecordWriterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get writer to test
+     * Get writer to test.
      *
      * @param array                          $config    Configuration
      * @param ?RecordWriterStrategyInterface $strategy  Writer strategy

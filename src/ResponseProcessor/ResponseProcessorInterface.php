@@ -41,7 +41,7 @@ namespace VuFindHarvest\ResponseProcessor;
 interface ResponseProcessorInterface
 {
     /**
-     * Process the provided XML
+     * Process the provided XML.
      *
      * @param string $xml Raw XML to process
      *

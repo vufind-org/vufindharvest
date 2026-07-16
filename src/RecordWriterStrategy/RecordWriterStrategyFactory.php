@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Factory for record writer strategy
+ * Factory for record writer strategy.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace VuFindHarvest\RecordWriterStrategy;
 
 /**
- * Factory for record writer strategy
+ * Factory for record writer strategy.
  *
  * @category VuFind
  * @package  Harvest_Tools

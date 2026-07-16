@@ -1,7 +1,7 @@
 <?php
 
 /**
- * OAI-PMH Harvest Tool
+ * OAI-PMH Harvest Tool.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use VuFindHarvest\ConsoleOutput\WriterAwareTrait;
 use function count;
 
 /**
- * OAI-PMH Harvest Tool
+ * OAI-PMH Harvest Tool.
  *
  * @category VuFind
  * @package  Harvest_Tools
@@ -47,7 +47,7 @@ class SetLoader
     use WriterAwareTrait;
 
     /**
-     * Low-level OAI-PMH communicator
+     * Low-level OAI-PMH communicator.
      *
      * @var Communicator
      */

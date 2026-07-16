@@ -48,21 +48,21 @@ class SimpleXmlResponseProcessor implements ResponseProcessorInterface
     protected $sanitize = false;
 
     /**
-     * Filename for logging bad XML responses (false for none)
+     * Filename for logging bad XML responses (false for none).
      *
      * @var string|bool
      */
     protected $badXmlLog = false;
 
     /**
-     * An array of regex strings used to sanitize XML
+     * An array of regex strings used to sanitize XML.
      *
      * @var array
      */
     protected $sanitizeRegex = [];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $basePath Base path to harvest directory.
      * @param array  $settings OAI-PMH settings from oai.ini.

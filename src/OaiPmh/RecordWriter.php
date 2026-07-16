@@ -1,7 +1,7 @@
 <?php
 
 /**
- * OAI-PMH Record Writer
+ * OAI-PMH Record Writer.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use VuFindHarvest\RecordWriterStrategy\RecordWriterStrategyInterface;
 use function strlen;
 
 /**
- * OAI-PMH Record Writer
+ * OAI-PMH Record Writer.
  *
  * @category VuFind
  * @package  Harvest_Tools
@@ -45,49 +45,49 @@ use function strlen;
 class RecordWriter
 {
     /**
-     * Filename for logging harvested IDs (false for none)
+     * Filename for logging harvested IDs (false for none).
      *
      * @var string|bool
      */
     protected $harvestedIdLog = false;
 
     /**
-     * OAI prefix to strip from ID values
+     * OAI prefix to strip from ID values.
      *
      * @var string
      */
     protected $idPrefix = '';
 
     /**
-     * Regular expression searches
+     * Regular expression searches.
      *
      * @var array
      */
     protected $idSearch = [];
 
     /**
-     * Replacements for regular expression matches
+     * Replacements for regular expression matches.
      *
      * @var array
      */
     protected $idReplace = [];
 
     /**
-     * XML record formatter
+     * XML record formatter.
      *
      * @var RecordXmlFormatter
      */
     protected $recordFormatter;
 
     /**
-     * Writer strategy
+     * Writer strategy.
      *
      * @var RecordWriterStrategyInterface
      */
     protected $strategy;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param RecordWriterStrategyInterface $strategy  Writing strategy
      * @param RecordXmlFormatter            $formatter XML record formatter

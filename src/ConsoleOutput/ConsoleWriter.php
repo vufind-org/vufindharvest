@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Thin wrapper around console output
+ * Thin wrapper around console output.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace VuFindHarvest\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Thin wrapper around console output
+ * Thin wrapper around console output.
  *
  * @category VuFind
  * @package  Harvest_Tools
@@ -43,14 +43,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ConsoleWriter implements WriterInterface
 {
     /**
-     * Output interface
+     * Output interface.
      *
      * @var OutputInterface
      */
     protected $output;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param OutputInterface $output Output interface
      */
